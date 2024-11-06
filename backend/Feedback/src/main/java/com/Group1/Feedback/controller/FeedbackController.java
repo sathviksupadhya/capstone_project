@@ -1,0 +1,53 @@
+package com.Group1.Feedback.controller;
+
+import com.Group1.Feedback.dto.FeedbackDto;
+import com.Group1.Feedback.service.FeedbackService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+public class FeedbackController {
+    @Autowired
+    private FeedbackService feedbackService;
+
+    // Post a new feedback
+    @PostMapping("/create-feedback")
+    public ResponseEntity<FeedbackDto> postFeedback(@RequestBody FeedbackDto feedbackDto) {
+        FeedbackDto createdFeedback = feedbackService.addFeedback(feedbackDto);
+        return new ResponseEntity<>(createdFeedback, HttpStatus.CREATED);
+    }
+
+    // Get all feedbacks
+    @GetMapping("/get-feedbacks")
+    public ResponseEntity<List<FeedbackDto>> getAllFeedbacks() {
+        List<FeedbackDto> feedbacks = feedbackService.getAllFeedbacks();
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete{feedbackId}")
+    public ResponseEntity<String> deleteFeedback(@PathVariable("feedbackId") int feedbackId) {
+        feedbackService.deleteFeedback(feedbackId);
+        return ResponseEntity.ok("Feedback with ID: " + feedbackId + " successfully deleted!");
+    }
+
+    @GetMapping("/get-feedback-by-eventId/{eventId}")
+    public ResponseEntity<List<FeedbackDto>> getFeedbackByEventId(@PathVariable("eventId") int eventId) {
+        List<FeedbackDto> feedbacks = feedbackService.getFeedbackByEventId(eventId);
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    }
+    @GetMapping("/get-feedback-by-userId/{userId}")
+    public ResponseEntity<List<FeedbackDto>> getFeedbackByUserId(@PathVariable("userId") int userId) {
+        List<FeedbackDto> feedbacks = feedbackService.getFeedbackByUserId(userId);
+        return new ResponseEntity<>(feedbacks, HttpStatus.OK);
+    }
+    @GetMapping("/get-feedback-by-UserId-EventId/{eventId}/{userId}")
+    public ResponseEntity<FeedbackDto> getFeedbackByEventIdAndUserId(@PathVariable("eventId") int eventId, @PathVariable("userId") int userId) {
+        FeedbackDto feedback = feedbackService.getFeedbackByEventIdAndUserId(eventId, userId);
+        return new ResponseEntity<>(feedback, HttpStatus.OK);
+    }
+
+}
