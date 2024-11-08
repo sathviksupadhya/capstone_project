@@ -1,6 +1,7 @@
 package com.Group1.Feedback.controller;
 
 import com.Group1.Feedback.dto.FeedbackDto;
+import com.Group1.Feedback.model.Feedback;
 import com.Group1.Feedback.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,23 +30,23 @@ public class FeedbackController {
     }
 
     @DeleteMapping("/delete{feedbackId}")
-    public ResponseEntity<String> deleteFeedback(@PathVariable("feedbackId") int feedbackId) {
+    public ResponseEntity<String> deleteFeedback(@PathVariable("feedbackId") String feedbackId) {
         feedbackService.deleteFeedback(feedbackId);
         return ResponseEntity.ok("Feedback with ID: " + feedbackId + " successfully deleted!");
     }
 
     @GetMapping("/get-feedback-by-eventId/{eventId}")
-    public ResponseEntity<List<FeedbackDto>> getFeedbackByEventId(@PathVariable("eventId") int eventId) {
+    public ResponseEntity<List<FeedbackDto>> getFeedbackByEventId(@PathVariable("eventId") String eventId) {
         List<FeedbackDto> feedbacks = feedbackService.getFeedbackByEventId(eventId);
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-userId/{userId}")
-    public ResponseEntity<List<FeedbackDto>> getFeedbackByUserId(@PathVariable("userId") int userId) {
+    public ResponseEntity<List<FeedbackDto>> getFeedbackByUserId(@PathVariable("userId") String userId) {
         List<FeedbackDto> feedbacks = feedbackService.getFeedbackByUserId(userId);
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-UserId-EventId/{eventId}/{userId}")
-    public ResponseEntity<FeedbackDto> getFeedbackByEventIdAndUserId(@PathVariable("eventId") int eventId, @PathVariable("userId") int userId) {
+    public ResponseEntity<FeedbackDto> getFeedbackByEventIdAndUserId(@PathVariable("eventId") String eventId, @PathVariable("userId") String userId) {
         FeedbackDto feedback = feedbackService.getFeedbackByEventIdAndUserId(eventId, userId);
         return new ResponseEntity<>(feedback, HttpStatus.OK);
     }

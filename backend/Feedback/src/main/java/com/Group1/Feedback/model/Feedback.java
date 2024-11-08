@@ -1,24 +1,20 @@
 package com.Group1.Feedback.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Document
 @Data
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int feedbackId;
-    private String feedbackText;
-    private int eventId;
-    private int userId;
-    private String userName;
-
+    private String feedbackId;
+    private String feedbackMessage;
+    private String eventId;
+    private String userId;
 }

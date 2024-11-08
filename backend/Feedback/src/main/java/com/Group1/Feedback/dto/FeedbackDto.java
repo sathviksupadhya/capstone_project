@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class FeedbackDto {
-    private int feedbackId;
-    private String feedbackText;
-    private int eventId;
-    private int userId;
-    private String userName;
+
+    private String feedbackId;
+    private String feedbackMessage;
+    private String eventId;
+    private String userId;
+
 }

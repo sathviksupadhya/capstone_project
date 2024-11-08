@@ -11,25 +11,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class FeedbackService {
+
     @Autowired
     private FeedbackRepository feedbackRepository;
 
     public static FeedbackDto entityToDto(Feedback feedback) {
         FeedbackDto dto = new FeedbackDto();
         dto.setFeedbackId(feedback.getFeedbackId());
-        dto.setFeedbackText(feedback.getFeedbackText());
+        dto.setFeedbackMessage(feedback.getFeedbackMessage());
         dto.setEventId(feedback.getEventId());
         dto.setUserId(feedback.getUserId());
-        dto.setUserName(feedback.getUserName());
         return dto;
     }
     public static Feedback dtoToEntity(FeedbackDto dto) {
         Feedback feedback = new Feedback();
         feedback.setFeedbackId(dto.getFeedbackId());
-        feedback.setFeedbackText(dto.getFeedbackText());
+        feedback.setFeedbackMessage(dto.getFeedbackMessage());
         feedback.setEventId(dto.getEventId());
         feedback.setUserId(dto.getUserId());
-        feedback.setUserName(dto.getUserName());
         return feedback;
     }
 
@@ -61,30 +60,30 @@ public class FeedbackService {
 
 
 
-    public void deleteFeedback(int feedbackId) {
+    public void deleteFeedback(String feedbackId) {
         feedbackRepository.deleteById(feedbackId);
     }
 
-    public FeedbackDto updateFeedback(int feedbackId, FeedbackDto feedbackDto) {
+    public FeedbackDto updateFeedback(String feedbackId, FeedbackDto feedbackDto) {
         Feedback feedback = feedbackRepository.findById(feedbackId).orElse(null);
         if (feedback == null) {
             throw new RuntimeException("Feedback not found with id: " + feedbackId);
         }
-        feedback.setFeedbackText(feedbackDto.getFeedbackText());
+        feedback.setFeedbackMessage(feedbackDto.getFeedbackMessage());
         return entityToDto(feedbackRepository.save(feedback));
     }
 
-    public List<FeedbackDto> getFeedbackByEventId(int eventId) {
+    public List<FeedbackDto> getFeedbackByEventId(String eventId) {
         List<Feedback> feedbacks = feedbackRepository.findByEventId(eventId);
         return feedbacks.stream().map(FeedbackService::entityToDto).collect(Collectors.toList());
     }
 
-    public List<FeedbackDto> getFeedbackByUserId(int userId) {
+    public List<FeedbackDto> getFeedbackByUserId(String userId) {
         List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
         return feedbacks.stream().map(FeedbackService::entityToDto).collect(Collectors.toList());
     }
 
-    public FeedbackDto getFeedbackByEventIdAndUserId(int eventId, int userId) {
+    public FeedbackDto getFeedbackByEventIdAndUserId(String eventId, String userId) {
         Feedback feedback = feedbackRepository.findByEventIdAndUserId(eventId, userId);
         return feedback == null? null : entityToDto(feedback);
     }
