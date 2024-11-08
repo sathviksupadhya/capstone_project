@@ -1,10 +1,10 @@
-package com.Group1.Resident;
+package com.Group1.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ResidentApplicationTests {
+class UserApplicationTests {
 
 	@Test
 	void contextLoads() {

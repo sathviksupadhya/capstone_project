@@ -7,9 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Resident" />
+        <module name="Alert" />
         <module name="event" />
         <module name="Feedback" />
-        <module name="Alert" />
       </profile>
     </annotationProcessing>
   </component>
