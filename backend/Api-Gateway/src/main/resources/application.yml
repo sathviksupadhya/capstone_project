@@ -1,0 +1,63 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+server:
+  port: 9997
+
+spring:
+  application:
+    name: Api-GateWay
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+
+        - id: User
+          uri: http://localhost:9991
+          predicates:
+            - Path=/api/residents/**
+
+        - id: Event
+          uri: http://localhost:9992
+          predicates:
+            - Path=/event/**
+
+        - id: Feedback
+          uri: http://localhost:9995
+          predicates:
+            - Path=/feedback/**
+
+        - id: Alert
+          uri: http://localhost:9994
+          predicates:
+            - Path=/api/alert/**
+
+        - id: Reminder
+          uri: http://localhost:9993
+          predicates:
+            - Path=/reminder/**
+
+        - id: authentication-service
+          uri: http://localhost:9996/
+          predicates:
+            - Path=/api/auth/**
+
+
+
+      routes[0]:
+        filters[0]: AuthenticationFilter
+      routes[1]:
+        filters[0]: AuthenticationFilter
+      routes[2]:
+        filters[0]: AuthenticationFilter
+      routes[3]:
+        filters[0]: AuthenticationFilter
+      routes[4]:
+        filters[0]: AuthenticationFilter
+      routes[5]:
+        filters[0]: AuthenticationFilter
