@@ -42,4 +42,9 @@ public class eventController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/getEvent/{eventId}")
+    public eventModel getEvent(@PathVariable String eventId) {
+        return service.getEvent(eventId);
+    }
+
 }

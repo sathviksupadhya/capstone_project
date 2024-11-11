@@ -1,7 +1,7 @@
 package com.Group1.Reminder.repository;
 
 import com.Group1.Reminder.model.Reminder;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ReminderRepository extends JpaRepository<Reminder,Integer> {
+public interface ReminderRepository extends MongoRepository<Reminder,String> {
 }

@@ -2,6 +2,7 @@ package com.Group1.user.controller;
 
 import com.Group1.user.dto.Response;
 import com.Group1.user.dto.UserDto;
+import com.Group1.user.model.User;
 import com.Group1.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class UserController {
 
     // Endpoint to create a new resident - Defaults to isAdminRequest = false in the service
     @PostMapping("/create")
-    public ResponseEntity<Response<UserDto>> createResident(@RequestBody UserDto userDto) {
+    public ResponseEntity<Response<UserDto>> createUser(@RequestBody UserDto userDto) {
         Response<UserDto> response = userService.createResident(userDto);
         return ResponseEntity.ok(response);
     }
@@ -53,9 +54,8 @@ public class UserController {
 
     // Endpoint to retrieve a resident by ID
     @GetMapping("/{userId}")
-    public ResponseEntity<Response<UserDto>> getResidentById(@PathVariable String userId) {
-        Response<UserDto> response = userService.getResidentById(userId);
-        return ResponseEntity.ok(response);
+    public User getResidentById(@PathVariable String userId) {
+        return userService.getResidentById(userId);
     }
 
     // Endpoint to retrieve all approved residents (accessible by any user)
@@ -63,5 +63,10 @@ public class UserController {
     public ResponseEntity<Response<List<UserDto>>> getAllResidents() {
         Response<List<UserDto>> response = userService.getAllResidents();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/allUsers")
+    public List<User> getAllUsers(){
+        return userService.getAllUsers();
     }
 }

@@ -103,7 +103,7 @@ public class UserService {
     }
 
     // Get a resident by ID - Only APPROVED residents are accessible
-    public Response<UserDto> getResidentById(String userid) {
+    public User getResidentById(String userid) {
         User user = userRepository.findById(userid)
                 .orElseThrow(() -> new RuntimeException("Resident not found with ID: " + userid));
 
@@ -111,7 +111,7 @@ public class UserService {
             throw new RuntimeException("Resident is not approved.");
         }
 
-        return new Response<>("Resident retrieved successfully", mapToDTO(user));
+        return user;
     }
 
     // Get all residents - Now accessible to any user, no admin check required
@@ -144,5 +144,13 @@ public class UserService {
         user.setRole(userDto.getRole());
         user.setStatus(userDto.getStatus());
         return user;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> user.getStatus().equalsIgnoreCase("APPROVED"))
+                .toList();
+
     }
 }

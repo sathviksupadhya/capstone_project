@@ -9,8 +9,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Resident" />
         <module name="Alert" />
+        <module name="Reminder" />
         <module name="event" />
         <module name="Feedback" />
+        <module name="authentication" />
       </profile>
     </annotationProcessing>
   </component>
@@ -18,6 +20,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Alert" options="-parameters" />
       <module name="Feedback" options="-parameters" />
+      <module name="Reminder" options="-parameters" />
+      <module name="Resident" options="-parameters" />
+      <module name="authentication" options="-parameters" />
       <module name="event" options="-parameters" />
     </option>
   </component>

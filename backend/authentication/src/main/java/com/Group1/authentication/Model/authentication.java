@@ -1,5 +1,4 @@
-package com.Group1.Reminder.model;
-
+package com.Group1.authentication.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,18 +6,15 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Document
-public class Reminder {
+public class authentication {
+
     @Id
-    private String remId;
-    private String eventId;
     private String userId;
-    private boolean needSms;
-    private boolean needCall;
-    private boolean needEmail;
-
-
+    private String userName;
+    private String password;
+    private String role;
 }

@@ -1,9 +1,12 @@
 package com.Group1.Alert.service;
 
 
+import com.Group1.Alert.feign.feignClient;
 import com.Group1.Alert.model.Alert;
+import com.Group1.Alert.model.User;
 import com.Group1.Alert.repository.AlertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +18,9 @@ public class AlertService {
     @Autowired
     private AlertRepository alertRepository;
 
+    @Autowired
+    private feignClient client;
+
     public List<Alert> getAlertByUserId(String userId) {
         List<Alert> alerts = alertRepository.findByUserId(userId);  // Now, this returns a List<Alert>
         return alerts.stream()
@@ -24,13 +30,15 @@ public class AlertService {
 
 
 
-    public Alert createAlert(Alert alertDto) {
-        // Create the new alert
-        Alert alert = new Alert();
-        alert.setUserId(alertDto.getUserId());
-        alert.setEventId(alertDto.getEventId());
-
-        return alertRepository.save(alert);
+    public String createAlert(String eventid) {
+        List<User> users = client.getAllUsers();
+        for(User user : users){
+            Alert alert = new Alert();
+            alert.setUserId(user.getUserId());
+            alert.setEventId(eventid);
+            alertRepository.save(alert);
+        }
+        return "saved all";
 
     }
 
@@ -46,5 +54,9 @@ public class AlertService {
             // Handle the case where the alert is not found
             return null;
         }
+    }
+
+    public List<Alert> getAllAlerts() {
+        return alertRepository.findAll();
     }
 }
