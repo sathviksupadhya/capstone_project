@@ -27,7 +27,7 @@ public class AlertController {
     }
 
 
-    @PostMapping("/sendAlerts/{eventid}")
+    @PostMapping("/createAlert/{eventid}")
     public ResponseEntity<String> createAlert(@PathVariable String eventid) {
         return new ResponseEntity<>(alertService.createAlert(eventid), HttpStatus.CREATED);
     }

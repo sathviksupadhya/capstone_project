@@ -1,6 +1,14 @@
+
+import { useNavigate } from "react-router-dom";
 import "../authCSS/login.css";
 
 export default function Login() {
+    const navigate = useNavigate();
+
+function auth(e){
+    e.preventDefault();
+    navigate("/validate" + {state : e}); 
+}
   return (
     <>
       <div>
@@ -8,7 +16,7 @@ export default function Login() {
           <div className="shape"></div>
           <div className="shape"></div>
         </div>
-        <form className="login-form">
+        <form className="login-form" onSubmit={(e) => auth(e)}>
           <h3>Login Here</h3>
 
           <label htmlFor="username">Username</label>
