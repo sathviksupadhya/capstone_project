@@ -97,7 +97,7 @@ public class ReminderService {
     }
 
     public String SendSms(String remId) {
-    eventModel event = eventClient.getEvent(reminderRepository.findById(remId).get().getEventId());
+    eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
     User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
         Message.creator(new PhoneNumber(user.getPhoneNumber()), new PhoneNumber("+15102963260"),
                 event.getEventDescription()).create();
@@ -105,7 +105,7 @@ public class ReminderService {
     }
 
     public String SendCall(String remId) {
-        eventModel event = eventClient.getEvent(reminderRepository.findById(remId).get().getEventId());
+        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
         User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
         Call.creator(new PhoneNumber(user.getPhoneNumber()),
                         new PhoneNumber("+15102963260"),

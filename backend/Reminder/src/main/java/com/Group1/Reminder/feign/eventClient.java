@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface eventClient {
 
     @GetMapping("/getEvent/{eventId}")
-    public static eventModel getEvent(@PathVariable String eventId);
+    public eventModel getEvent(@PathVariable String eventId);
 }

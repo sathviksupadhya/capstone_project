@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/backend/Alert/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/Api-Gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/Community-Server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/Feedback/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/Reminder/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/Resident/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/authentication/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/event/src/main/java" charset="UTF-8" />
+  </component>
+</project>
