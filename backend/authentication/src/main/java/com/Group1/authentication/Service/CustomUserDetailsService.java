@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<authentication> user = userCredentialsDao.findbyUserName(username);
+        Optional<authentication> user = userCredentialsDao.findByUserName(username);
         System.out.println("user 2: " + user);
         return user.map(authUserDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Username/password not valid!"));

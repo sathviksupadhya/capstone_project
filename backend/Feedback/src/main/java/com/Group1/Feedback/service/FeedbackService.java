@@ -39,7 +39,7 @@ public class FeedbackService {
     }
 
 
-    // Get all feedbacks
+
     public List<FeedbackDto> getAllFeedbacks() {
         List<Feedback> feedbacks = feedbackRepository.findAll();
         return feedbacks.stream().map(FeedbackService::entityToDto).collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class FeedbackService {
 
 
 
-    // Get feedbacks by event ID
+
 //    public List<FeedbackDto> getFeedbacksByEventId(Long eventId) {
 //        Event event = eventRepository.findById(eventId)
 //                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));

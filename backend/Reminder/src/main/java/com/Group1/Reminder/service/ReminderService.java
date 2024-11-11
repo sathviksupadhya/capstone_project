@@ -4,8 +4,8 @@ import com.Group1.Reminder.dto.ReminderDTO;
 import com.Group1.Reminder.feign.eventClient;
 import com.Group1.Reminder.feign.userClient;
 import com.Group1.Reminder.model.Reminder;
-import com.Group1.Reminder.model.User;
-import com.Group1.Reminder.model.eventModel;
+import com.Group1.Reminder.dto.User;
+import com.Group1.Reminder.dto.eventModel;
 import com.Group1.Reminder.repository.ReminderRepository;
 import com.Group1.Reminder.dto.Response;
 import com.twilio.rest.api.v2010.account.Call;
@@ -30,14 +30,14 @@ public class ReminderService {
     @Autowired
     private userClient userclient;
 
-    // Create a new reminder
+
     public Response<ReminderDTO> createReminder(ReminderDTO reminderDTO) {
         Reminder reminder = mapToEntity(reminderDTO);
         reminder = reminderRepository.save(reminder);
         return new Response<>("Reminder created successfully", mapToDTO(reminder));
     }
 
-    // Update an existing reminder
+
     public Response<ReminderDTO> updateReminder(String remId, ReminderDTO reminderDTO) {
         Reminder reminder = reminderRepository.findById(remId)
                 .orElseThrow(() -> new RuntimeException("Reminder not found with ID: " + remId));
@@ -52,7 +52,7 @@ public class ReminderService {
         return new Response<>("Reminder updated successfully", mapToDTO(reminder));
     }
 
-    // Delete a reminder by ID
+
     public Response<String> deleteReminder(String remId) {
         reminderRepository.findById(remId)
                 .orElseThrow(() -> new RuntimeException("Reminder not found with ID: " + remId));
@@ -60,21 +60,20 @@ public class ReminderService {
         return new Response<>("Reminder deleted successfully", null);
     }
 
-    // Get a reminder by ID
+
     public Response<ReminderDTO> getReminderById(String remId) {
         Reminder reminder = reminderRepository.findById(remId)
                 .orElseThrow(() -> new RuntimeException("Reminder not found with ID: " + remId));
         return new Response<>("Reminder retrieved successfully", mapToDTO(reminder));
     }
 
-    // Get all reminders
+
     public Response<List<ReminderDTO>> getAllReminders() {
         List<Reminder> reminders = reminderRepository.findAll();
         List<ReminderDTO> reminderDTOs = reminders.stream().map(this::mapToDTO).collect(Collectors.toList());
         return new Response<>("All reminders retrieved successfully", reminderDTOs);
     }
 
-    // Helper method to map entity to DTO
     private ReminderDTO mapToDTO(Reminder reminder) {
         ReminderDTO reminderDTO = new ReminderDTO();
         reminderDTO.setEventId(reminder.getEventId());
@@ -85,7 +84,6 @@ public class ReminderService {
         return reminderDTO;
     }
 
-    // Helper method to map DTO to entity
     private Reminder mapToEntity(ReminderDTO reminderDTO) {
         Reminder reminder = new Reminder();
         reminder.setEventId(reminderDTO.getEventId());
@@ -97,7 +95,7 @@ public class ReminderService {
     }
 
     public String SendSms(String remId) {
-    eventModel event = eventClient.getEvent(reminderRepository.findById(remId).get().getEventId());
+    eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
     User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
         Message.creator(new PhoneNumber(user.getPhoneNumber()), new PhoneNumber("+15102963260"),
                 event.getEventDescription()).create();
@@ -105,7 +103,7 @@ public class ReminderService {
     }
 
     public String SendCall(String remId) {
-        eventModel event = eventClient.getEvent(reminderRepository.findById(remId).get().getEventId());
+        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
         User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
         Call.creator(new PhoneNumber(user.getPhoneNumber()),
                         new PhoneNumber("+15102963260"),

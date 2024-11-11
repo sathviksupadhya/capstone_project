@@ -21,6 +21,6 @@ public class eventModel {
     private String eventImg;
     private Date eventDate;
     private String eventType;
-    private int userId;
+    private String userId;
 
 }

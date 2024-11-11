@@ -1,18 +1,17 @@
-package com.Group1.user.dto;
+package com.Group1.Reminder.dto;
 
-
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class UserDto {
+public class User {
+    private String userId;
     private String email;
     private String phoneNumber;
     private String image;
-    @Pattern(regexp = "^(PENDING|APPROVED|REJECTED)$", message = "Status must be anyone of 'Pending', 'Approved' and 'Rejected'")
+    private String role;
     private String status;
 }

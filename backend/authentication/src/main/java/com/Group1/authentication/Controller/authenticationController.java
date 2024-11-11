@@ -3,6 +3,7 @@ package com.Group1.authentication.Controller;
 import com.Group1.authentication.Model.authentication;
 import com.Group1.authentication.Service.authenticationService;
 import com.Group1.authentication.Service.jwtService;
+import com.Group1.authentication.dto.authdto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,12 +25,12 @@ public class authenticationController {
     private jwtService jwrs;
 
     @PostMapping("/register")
-    public ResponseEntity<authentication> register(@RequestBody authentication auth) {
+    public ResponseEntity<authentication> register(@RequestBody authdto auth) {
         return ResponseEntity.ok(authenticationservice.register(auth));
     }
 
     @PostMapping("/validate/user")
-    public String validateUser(@RequestBody authentication auth) {
+    public String validateUser(@RequestBody authdto auth) {
         System.out.println("user : " + auth);
         Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(auth.getUserName(), auth.getPassword()));

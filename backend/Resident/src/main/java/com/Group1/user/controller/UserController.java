@@ -17,14 +17,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Endpoint to create a new resident - Defaults to isAdminRequest = false in the service
-    @PostMapping("/create")
-    public ResponseEntity<Response<UserDto>> createUser(@RequestBody UserDto userDto) {
-        Response<UserDto> response = userService.createResident(userDto);
-        return ResponseEntity.ok(response);
+    @PostMapping("/create/{id}")
+    public String create(@PathVariable String id) {
+        return userService.createtuple(id);
     }
 
-    // Endpoint for admin to approve or reject a pending resident request using "Approve" or "Reject"
+
     @PutMapping("/{userId}/action")
     public ResponseEntity<Response<UserDto>> approveOrRejectResident(
             @PathVariable String userId,
@@ -33,32 +31,28 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint to update an existing resident's information
     @PutMapping("/{userId}/update")
     public ResponseEntity<Response<UserDto>> updateResident(
             @PathVariable String userId,
-            @RequestBody UserDto userDto,
-            @RequestParam(value = "isAdminRequest", defaultValue = "false") boolean isAdminRequest) {
-        Response<UserDto> response = userService.updateResident(userId, userDto, isAdminRequest);
+            @RequestBody UserDto userDto) {
+        Response<UserDto> response = userService.updateResident(userId, userDto);
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint to delete a resident by ID (Admin only)
+
     @DeleteMapping("/{userId}")
     public ResponseEntity<Response<String>> deleteResident(
-            @PathVariable String userId,
-            @RequestParam(value = "isAdminRequest", defaultValue = "false") boolean isAdminRequest) {
-        Response<String> response = userService.deleteResident(userId, isAdminRequest);
+            @PathVariable String userId) {
+        Response<String> response = userService.deleteResident(userId);
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint to retrieve a resident by ID
     @GetMapping("/{userId}")
     public User getResidentById(@PathVariable String userId) {
         return userService.getResidentById(userId);
     }
 
-    // Endpoint to retrieve all approved residents (accessible by any user)
+
     @GetMapping("/all")
     public ResponseEntity<Response<List<UserDto>>> getAllResidents() {
         Response<List<UserDto>> response = userService.getAllResidents();

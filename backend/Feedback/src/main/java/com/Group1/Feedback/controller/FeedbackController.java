@@ -15,14 +15,14 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
-    // Post a new feedback
+
     @PostMapping("/create-feedback")
     public ResponseEntity<FeedbackDto> postFeedback(@RequestBody FeedbackDto feedbackDto) {
         FeedbackDto createdFeedback = feedbackService.addFeedback(feedbackDto);
         return new ResponseEntity<>(createdFeedback, HttpStatus.CREATED);
     }
 
-    // Get all feedbacks
+
     @GetMapping("/get-feedbacks")
     public ResponseEntity<List<FeedbackDto>> getAllFeedbacks() {
         List<FeedbackDto> feedbacks = feedbackService.getAllFeedbacks();
