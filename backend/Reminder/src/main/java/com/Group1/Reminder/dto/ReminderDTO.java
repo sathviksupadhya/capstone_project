@@ -9,15 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReminderDTO {
-    private int remId;
 
     @NotNull(message = "Event ID is required.")
-    private int eventId;
+    private String eventId;
 
     @NotNull(message = "User ID is required.")
-    private int userId;
+    private String userId;
 
-    private boolean needSms;
-    private boolean needCall;
-    private boolean needEmail;
+    private boolean needSms = false;
+    private boolean needCall = false;
+    private boolean needEmail = false;
 }

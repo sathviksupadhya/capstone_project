@@ -27,15 +27,19 @@ public class AlertController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<Alert> createAlert(@RequestBody Alert alertDto) {
-            Alert createdAlert = alertService.createAlert(alertDto);
-            return new ResponseEntity<>(createdAlert, HttpStatus.CREATED);
+    @PostMapping("/sendAlerts/{eventid}")
+    public ResponseEntity<String> createAlert(@PathVariable String eventid) {
+        return new ResponseEntity<>(alertService.createAlert(eventid), HttpStatus.CREATED);
     }
 
     @PutMapping("/seen/{userid}/{eventid}")
     public ResponseEntity<Alert> updateAlert(@PathVariable("userid") String userId, @PathVariable("eventid") String eventid) {
         alertService.updateAlert(userId, eventid);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getAll")
+    public List<Alert> getAllAlerts() {
+        return alertService.getAllAlerts();
     }
 }

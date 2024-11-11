@@ -41,4 +41,8 @@ public class eventService {
             repo.deleteById(eventId);
         }
     }
+
+    public eventModel getEvent(String eventId) {
+        return repo.findById(eventId).orElse(null);
+    }
 }

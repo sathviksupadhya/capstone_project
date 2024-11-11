@@ -8,6 +8,9 @@
         <option value="$PROJECT_DIR$/event/pom.xml" />
         <option value="$PROJECT_DIR$/Feedback/pom.xml" />
         <option value="$PROJECT_DIR$/Resident/Resident/pom.xml" />
+        <option value="$PROJECT_DIR$/Resident/pom.xml" />
+        <option value="$PROJECT_DIR$/Reminder/pom.xml" />
+        <option value="$PROJECT_DIR$/authentication/pom.xml" />
       </list>
     </option>
   </component>
