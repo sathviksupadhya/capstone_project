@@ -7,11 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Reminder" />
+        <module name="Feedback" />
         <module name="Resident" />
         <module name="Alert" />
-        <module name="Reminder" />
+        <module name="Community-Server" />
         <module name="event" />
-        <module name="Feedback" />
+        <module name="Api-Gateway" />
         <module name="authentication" />
       </profile>
     </annotationProcessing>
@@ -19,6 +21,8 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Alert" options="-parameters" />
+      <module name="Api-Gateway" options="-parameters" />
+      <module name="Community-Server" options="-parameters" />
       <module name="Feedback" options="-parameters" />
       <module name="Reminder" options="-parameters" />
       <module name="Resident" options="-parameters" />

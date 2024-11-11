@@ -17,12 +17,12 @@ spring:
           enabled: true
       routes:
 
-        - id: User
+        - id: user
           uri: http://localhost:9991
           predicates:
             - Path=/api/residents/**
 
-        - id: Event
+        - id: event
           uri: http://localhost:9992
           predicates:
             - Path=/event/**
@@ -42,10 +42,10 @@ spring:
           predicates:
             - Path=/reminder/**
 
-        - id: authentication-service
+        - id: authentication
           uri: http://localhost:9996/
           predicates:
-            - Path=/api/auth/**
+            - Path=/auth/**
 
 
 
@@ -58,6 +58,4 @@ spring:
       routes[3]:
         filters[0]: AuthenticationFilter
       routes[4]:
-        filters[0]: AuthenticationFilter
-      routes[5]:
         filters[0]: AuthenticationFilter

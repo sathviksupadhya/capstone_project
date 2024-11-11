@@ -11,6 +11,8 @@
         <option value="$PROJECT_DIR$/Resident/pom.xml" />
         <option value="$PROJECT_DIR$/Reminder/pom.xml" />
         <option value="$PROJECT_DIR$/authentication/pom.xml" />
+        <option value="$PROJECT_DIR$/Community-Server/pom.xml" />
+        <option value="$PROJECT_DIR$/Api-Gateway/pom.xml" />
       </list>
     </option>
   </component>
