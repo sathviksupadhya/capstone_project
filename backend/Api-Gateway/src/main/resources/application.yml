@@ -59,3 +59,15 @@ spring:
         filters[0]: AuthenticationFilter
       routes[4]:
         filters[0]: AuthenticationFilter
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders: "*"
+            allowCredentials: true
