@@ -1,14 +1,29 @@
-
 import { useNavigate } from "react-router-dom";
 import "../authCSS/login.css";
 
 export default function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  
 
-function auth(e){
+  function auth(e) {
     e.preventDefault();
-    navigate("/validate" + {state : e}); 
-}
+
+    // Get username and password values
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    // You should validate the login credentials here
+    // Assuming successful validation:
+
+    // Store user data in sessionStorage (or localStorage)
+    const userData = { username, password };
+    sessionStorage.setItem("user", JSON.stringify(userData)); // Storing in sessionStorage
+
+    // Navigate to the validation page with state
+    navigate("/validate", { state: { user: userData } });
+    
+  }
+
   return (
     <>
       <div>
@@ -25,14 +40,10 @@ function auth(e){
           <label htmlFor="password">Password</label>
           <input type="password" placeholder="Password" id="password" />
 
-          <button type="button">Log In</button>
+          <button type="submit">Log In</button>
+
           <div className="social">
-            {/* <div className="go">
-              <i className="fab fa-google"></i> Google
-            </div>
-            <div className="fb">
-              <i className="fab fa-facebook"></i> Facebook
-            </div> */}
+            {/* Social media login buttons */}
           </div>
         </form>
       </div>

@@ -1,0 +1,57 @@
+/* src/components/Navbar.css */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between title and nav links */
+    background-color: #333; /* Background color of navbar */
+    padding: 10px 20px; /* Padding around navbar */
+}
+
+.navbar-title {
+    color: white; /* Color for the navbar title */
+    margin: 0; /* Remove default margin */
+}
+
+.nav-links {
+    list-style: none; /* Remove bullet points from list */
+    display: flex; /* Display items in a row */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+    justify-content: center; /* Center the nav links */
+    flex-grow: 1; /* Allow nav links to grow and take available space */
+}
+
+.nav-links li {
+    margin: 0 15px; /* Spacing between nav items */
+}
+
+.nav-links li:last-child {
+    margin-right: 0; /* Remove margin for last item */
+}
+
+.nav-links a {
+    color: white; /* Color for links */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.nav-links a:hover {
+    text-decoration: underline; /* Underline on hover for better UX */
+}
+
+/* Styles for authentication buttons */
+.auth-buttons {
+    display: flex; /* Display buttons in a row */
+}
+
+.auth-buttons .btn {
+    color: white;
+    background-color: #007bff; /* Bootstrap primary color */
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-left: 10px; /* Space between buttons */
+}
+
+.auth-buttons .btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
