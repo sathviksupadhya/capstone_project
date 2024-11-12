@@ -2,27 +2,31 @@ import { useNavigate } from "react-router-dom";
 import "../authCSS/login.css";
 
 export default function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  
 
-  function auth(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    try {
+      // Send credentials to the backend for authentication
+      const response = await axios.post("http://localhost:9997/auth/validate/user", {
+        userName: username,
+        password: password,
+      });
 
-    // Get username and password values
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+      // Store the JWT token in localStorage if authentication is successful
+      const token = response.data;  // The token is returned as a plain string
+      localStorage.setItem("jwtToken", token);  // Store the token
 
-    // You should validate the login credentials here
-    // Assuming successful validation:
+      navigate('/home');
 
-    // Store user data in sessionStorage (or localStorage)
-    const userData = { username, password };
-    sessionStorage.setItem("user", JSON.stringify(userData)); // Storing in sessionStorage
-
-    // Navigate to the validation page with state
-    navigate("/validate", { state: { user: userData } });
-    
-  }
+      // Redirect or update UI based on authentication success
+    } catch (err) {
+      setError("Invalid credentials, please try again.");
+    }
+  };
 
   return (
     <>
@@ -31,19 +35,20 @@ export default function Login() {
           <div className="shape"></div>
           <div className="shape"></div>
         </div>
-        <form className="login-form" onSubmit={(e) => auth(e)}>
+        <form className="login-form" onSubmit={handleLogin}>
           <h3>Login Here</h3>
 
           <label htmlFor="username">Username</label>
-          <input type="text" placeholder="Email or Phone" id="username" />
+          <input type="text" placeholder="Email or Phone" id="username" value={username}
+            onChange={(e) => setUsername(e.target.value)}/>
 
           <label htmlFor="password">Password</label>
-          <input type="password" placeholder="Password" id="password" />
+          <input type="password" placeholder="Password" id="password"  value={password}
+            onChange={(e) => setPassword(e.target.value)}/>
 
           <button type="submit">Log In</button>
 
           <div className="social">
-            {/* Social media login buttons */}
           </div>
         </form>
       </div>
