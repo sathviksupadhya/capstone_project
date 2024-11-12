@@ -6,16 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="bbae1511-72ed-40b5-9947-7bf92a28c349" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Alert/src/main/java/com/Group1/Alert/AlertApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Alert/src/main/java/com/Group1/Alert/AlertApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Alert/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Alert/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Feedback/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Feedback/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/ReminderApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/ReminderApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/feign/eventClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/feign/eventClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/service/ReminderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/service/ReminderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/AuthenticationApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/AuthenticationApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/event/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/event/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/CapStone/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/CapStone/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/CapStone/src/auth/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/CapStone/src/auth/Login.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/CapStone/src/auth/validate.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/CapStone/src/auth/validate.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
