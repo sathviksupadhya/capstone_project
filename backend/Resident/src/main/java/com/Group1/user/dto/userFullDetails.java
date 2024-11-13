@@ -1,4 +1,4 @@
-package com.Group1.Reminder.dto;
+package com.Group1.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class userFullDetails {
     private String userId;
     private String userName;
     private String role;

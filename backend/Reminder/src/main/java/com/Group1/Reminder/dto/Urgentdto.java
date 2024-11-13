@@ -7,12 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private String userId;
-    private String userName;
-    private String role;
-    private String email;
+public class Urgentdto {
     private String phoneNumber;
-    private String image;
-    private String status;
+    private String message;
 }

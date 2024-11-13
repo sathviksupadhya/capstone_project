@@ -2,6 +2,7 @@ package com.Group1.event.Controller;
 
 import com.Group1.event.Model.eventModel;
 import com.Group1.event.Service.eventService;
+import com.Group1.event.dto.eventdto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class eventController {
     private eventService service;
 
     @PostMapping("/add")
-    public ResponseEntity<eventModel> addEvent(@RequestBody eventModel event) {
+    public ResponseEntity<eventModel> addEvent(@RequestBody eventdto event) {
         return new ResponseEntity<>(service.addEvent(event), HttpStatus.CREATED);
     }
 

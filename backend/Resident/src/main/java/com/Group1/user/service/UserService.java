@@ -1,6 +1,9 @@
 package com.Group1.user.service;
 import com.Group1.user.dto.UserDto;
 import com.Group1.user.dto.Response;
+import com.Group1.user.dto.authentication;
+import com.Group1.user.dto.userFullDetails;
+import com.Group1.user.feign.authClient;
 import com.Group1.user.model.User;
 import com.Group1.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private authClient authclient;
 
 //    @EventListener(ApplicationReadyEvent.class)
 //    public void initializeAdminUser() {
@@ -70,15 +76,24 @@ public class UserService {
         return new Response<>("Resident deleted successfully", null);
     }
 
-    public User getResidentById(String userid) {
+    public userFullDetails getResidentById(String userid) {
         User user = userRepository.findById(userid)
                 .orElseThrow(() -> new RuntimeException("Resident not found with ID: " + userid));
 
         if (!user.getStatus().equalsIgnoreCase("APPROVED")) {
             throw new RuntimeException("Resident is not approved.");
         }
+        authentication a = authclient.getUser(userid);
+        userFullDetails userFullDetails = new userFullDetails();
+        userFullDetails.setUserId(userid);
+        userFullDetails.setRole(a.getRole());
+        userFullDetails.setUserName(a.getUserName());
+        userFullDetails.setEmail(user.getEmail());
+        userFullDetails.setPhoneNumber(user.getPhoneNumber());
+        userFullDetails.setImage(user.getImage());
 
-        return user;
+
+        return userFullDetails;
     }
 
     public Response<List<UserDto>> getAllResidents() {

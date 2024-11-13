@@ -2,6 +2,7 @@ package com.Group1.event.Service;
 
 import com.Group1.event.Model.eventModel;
 import com.Group1.event.Repository.eventRepo;
+import com.Group1.event.dto.eventdto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,15 @@ public class eventService {
     private eventRepo repo;
 
 
-    public eventModel addEvent(eventModel event) {
-        return repo.save(event);
+    public eventModel addEvent(eventdto event) {
+        eventModel e = new eventModel();
+        e.setEventTitle(event.getEventTitle());
+        e.setEventDescription(event.getEventDescription());
+        e.setEventDate(event.getEventDate());
+        e.setEventImg(event.getEventImg());
+        e.setEventType(event.getEventType());
+        e.setUserId(event.getUserId());
+        return repo.save(e);
     }
 
     public List<eventModel> getAllEvents() {

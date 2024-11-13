@@ -2,6 +2,7 @@ package com.Group1.user.controller;
 
 import com.Group1.user.dto.Response;
 import com.Group1.user.dto.UserDto;
+import com.Group1.user.dto.userFullDetails;
 import com.Group1.user.model.User;
 import com.Group1.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/{userId}/action")
+    @PutMapping("/action/{userId}")
     public ResponseEntity<Response<UserDto>> approveOrRejectResident(
             @PathVariable String userId,
             @RequestParam("action") String action) {
@@ -31,7 +32,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{userId}/update")
+    @PutMapping("/update/{userId}")
     public ResponseEntity<Response<UserDto>> updateResident(
             @PathVariable String userId,
             @RequestBody UserDto userDto) {
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getResidentById(@PathVariable String userId) {
+    public userFullDetails getResidentById(@PathVariable String userId) {
         return userService.getResidentById(userId);
     }
 

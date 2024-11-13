@@ -10,6 +10,7 @@ import Feedback from './pages/Feedback';
 import Contact from './pages/Contact';
 import SignIn from './pages/SignIn'; // Import SignIn page
 import SignUp from './pages/SignUp';   // Import SignUp page
+import Alert from './Components/alert';
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 
                 <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/alerts" element={<Alert />} />
                     <Route path="/events" element={<Events />} />
                     <Route path="/schedule" element={<Schedule />} />
                     <Route path="/about" element={<About />} />

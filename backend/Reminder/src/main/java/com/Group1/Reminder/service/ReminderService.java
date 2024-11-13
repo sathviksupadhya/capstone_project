@@ -15,7 +15,10 @@ import com.twilio.type.Twiml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,22 +97,46 @@ public class ReminderService {
         return reminder;
     }
 
-    public String SendSms(String remId) {
-    eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-    User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-        Message.creator(new PhoneNumber(user.getPhoneNumber()), new PhoneNumber("+15102963260"),
-                event.getEventDescription()).create();
+    public String SendSms(String number, String message) {
+        Message.creator(new PhoneNumber(number), new PhoneNumber("+15102963260"),
+                message).create();
         return "you may receive a message now!!!";
     }
 
-    public String SendCall(String remId) {
-        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-        Call.creator(new PhoneNumber(user.getPhoneNumber()),
+    public String SendCall(String number, String message) {
+        Call.creator(new PhoneNumber(number),
                         new PhoneNumber("+15102963260"),
-                        new Twiml("<Response><Say>you have an event on " + event.getEventDate() +" this weekend</Say></Response>"))
+                        new Twiml("<Response><Say>"+message+"</Say></Response>"))
                 .create();
         return "you may receive a call now!!!";
     }
 
+    public String formatDateTime(LocalDateTime dateTime) {
+        int day = dateTime.getDayOfMonth();
+        String daySuffix = getDaySuffix(day);
+
+        String month = dateTime.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+        int hour = dateTime.getHour() % 12 == 0 ? 12 : dateTime.getHour() % 12;
+        int minute = dateTime.getMinute();
+        String amPm = dateTime.getHour() >= 12 ? "PM" : "AM";
+
+        return String.format("%d%s %s at %d:%02d%s", day, daySuffix, month, hour, minute, amPm);
+    }
+
+    private static String getDaySuffix(int day) {
+        if (day >= 11 && day <= 13) {
+            return "th";
+        }
+        switch (day % 10) {
+            case 1:  return "st";
+            case 2:  return "nd";
+            case 3:  return "rd";
+            default: return "th";
+        }
+    }
+
+    public String SendEmail(String email, String message) {
+
+    }
 }
+

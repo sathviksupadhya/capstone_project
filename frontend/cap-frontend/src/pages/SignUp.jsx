@@ -1,45 +1,98 @@
-// src/pages/SignUp.jsx
-import React, { useState } from 'react';
-import './Auth.css'; // Import CSS for styling
+import axios from "axios";
+import { useState } from "react";
+import loginimg from "../assets/login.gif";
 
-const SignUp = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+import { useNavigate } from "react-router";
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle sign-up logic here
-        console.log('Creating account:', { username, password });
-    };
+export default function SignUp() {
+  const [username, setUsername] = useState("");
 
-    return (
-        <div className="auth-container">
-            <h2>Create an Account</h2>
-            <form onSubmit={handleSubmit} className="auth-form">
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn">Create Account</button>
-            </form>
+  const [password, setPassword] = useState("");
+
+  const [role, setRole] = useState("");
+
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Send credentials to the backend for registration
+
+      const response = await axios.post("http://localhost:9997/auth/register", {
+        userName: username,
+
+        password: password,
+
+        role: role,
+      });
+      console.log("Registration successful:", response.data);
+
+      navigate("/login");
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+
+      console.error("Error during registration:", err);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <div>
+          <div className="shape"></div>
+
+          <div className="shape"></div>
         </div>
-    );
-};
 
-export default SignUp;
+        <form className="login-form" onSubmit={handleRegister}>
+          <img src={loginimg} alt="Login GIF" className="login-gif" />
+
+          <h3>Register Here</h3>
+
+          <label htmlFor="username">Username</label>
+
+          <input
+            type="text"
+            placeholder="Email or Phone"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
+          <label htmlFor="role">Role</label>
+
+          <input
+            type="text"
+            placeholder="Admin or Resident"
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          />
+
+          <label htmlFor="password">Password</label>
+
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+
+          <button type="submit">Create account</button>
+
+          <div className="social"></div>
+        </form>
+      </div>
+    </>
+  );
+}
