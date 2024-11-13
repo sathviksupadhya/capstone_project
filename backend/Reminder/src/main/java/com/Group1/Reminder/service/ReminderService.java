@@ -97,20 +97,14 @@ public class ReminderService {
         return reminder;
     }
 
-    public String SendSms(String remId) {
-    eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-    User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-    String message = "we have an "+ event.getEventTitle() +" event on " + formatDateTime(event.getEventDate());
-        Message.creator(new PhoneNumber(user.getPhoneNumber()), new PhoneNumber("+15102963260"),
+    public String SendSms(String number, String message) {
+        Message.creator(new PhoneNumber(number), new PhoneNumber("+15102963260"),
                 message).create();
         return "you may receive a message now!!!";
     }
 
-    public String SendCall(String remId) {
-        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-        String message = "we have an "+ event.getEventTitle() +" event on " + formatDateTime(event.getEventDate());
-        Call.creator(new PhoneNumber(user.getPhoneNumber()),
+    public String SendCall(String number, String message) {
+        Call.creator(new PhoneNumber(number),
                         new PhoneNumber("+15102963260"),
                         new Twiml("<Response><Say>"+message+"</Say></Response>"))
                 .create();
@@ -139,6 +133,10 @@ public class ReminderService {
             case 3:  return "rd";
             default: return "th";
         }
+    }
+
+    public String SendEmail(String email, String message) {
+
     }
 }
 
