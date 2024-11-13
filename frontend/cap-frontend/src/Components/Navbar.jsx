@@ -13,8 +13,8 @@ const Navbar = () => {
         navigate('/signup', { state: { signUpStatus: true } });
     }
     return (
-        <nav className="navbar">
-            <h1 className="navbar-title">My Website</h1>
+        <nav className="navbar bg-blur">
+            <h1 className="navbar-title">Community</h1>
             <ul className="nav-links">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/events">Events</Link></li>
@@ -24,8 +24,13 @@ const Navbar = () => {
                 <li><Link to="/contact">Contact</Link></li>
             </ul>
             <div className="auth-buttons">
+<<<<<<< HEAD
             <button onClick={handleSignIn} className="btn">Sign In</button>
             <button onClick={handleSignUp} className="btn">Sign Up</button>
+=======
+                <Link to="/signin" className="btn">Sign In</Link>
+                <Link to="/signup" className="btn">Create Account</Link>
+>>>>>>> ce3e3c71682986bdf0af9aea48c55a70d5059b80
             </div>
         </nav>
     );
