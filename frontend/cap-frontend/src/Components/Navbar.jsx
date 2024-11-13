@@ -5,8 +5,8 @@ import './Navbar.css'; // Ensure this path is correct
 
 const Navbar = () => {
     return (
-        <nav className="navbar">
-            <h1 className="navbar-title">My Website</h1>
+        <nav className="navbar bg-blur">
+            <h1 className="navbar-title">Community</h1>
             <ul className="nav-links">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/events">Events</Link></li>
@@ -17,7 +17,7 @@ const Navbar = () => {
             </ul>
             <div className="auth-buttons">
                 <Link to="/signin" className="btn">Sign In</Link>
-                <Link to="/signup" className="btn">Create an Account</Link>
+                <Link to="/signup" className="btn">Create Account</Link>
             </div>
         </nav>
     );
