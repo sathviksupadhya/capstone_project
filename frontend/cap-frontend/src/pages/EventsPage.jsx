@@ -43,7 +43,7 @@ function EventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50" style={{ marginTop: '64px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50" style={{ marginTop: '50px' }}>
       {/* Secondary Navigation Bar */}
       <div className="bg-white shadow-md w-full">
         <div className="container mx-auto px-4 py-4">
