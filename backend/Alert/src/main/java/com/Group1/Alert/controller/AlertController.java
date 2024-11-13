@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/alert")
+@CrossOrigin
 public class AlertController {
     @Autowired
     private AlertService alertService;

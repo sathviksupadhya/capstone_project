@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class authenticationService {
 
@@ -19,13 +21,27 @@ public class authenticationService {
     private userClient userclient;
 
     public authentication register(authdto auth) {
+        authrepo.findByUserName(auth.getUserName()).ifPresent(u -> {
+            throw new RuntimeException("Username already exists");
+        });
         authentication a = new authentication();
         a.setUserName(auth.getUserName());
-        a.setRole(auth.getRole());
         a.setPassword(passwordEncoder.encode(auth.getPassword()));
         authentication b = authrepo.save(a);
         userclient.create(b.getUserId());
         return b;
     }
 
+    public String getuserId(String userName) {
+        Optional<authentication> a = authrepo.findByUserName(userName);
+        if(a.isPresent()) {
+            authentication b = a.get();
+            return b.getUserId();
+        }
+        return null;
+    }
+
+    public authentication getUser(String userid) {
+        return authrepo.findByUserId(userid);
+    }
 }

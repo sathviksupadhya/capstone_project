@@ -11,6 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class authenticationController {
@@ -30,13 +33,16 @@ public class authenticationController {
     }
 
     @PostMapping("/validate/user")
-    public String validateUser(@RequestBody authdto auth) {
+    public Map<String, String> validateUser(@RequestBody authdto auth) {
         System.out.println("user : " + auth);
         Authentication authenticate = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(auth.getUserName(), auth.getPassword()));
         System.out.println("authenticated?? : " + authenticate.isAuthenticated());
+        Map<String, String> response = new HashMap<>();
         if (authenticate.isAuthenticated()) {
-            return jwrs.generateToken(auth.getUserName());
+            response.put("token", jwrs.generateToken(auth.getUserName()));  // Store token
+            response.put("userId", authenticationservice.getuserId(auth.getUserName()));
+            return response;
         }
         return null;
     }
@@ -46,4 +52,11 @@ public class authenticationController {
         jwrs.validateToken(token);
         return true;
     }
+
+    @GetMapping("/getuser/{userid}")
+    public authentication getUser(@PathVariable String userid) {
+        return authenticationservice.getUser(userid);
+    }
+
+
 }

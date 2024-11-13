@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -19,7 +20,7 @@ public class eventModel {
     private String eventTitle;
     private String eventDescription;
     private String eventImg;
-    private Date eventDate;
+    private LocalDateTime eventDate;
     private String eventType;
     private String userId;
 

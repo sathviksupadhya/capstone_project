@@ -18,13 +18,13 @@ public class reminderController {
         return reminderService.createReminder(reminderDTO);
     }
 
-    @GetMapping("/sendsms/{remid}/{userid}")
-    public String SendSms(@PathVariable("remid") String remId, @PathVariable("userid") String userId) {
+    @GetMapping("/sendsms/{remid}")
+    public String SendSms(@PathVariable("remid") String remId) {
         return reminderService.SendSms(remId);
     }
 
-    @GetMapping("/sendcall/{remid}/{userid}")
-    public String SendCall(@PathVariable("remid") String remId, @PathVariable("userid") String userId) {
+    @GetMapping("/sendcall/{remid}")
+    public String SendCall(@PathVariable("remid") String remId) {
         return reminderService.SendCall(remId);
     }
 

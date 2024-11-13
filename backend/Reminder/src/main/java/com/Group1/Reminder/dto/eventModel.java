@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -15,8 +16,8 @@ public class eventModel {
     private String eventTitle;
     private String eventDescription;
     private String eventImg;
-    private Date eventDate;
+    private LocalDateTime eventDate;
     private String eventType;
-    private int userId;
+    private String userId;
 
 }

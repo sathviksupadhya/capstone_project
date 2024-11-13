@@ -40,6 +40,10 @@ const HomePage = () => {
       console.error("Error fetching user alerts:", error);
     }
   };
+
+  function callalerts() {
+    <h1>these are your alerts</h1>
+  }
     return (
         <div className="homebody">
       <button onClick={handleOpenCard}>Login</button>

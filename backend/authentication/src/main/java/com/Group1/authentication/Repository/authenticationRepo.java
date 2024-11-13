@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface authenticationRepo extends MongoRepository<authentication,String> {
 
     Optional<authentication> findByUserName(String username);
+
+    authentication findByUserId(String userid);
 }
