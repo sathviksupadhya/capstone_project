@@ -1,9 +1,17 @@
+"use client";
+ 
+import React from "react";
+import { AuroraBackground } from './ui/aurora-background';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
+<<<<<<< HEAD
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon } from 'react-icons/fa';
 import { FocusCards } from './ui/FocusCards';
+=======
+import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon, FaShieldAlt, FaLock, FaHandshake, FaUsers, FaRocket, FaUserShield, FaCommentDots } from 'react-icons/fa';
+>>>>>>> e13180928f2ccdcf8fd0c23e6a375f26de377fbe
 
 const HeroSection = styled.div`
   min-height: 100vh;
@@ -17,6 +25,11 @@ const HeroSection = styled.div`
     : 'linear-gradient(135deg, #e6f0ff 0%, #f5f5ff 100%)'
   };
   color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  scroll-behavior: smooth;
+
+  @media (max-width: 768px) {
+    padding: 80px 20px 20px 20px;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -27,30 +40,11 @@ const ContentWrapper = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin: 0 auto;
-  gap: 12.5vh;
-`;
+  gap: 4vh; // Reduced from 8vh
 
-const AnimationCard = styled(motion.div)`
-  background: ${props => props.theme === 'dark' 
-    ? 'rgba(45, 45, 45, 0.9)' 
-    : 'rgba(255, 255, 255, 0.95)'
-  };
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: ${props => props.theme === 'dark'
-    ? '0 10px 30px -10px rgba(0, 0, 0, 0.3)'
-    : '0 10px 30px -10px rgba(37, 99, 235, 0.2)'
-  };
-  max-width: 1200px;
-  width: 100%;
-  backdrop-filter: blur(10px);
-  border: 1px solid ${props => props.theme === 'dark' 
-    ? 'rgba(255, 255, 255, 0.1)'
-    : 'rgba(37, 99, 235, 0.1)'
-  };
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @media (max-width: 768px) {
+    gap: 2vh; // Reduced from 4vh
+  }
 `;
 
 const Title = styled(motion.h1)`
@@ -62,6 +56,10 @@ const Title = styled(motion.h1)`
   -webkit-text-fill-color: transparent;
   text-align: center;
   width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 
   span {
     background: none;
@@ -80,12 +78,18 @@ const Description = styled(motion.p)`
   max-width: 90%;
   margin-left: auto;
   margin-right: auto;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const ThemeToggleButton = styled(motion.button)`
@@ -150,7 +154,12 @@ const FeaturesSection = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 2rem 0;
+  padding: 1rem 0; // Reduced from 2rem
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0.5rem; // Reduced from 1rem
+  }
 `;
 
 const FeatureItem = styled(motion.div)`
@@ -198,87 +207,97 @@ const FeatureItem = styled(motion.div)`
   }
 `;
 
-const TeamSection = styled(motion.div)`
-  width: 100%;
-  max-width: 1200px;
-  padding: 4rem 2rem;
-  background: ${props => props.theme === 'dark'
-    ? 'rgba(45, 45, 45, 0.9)'
-    : 'rgba(255, 255, 255, 0.95)'
-  };
-  border-radius: 1rem;
-  box-shadow: ${props => props.theme === 'dark'
-    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
-    : '0 4px 6px rgba(37, 99, 235, 0.1)'
-  };
-`;
-
-const TeamTitle = styled.h2`
+const SectionTitle = styled.h2`
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem; // Reduced from 2rem
   text-align: center;
-  color: #2563eb;
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
+  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
+  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 0.5rem; // Added reduced margin for mobile
+  }
 `;
 
 const TeamGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: flex;
+  justify-content: center;
   gap: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  flex-wrap: wrap;
 `;
 
-const TeamMember = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: ${props => props.theme === 'dark'
-    ? 'rgba(61, 61, 61, 0.9)'
-    : 'rgba(255, 255, 255, 0.95)'
-  };
-  border-radius: 1rem;
-  box-shadow: ${props => props.theme === 'dark'
-    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
-    : '0 4px 6px rgba(37, 99, 235, 0.1)'
-  };
-`;
-
-const MemberIcon = styled(FaUserCircle)`
-  font-size: 6rem;
-  color: #4f46e5;
-  margin-bottom: 1rem;
-`;
-
-const MemberName = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : 'inherit'};
-`;
-
-const MemberRole = styled.p`
-  color: ${props => props.theme === 'dark' ? '#b0b0b0' : '#6b7280'};
-  margin-bottom: 1rem;
-`;
-
-const SocialButton = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: white;
-  background: ${props => props.platform === 'linkedin' 
-    ? '#0077B5' 
-    : props.theme === 'dark' ? '#444' : '#333'
-  };
-  margin: 0.5rem 0;
-  transition: transform 0.2s;
+const TeamCard = styled.div`
+  width: 300px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-10px);
+  }
+
+  .image-container {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .content {
+    padding: 1.5rem;
+    text-align: center;
+
+    h4 {
+      color: #1a1a1a;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #4f46e5;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    a {
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+
+      &.linkedin {
+        color: #0077b5;
+        &:hover {
+          color: #00548c;
+        }
+      }
+
+      &.github {
+        color: #333;
+        &:hover {
+          color: #000;
+        }
+      }
+    }
   }
 `;
 
@@ -286,6 +305,13 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const featuresSectionRef = useRef(null);
   const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, []);
 
   const handleGetStarted = () => {
     navigate('/register');
@@ -332,18 +358,6 @@ const LandingPage = () => {
     },
   };
 
-  const cardVariants = {
-    initial: { opacity: 0, scale: 0.9 },
-    animate: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        duration: 2,
-        ease: "easeOut"
-      }
-    }
-  };
-
   const featureVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { 
@@ -362,26 +376,20 @@ const LandingPage = () => {
     }
   };
 
-  const teamMemberVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
   return (
     <HeroSection theme={theme}>
       <ContentWrapper>
-        <AnimationCard
-          variants={cardVariants}
-          initial="initial"
-          animate="animate"
-          theme={theme}
-        >
+      <AuroraBackground>
+      <motion.div
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="relative flex flex-col gap-4 items-center justify-center px-4"
+      >
           <Title
             variants={titleVariants}
             initial="initial"
@@ -442,8 +450,10 @@ const LandingPage = () => {
               Know More
             </KnowMoreButton>
           </ButtonContainer>
-        </AnimationCard>
+        </motion.div>
+        </AuroraBackground>
 
+        <SectionTitle theme={theme} gradient={true}>Our Features</SectionTitle>
         <FeaturesSection ref={featuresSectionRef}>
           <FeatureItem
             variants={featureVariants}
@@ -518,71 +528,134 @@ const LandingPage = () => {
           </FeatureItem>
         </FeaturesSection>
 
-        <TeamSection 
-          theme={theme}
-          variants={cardVariants}
-          initial="initial"
-          animate="animate"
-        >
-          <TeamTitle>Meet Our Team</TeamTitle>
-          <TeamGrid>
-            <TeamMember
-              variants={teamMemberVariants}
-              initial="initial"
-              animate="animate"
-              theme={theme}
-            >
-              <MemberIcon />
-              <MemberName theme={theme}>Sathvik S </MemberName>
-              <MemberRole theme={theme}>Lead Developer</MemberRole>
-              <SocialButton 
-                href="https://linkedin.com/sathviksupadhya19/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                platform="linkedin"
-              >
-                <FaLinkedin /> Connect via LinkedIn
-              </SocialButton>
-              <SocialButton 
-                href="https://github.com/sathviksupadhya/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                platform="github"
-                theme={theme}
-              >
-                <FaGithub /> Connect via GitHub
-              </SocialButton>
-            </TeamMember>
+        <SectionTitle theme={theme} gradient={true}>Security & Privacy</SectionTitle>
+        <FeaturesSection>
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+          >
+            <h3><FaShieldAlt /> Data Protection</h3>
+            <p>Your data is encrypted and secured using industry-standard protocols. We prioritize the safety and confidentiality of your information.</p>
+          </FeatureItem>
 
-            <TeamMember
-              variants={teamMemberVariants}
-              initial="initial"
-              animate="animate"
-              theme={theme}
-            >
-              <MemberIcon />
-              <MemberName theme={theme}>Rahul K</MemberName>
-              <MemberRole theme={theme}>Lead Developer</MemberRole>
-              <SocialButton 
-                href="https://linkedin.com" 
-                target="_blank"
-                rel="noopener noreferrer"
-                platform="linkedin"
-              >
-                <FaLinkedin /> Connect via LinkedIn
-              </SocialButton>
-              <SocialButton 
-                href="https://github.com/Rahul-char/" 
-                target="_blank"
-                rel="noopener noreferrer"
-                platform="github"
-                theme={theme}
-              >
-                <FaGithub /> Connect via GitHub
-              </SocialButton>
-            </TeamMember>
-          </TeamGrid>
-        </TeamSection>
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+          >
+            <h3><FaLock /> Privacy Controls</h3>
+            <p>Take control of your privacy settings. Choose what you share and who can see your information within the community.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+          >
+            <h3><FaUserShield /> Secure Authentication</h3>
+            <p>Multi-factor authentication and robust security measures ensure your account remains protected at all times.</p>
+          </FeatureItem>
+        </FeaturesSection>
+
+        <SectionTitle theme={theme} gradient={true}>Coming Soon</SectionTitle>
+        <FeaturesSection>
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+          >
+            <h3><FaHandshake /> Community Marketplace</h3>
+            <p>A dedicated space for community members to buy, sell, or exchange items and services locally.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+          >
+            <h3><FaUsers /> Interest Groups</h3>
+            <p>Create and join groups based on shared interests, hobbies, or activities within your community.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+          >
+            <h3><FaRocket /> Mobile App</h3>
+            <p>Access UnitySpace on the go with our upcoming mobile application for iOS and Android devices.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+          >
+            <h3><FaCommentDots /> Discussion Forum</h3>
+            <p>Engage in meaningful conversations with community members through our dedicated discussion forum and real-time chat features.</p>
+          </FeatureItem>
+        </FeaturesSection>
+
+        <SectionTitle theme={theme}>Meet Our Team</SectionTitle>
+        <TeamGrid>
+          <TeamCard>
+            <div className="image-container">
+              <img src="https://avatars.githubusercontent.com/u/98264659?v=4" alt="profile-picture" />
+            </div>
+            <div className="content">
+              <h4>Sathvik S</h4>
+              <p>Lead Developer</p>
+            </div>
+            <div className="social-links">
+              <a href="https://linkedin.com/sathviksupadhya19/" target="_blank" rel="noopener noreferrer" className="linkedin">
+                <FaLinkedin />
+              </a>
+              <a href="https://github.com/sathviksupadhya/" target="_blank" rel="noopener noreferrer" className="github">
+                <FaGithub />
+              </a>
+            </div>
+          </TeamCard>
+
+          <TeamCard>
+            <div className="image-container">
+              <img src="https://avatars.githubusercontent.com/u/98264659?v=4" alt="profile-picture" />
+            </div>
+            <div className="content">
+              <h4>Rahul K</h4>
+              <p>Lead Developer</p>
+            </div>
+            <div className="social-links">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="linkedin">
+                <FaLinkedin />
+              </a>
+              <a href="https://github.com/Rahul-char/" target="_blank" rel="noopener noreferrer" className="github">
+                <FaGithub />
+              </a>
+            </div>
+          </TeamCard>
+        </TeamGrid>
       </ContentWrapper>
     </HeroSection>
   );

@@ -18,6 +18,19 @@ const Nav = styled.nav`
   box-shadow: ${props => !props.scrolled && props.theme !== 'dark' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'};
 `;
 
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+`;
+
+const LogoImage = styled.img`
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+`;
+
 const Logo = styled.div`
   font-size: 24px;
   font-weight: bold;
@@ -25,7 +38,6 @@ const Logo = styled.div`
     if (props.theme === 'dark') return '#ffffff';
     return props.scrolled ? '#ffffff' : '#000000';
   }};
-  cursor: pointer;
 `;
 
 const ButtonGroup = styled.div`
@@ -117,7 +129,10 @@ const Navigationbar = ({ theme }) => {
 
   return (
     <Nav scrolled={scrolled} theme={theme}>
-      <Logo scrolled={scrolled} theme={theme} onClick={handleLogoClick}>UnitySpace</Logo>
+      <LogoContainer onClick={handleLogoClick}>
+        <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
+        <Logo scrolled={scrolled} theme={theme}>UnitySpace</Logo>
+      </LogoContainer>
       <ButtonGroup>
         <Button className="signin" scrolled={scrolled} theme={theme} onClick={handleSignIn}>Sign In</Button>
         <Button className="register" scrolled={scrolled} theme={theme} onClick={handleRegister}>Register</Button>

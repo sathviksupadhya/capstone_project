@@ -1,36 +1,38 @@
+<<<<<<< HEAD
 import { default as flattenColorPalette } from 'tailwindcss/lib/util/flattenColorPalette';
+=======
+import { default as flattenColorPalette } from "tailwindcss/lib/util/flattenColorPalette";
+>>>>>>> e13180928f2ccdcf8fd0c23e6a375f26de377fbe
 
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-   "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
- 
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  darkMode: "class",
-  theme: {
-    extend: {
-      animation: {
-        aurora: "aurora 60s linear infinite",
-      },
-      keyframes: {
-        aurora: {
-          from: {
-            backgroundPosition: "50% 50%, 50% 50%",
-          },
-          to: {
-            backgroundPosition: "350% 50%, 350% 50%",
-          },
+export const content = [
+  "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+  "./components/**/*.{js,ts,jsx,tsx,mdx}",
+
+  // Or if using `src` directory:
+  "./src/**/*.{js,ts,jsx,tsx,mdx}",
+];
+export const darkMode = "class";
+export const theme = {
+  extend: {
+    animation: {
+      aurora: "aurora 60s linear infinite",
+    },
+    keyframes: {
+      aurora: {
+        from: {
+          backgroundPosition: "50% 50%, 50% 50%",
+        },
+        to: {
+          backgroundPosition: "350% 50%, 350% 50%",
         },
       },
     },
   },
-  plugins: [addVariablesForColors],
 };
+export const plugins = [addVariablesForColors];
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
 function addVariablesForColors({
