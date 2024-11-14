@@ -6,12 +6,8 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-<<<<<<< HEAD
-import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon } from 'react-icons/fa';
 import { FocusCards } from './ui/FocusCards';
-=======
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon, FaShieldAlt, FaLock, FaHandshake, FaUsers, FaRocket, FaUserShield, FaCommentDots } from 'react-icons/fa';
->>>>>>> e13180928f2ccdcf8fd0c23e6a375f26de377fbe
 
 const HeroSection = styled.div`
   min-height: 100vh;

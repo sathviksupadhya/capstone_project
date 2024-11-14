@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { default as flattenColorPalette } from 'tailwindcss/lib/util/flattenColorPalette';
-=======
 import { default as flattenColorPalette } from "tailwindcss/lib/util/flattenColorPalette";
->>>>>>> e13180928f2ccdcf8fd0c23e6a375f26de377fbe
 
 
 /** @type {import('tailwindcss').Config} */

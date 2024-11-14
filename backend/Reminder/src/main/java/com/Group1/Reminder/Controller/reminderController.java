@@ -46,13 +46,13 @@ public class reminderController {
         return reminderService.SendCall(user.getPhoneNumber(), message);
     }
 
-    @GetMapping("/sendemail/{remid}")
-    public String SendEmail(@PathVariable("remid") String remId) {
-        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-        String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
-        return reminderService.SendEmail(user.getEmail(), message);
-    }
+//    @GetMapping("/sendemail/{remid}")
+//    public String SendEmail(@PathVariable("remid") String remId) {
+//        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
+//        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
+//        String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
+//        return reminderService.SendEmail(user.getEmail(), message);
+//    }
 
     @GetMapping("/sendUrgentsmsAndCall")
     public String SendUrgentSmsAndCall(@RequestBody Urgentdto dto) {

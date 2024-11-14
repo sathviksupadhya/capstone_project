@@ -5,6 +5,8 @@ import com.Group1.authentication.Repository.authenticationRepo;
 import com.Group1.authentication.dto.authdto;
 import com.Group1.authentication.feign.userClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,18 @@ public class authenticationService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private userClient userclient;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initializeAdminUser() {
+        if (authrepo.findByUserName("Admin").isEmpty()) {
+            authentication a = new authentication();
+            a.setUserName("Admin");
+            a.setPassword(passwordEncoder.encode("Admin"));
+            a.setRole("ADMIN");
+            authentication b = authrepo.save(a);
+            userclient.create(b.getUserId());
+        }
+    }
 
     public authentication register(authdto auth) {
         authrepo.findByUserName(auth.getUserName()).ifPresent(u -> {

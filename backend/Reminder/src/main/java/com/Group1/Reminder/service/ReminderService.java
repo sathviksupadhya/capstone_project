@@ -135,8 +135,8 @@ public class ReminderService {
         }
     }
 
-    public String SendEmail(String email, String message) {
-
-    }
+//    public String SendEmail(String email, String message) {
+//
+//    }
 }
 

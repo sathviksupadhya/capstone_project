@@ -23,18 +23,6 @@ public class UserService {
     @Autowired
     private authClient authclient;
 
-//    @EventListener(ApplicationReadyEvent.class)
-//    public void initializeAdminUser() {
-//        if (userRepository.findByEmail("admin@example.com").isEmpty()) {
-//            User admin = new User();
-//            admin.setEmail("admin@example.com");
-//            admin.setPhoneNumber("1234567890");
-//            admin.setImage("defaultAdminImage.png");
-//            admin.setStatus("APPROVED");
-//            userRepository.save(admin);
-//        }
-//    }
-
     public Response<UserDto> approveResidentRequest(String userId, String action) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Resident not found with ID: " + userId));
@@ -135,7 +123,15 @@ public class UserService {
     public String createtuple(String id) {
         User user = new User();
         user.setUserId(id);
-        user.setStatus("PENDING");
+        authentication a = authclient.getUser(id);
+        if(a.getUserName().equalsIgnoreCase("ADMIN")){
+            user.setStatus("APPROVED");
+            user.setEmail("admin@gmail.com");
+            user.setPhoneNumber("+919121340152");
+            user.setImage("https://media.istockphoto.com/id/1768858548/photo/dark-backlight-shadow-silhouette-of-male-person-incognito-unknown-profile.webp?a=1&b=1&s=612x612&w=0&k=20&c=nO5vniMxFB_BbOSkk2llnbzRsG6byoZpHG23xHgAyf4=");
+        }else{
+            user.setStatus("PENDING");
+        }
         userRepository.save(user);
         return "tuple created";
     }
