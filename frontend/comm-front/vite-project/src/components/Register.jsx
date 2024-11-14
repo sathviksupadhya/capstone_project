@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 const Container = styled.div`
   height: 100vh;
@@ -81,21 +82,23 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add registration logic here
-    console.log('Registration attempt with:', { username, password });
-    toast.success('Successfully registered!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-    setTimeout(() => {
+    try {
+      // Send credentials to the backend for registration
+      const response = await axios.post("http://localhost:9997/auth/register", {
+        userName: username,
+        password: password,
+        role: "Resident",
+      });
+
       navigate('/signin');
-    }, 3000);
+      
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+      console.error("Error during registration:", err);
+    }
   };
 
   return (

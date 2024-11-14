@@ -1,4 +1,4 @@
-package com.Group1.Alert.model;
+package com.Group1.Alert.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

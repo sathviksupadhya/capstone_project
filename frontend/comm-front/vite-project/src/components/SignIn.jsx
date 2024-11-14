@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 const Container = styled.div`
   height: 100vh;
@@ -79,27 +80,46 @@ const RegisterText = styled.p`
 const SignInForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add authentication logic here
-    console.log('Sign in attempt with:', { username, password });
-    
-    // Show success toast and navigate after successful sign in
-    toast.success('Successfully signed in!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-    
-    // Optional: Navigate after toast shows
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
+    console.log("username:", username);
+
+    try {
+      // Add loading state or spinner here if needed
+      const response = await axios.post(
+        "http://localhost:9997/auth/validate/user",
+        {
+          userName: username,
+          password: password,
+        },
+        // {
+        //   timeout: 5000 // Add timeout of 5 seconds
+        // }
+      );
+
+      // Check if response contains required data
+      if (!response.data || !response.data.token || !response.data.userId) {
+        throw new Error('Invalid response from server');
+      }
+
+      const { token, userId } = response.data;
+      sessionStorage.setItem("jwtToken", token);
+      sessionStorage.setItem("userId", userId);
+      
+      // Navigate immediately after storing data
+      navigate("/home");
+
+    } catch (err) {
+      console.error('Login error:', err);
+      if (err.code === 'ECONNABORTED') {
+        setError("Request timed out. Please try again.");
+      } else {
+        setError("Invalid credentials or server error. Please try again.");
+      }
+    }
   };
 
   return (

@@ -10,17 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^1.7.7",
-    "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",
-=======
     "@emotion/react": "^11.13.3",
     "bootstrap": "^5.3.3",
     "framer-motion": "^11.11.13",
     "lucide-react": "^0.456.0",
     "moment": "^2.30.1",
->>>>>>> ce3e3c71682986bdf0af9aea48c55a70d5059b80
     "pure-react-carousel": "^1.32.0",
     "react": "^18.3.1",
     "react-big-calendar": "^1.15.0",

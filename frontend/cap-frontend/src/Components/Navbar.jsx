@@ -24,13 +24,8 @@ const Navbar = () => {
                 <li><Link to="/contact">Contact</Link></li>
             </ul>
             <div className="auth-buttons">
-<<<<<<< HEAD
             <button onClick={handleSignIn} className="btn">Sign In</button>
             <button onClick={handleSignUp} className="btn">Sign Up</button>
-=======
-                <Link to="/signin" className="btn">Sign In</Link>
-                <Link to="/signup" className="btn">Create Account</Link>
->>>>>>> ce3e3c71682986bdf0af9aea48c55a70d5059b80
             </div>
         </nav>
     );

@@ -1,14 +1,16 @@
 package com.Group1.Alert.service;
 
 
+import com.Group1.Alert.dto.eventModel;
+import com.Group1.Alert.feign.eventClient;
 import com.Group1.Alert.feign.feignClient;
 import com.Group1.Alert.model.Alert;
-import com.Group1.Alert.model.User;
+import com.Group1.Alert.dto.User;
 import com.Group1.Alert.repository.AlertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,12 +22,19 @@ public class AlertService {
 
     @Autowired
     private feignClient client;
+    @Autowired
+    private eventClient eventclient;
 
-    public List<Alert> getAlertByUserId(String userId) {
+    public List<eventModel> getAlertByUserId(String userId) {
         List<Alert> alerts = alertRepository.findByUserId(userId);  // Now, this returns a List<Alert>
-        return alerts.stream()
+        alerts = alerts.stream()
                 .filter(i -> !i.isHasSeen())
                 .collect(Collectors.toList());
+        List<eventModel> event = new ArrayList<>();
+        for(Alert i : alerts){
+            event.add(eventclient.getEvent(i.getEventId()));
+        }
+        return event;
     }
 
 

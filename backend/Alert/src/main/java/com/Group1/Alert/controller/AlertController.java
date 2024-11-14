@@ -1,6 +1,7 @@
 package com.Group1.Alert.controller;
 
 
+import com.Group1.Alert.dto.eventModel;
 import com.Group1.Alert.model.Alert;
 import com.Group1.Alert.service.AlertService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,11 @@ public class AlertController {
 
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Alert>> getAlertByUserId(@PathVariable("userId") String userId) {
-        List<Alert> alerts = alertService.getAlertByUserId(userId);
-        return alerts.isEmpty()
+    public ResponseEntity<List<eventModel>> getAlertByUserId(@PathVariable("userId") String userId) {
+        List<eventModel> event = alertService.getAlertByUserId(userId);
+        return event.isEmpty()
                 ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-                : ResponseEntity.ok(alerts);
+                : ResponseEntity.ok(event);
     }
 
 

@@ -24,7 +24,6 @@ const SignIn = ({ onClose }) => {
         "http://localhost:9997/auth/validate/user",
         {
           userName: username,
-
           password: password,
         }
       );
