@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon } from 'react-icons/fa';
+import { FocusCards } from './ui/FocusCards';
 
 const HeroSection = styled.div`
   min-height: 100vh;

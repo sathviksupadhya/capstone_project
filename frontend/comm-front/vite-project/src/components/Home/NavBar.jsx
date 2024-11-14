@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from "axios";
+import "../../CSS/cardStyles.css";
 
 const Nav = styled.nav`
   position: fixed;
@@ -29,7 +31,7 @@ const Logo = styled.div`
 const LogoTitle = styled.span`
   font-size: 26px;
   font-weight: bold;
-  color: #ffffff;
+  color: #FFFFFF;
 `;
 
 const NavLinks = styled.div`
@@ -39,7 +41,7 @@ const NavLinks = styled.div`
 `;
 
 const NavLink = styled.a`
-  color: #ffffff;
+  color: #FFFFFF;
   text-decoration: none;
   font-size: 18px;
   font-weight: bold;
@@ -92,6 +94,8 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [profileImage, setProfileImage] = useState('');
+  const userId = sessionStorage.getItem('userId');
+  const token = sessionStorage.getItem('jwtToken');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,8 +114,6 @@ const NavBar = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        const userId = sessionStorage.getItem('userId');
-        const token = sessionStorage.getItem('jwtToken');
         console.log(userId);
         const response = await fetch(`http://localhost:9991/api/residents/${userId}`, {
           headers: {
@@ -139,17 +141,111 @@ const NavBar = () => {
     navigate('/');
   };
 
+  const [cards, setCards] = useState([]);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [checkboxValues, setCheckboxValues] = useState({
+    needsms: false,
+    needcall: false,
+    needemail: false,
+  });
+
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const headers = { Authorization: token };
+        const response = await axios.get(
+          `http://localhost:9994/api/alert/user/${userId}`, 
+          { headers }
+        );
+          setCards(response.data);
+      } catch (error) {
+        setCards([]);
+        console.error('Error fetching alerts:', error);
+      }
+    };
+
+    fetchAlerts();
+  }, [shouldRefetch]);
+
+  const handleCheckboxChange = ({ target: { name, checked } }) => {
+    setCheckboxValues(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+  };
+
+  const handleSetRem = async (eventid) => {
+    try{
+      const headers = { Authorization: token };
+      const baseUrl = 'http://localhost:9997/reminder/create';
+      await axios.post(`${baseUrl}`, {
+        userId,
+        eventId: eventid,
+        needSms: checkboxValues.needsms,
+        needCall: checkboxValues.needcall, 
+        needEmail: checkboxValues.needemail
+      }, { headers });
+      handleIgnore(eventid);
+    } catch (error) {
+      console.error('Error marking alert as seen:', error);
+    }
+  }
+
+  const handleIgnore = async (eventid) => {
+    try {
+      const headers = { Authorization: token };
+      const baseUrl = 'http://localhost:9994/api/alert';
+
+      await axios.put(
+        `${baseUrl}/seen/${userId}/${eventid}`,
+        null,
+        { headers }
+      );
+      
+      setShouldRefetch(prev => !prev);
+    } catch (error) {
+      console.error('Error marking alert as seen:', error);
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleCardClick = (index) => {
+    setCurrentCardIndex(index);
+  };
+
+  const getCardClass = (index) => {
+    if (index === currentCardIndex) {
+      return "card card--current";
+    } else if (
+      index === currentCardIndex + 1 ||
+      (currentCardIndex === cards.length - 1 && index === 0)
+    ) {
+      return "card card--next";
+    } else {
+      return "card card--out";
+    }
+  };
+
   return (
+    <>
     <Nav scrolled={scrolled}>
       <Logo onClick={handleLogoClick}>
         <LogoTitle>UnitySpace</LogoTitle>
       </Logo>
       
       <NavLinks>
-        <NavLink isActive={currentPath === '/home'} href="/home">Home</NavLink>
-        <NavLink isActive={currentPath === '/events'} href="/events">Events</NavLink>
-        <NavLink isActive={currentPath === '/schedules'} href="/schedules">Schedules</NavLink>
-        <NavLink isActive={currentPath === '/timesheet'} href="/timesheet">Timesheet</NavLink>
+        <NavLink onClick={() => scrollToSection('home-section')} isActive={currentPath === '/home'}>Home</NavLink>
+        <NavLink onClick={() => scrollToSection('events-section')} isActive={currentPath === '/events'}>Events</NavLink>
+        <NavLink onClick={() => scrollToSection('schedules-section')} isActive={currentPath === '/schedules'}>Schedules</NavLink>
+        <NavLink onClick={() => scrollToSection('timesheet-section')} isActive={currentPath === '/timesheet'}>Timesheet</NavLink>
       </NavLinks>
 
       <ProfileSection>
@@ -164,6 +260,156 @@ const NavBar = () => {
         </Dropdown>
       </ProfileSection>
     </Nav>
+    {cards.length > 0 && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center", 
+          alignItems: "center",
+          padding: "20px",
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 10,
+        }}
+      >
+        <ul className="cards">
+          {cards.map((card, index) => (
+            <li
+              key={index}
+              className={getCardClass(index)}
+              onClick={() => handleCardClick(index)}
+            >
+              <h1>{card.eventTitle}</h1>
+              <img src={card.eventImg} alt={card.title} className="card-image" />
+              <p>{card.eventDescription}</p>
+              <p>
+                {(() => {
+                  const date = new Date(card.eventDate);
+                  const day = date.getDate();
+                  const month = date.toLocaleString('default', { month: 'short' });
+                  const hour = date.getHours();
+                  const ampm = hour >= 12 ? 'PM' : 'AM';
+                  const hour12 = hour % 12 || 12;
+                  const message = `${day}th ${month} at ${hour12}${ampm}`;
+                  return message;
+                })()}
+              </p>
+              <div className="checkbox-container" style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '30px',
+                margin: '20px 0'
+              }}>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '16px'
+                }}>
+                  <input
+                    type="checkbox"
+                    name="needsms"
+                    checked={checkboxValues.needsms}
+                    onChange={handleCheckboxChange}
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  SMS
+                </label>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '16px'
+                }}>
+                  <input
+                    type="checkbox"
+                    name="needcall"
+                    checked={checkboxValues.needcall}
+                    onChange={handleCheckboxChange}
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  Call
+                </label>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '16px'
+                }}>
+                  <input
+                    type="checkbox"
+                    name="needemail"
+                    checked={checkboxValues.needemail}
+                    onChange={handleCheckboxChange}
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  Email
+                </label>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '20px',
+                marginTop: '20px'
+              }}>
+                <button 
+                  onClick={() => handleSetRem(card.eventId)}
+                  style={{
+                    padding: '10px 25px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    backgroundColor: '#4CAF50',
+                    color: 'white',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#45a049'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#4CAF50'}
+                >
+                  Submit
+                </button>
+                <button 
+                  onClick={() => handleIgnore(card.eventId)}
+                  style={{
+                    padding: '10px 25px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    backgroundColor: '#f44336',
+                    color: 'white',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#da190b'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#f44336'}
+                >
+                  Ignore
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    </>
   );
 };
 

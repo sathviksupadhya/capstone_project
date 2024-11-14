@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const FormContainer = styled.div`
   max-width: 600px;
@@ -60,6 +62,7 @@ const SubmitButton = styled(motion.button)`
 `;
 
 const EventForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -75,10 +78,30 @@ const EventForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+    const localDateTime = new Date(formData.date).toISOString();
+    console.log(localDateTime);
+
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      const userId = sessionStorage.getItem('userId');
+      const headers = { Authorization: token };
+      const response = await axios.post('http://localhost:9997/event/add',
+        {
+          eventTitle: formData.title,
+          eventDescription: formData.description,
+          eventDate: localDateTime,
+          eventType: "Event",
+          eventImg: formData.imageUrl,
+          userId: userId
+        },
+        { headers }
+      );
+      navigate(-1);
+    } catch(error) {
+      console.error('Error creating event:', error);
+    }
   };
 
   return (

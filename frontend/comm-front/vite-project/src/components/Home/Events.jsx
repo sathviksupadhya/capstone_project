@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { FocusCards } from "../ui/FocusCards";
 
 export default function Events() {
+  const navigate = useNavigate();
   const cards = [
     {
       title: "Forest Adventure",
@@ -28,8 +30,13 @@ export default function Events() {
     },
   ];
 
+  const navigateForm = () => {
+    navigate('/create-event');
+  }
+
   return (
     <div style={{ marginTop: "80px" }}>
+      <button className="eventform" onClick={navigateForm}>Add an Event</button>
       <FocusCards cards={cards} />
     </div>
   );
