@@ -4,6 +4,7 @@ import Navigationbar from './components/Navigationbar'
 import SignInForm from './components/SignIn'
 import RegisterForm from './components/Register'
 import LandingPage from './components/LandingPage'
+import EventForm from './components/EventForm'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/signin" element={<SignInForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/create-event" element={<EventForm />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>

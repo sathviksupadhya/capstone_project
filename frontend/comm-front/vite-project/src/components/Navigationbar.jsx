@@ -14,15 +14,17 @@ const Nav = styled.nav`
   padding: 0 50px;
   transition: all 0.3s ease-in-out;
   z-index: 1000;
-  background: ${props => props.scrolled ? '#000000' : 'rgba(255, 255, 255, 0.1)'};
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: ${props => props.theme === 'dark' ? '#000000' : props.scrolled ? '#000000' : '#ffffff'};
+  box-shadow: ${props => !props.scrolled && props.theme !== 'dark' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'};
 `;
 
 const Logo = styled.div`
   font-size: 24px;
   font-weight: bold;
-  color: ${props => props.scrolled ? '#ffffff' : '#000000'};
+  color: ${props => {
+    if (props.theme === 'dark') return '#ffffff';
+    return props.scrolled ? '#ffffff' : '#000000';
+  }};
   cursor: pointer;
 `;
 
@@ -38,31 +40,56 @@ const Button = styled.button`
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s ease;
+  font-weight: ${props => props.theme === 'dark' ? 'bold' : 'normal'};
   
   &.signin {
     background: transparent;
-    border: 2px solid ${props => props.scrolled ? '#ffffff' : '#000000'};
-    color: ${props => props.scrolled ? '#ffffff' : '#000000'};
+    border: 2px solid ${props => {
+      if (props.theme === 'dark') return '#ffffff';
+      return props.scrolled ? '#ffffff' : '#000000';
+    }};
+    color: ${props => {
+      if (props.theme === 'dark') return '#ffffff';
+      return props.scrolled ? '#ffffff' : '#000000';
+    }};
     
     &:hover {
-      background: ${props => props.scrolled ? '#ffffff' : '#000000'};
-      color: ${props => props.scrolled ? '#000000' : '#ffffff'};
+      background: ${props => {
+        if (props.theme === 'dark') return '#ffffff';
+        return props.scrolled ? '#ffffff' : '#000000';
+      }};
+      color: ${props => {
+        if (props.theme === 'dark') return '#000000';
+        return props.scrolled ? '#000000' : '#ffffff';
+      }};
     }
   }
   
   &.register {
     background: transparent;
-    border: 2px solid ${props => props.scrolled ? '#ffffff' : '#000000'};
-    color: ${props => props.scrolled ? '#ffffff' : '#000000'};
+    border: 2px solid ${props => {
+      if (props.theme === 'dark') return '#ffffff';
+      return props.scrolled ? '#ffffff' : '#000000';
+    }};
+    color: ${props => {
+      if (props.theme === 'dark') return '#ffffff';
+      return props.scrolled ? '#ffffff' : '#000000';
+    }};
     
     &:hover {
-      background: ${props => props.scrolled ? '#ffffff' : '#000000'};
-      color: ${props => props.scrolled ? '#000000' : '#ffffff'};
+      background: ${props => {
+        if (props.theme === 'dark') return '#ffffff';
+        return props.scrolled ? '#ffffff' : '#000000';
+      }};
+      color: ${props => {
+        if (props.theme === 'dark') return '#000000';
+        return props.scrolled ? '#000000' : '#ffffff';
+      }};
     }
   }
 `;
 
-const Navigationbar = () => {
+const Navigationbar = ({ theme }) => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
@@ -89,11 +116,11 @@ const Navigationbar = () => {
   };
 
   return (
-    <Nav scrolled={scrolled}>
-      <Logo scrolled={scrolled} onClick={handleLogoClick}>UnitySpace</Logo>
+    <Nav scrolled={scrolled} theme={theme}>
+      <Logo scrolled={scrolled} theme={theme} onClick={handleLogoClick}>UnitySpace</Logo>
       <ButtonGroup>
-        <Button className="signin" scrolled={scrolled} onClick={handleSignIn}>Sign In</Button>
-        <Button className="register" scrolled={scrolled} onClick={handleRegister}>Register</Button>
+        <Button className="signin" scrolled={scrolled} theme={theme} onClick={handleSignIn}>Sign In</Button>
+        <Button className="register" scrolled={scrolled} theme={theme} onClick={handleRegister}>Register</Button>
       </ButtonGroup>
     </Nav>
   );
