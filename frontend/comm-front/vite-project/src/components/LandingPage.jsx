@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { FocusCards } from './ui/FocusCards';
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon, FaShieldAlt, FaLock, FaHandshake, FaUsers, FaRocket, FaUserShield, FaCommentDots } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const HeroSection = styled.div`
   min-height: 100vh;
@@ -310,6 +311,18 @@ const LandingPage = () => {
   }, []);
 
   const handleGetStarted = () => {
+    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.error('Please sign in or register to access this feature!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
     navigate('/register');
   };
 
@@ -369,6 +382,21 @@ const LandingPage = () => {
         duration: 0.3,
         ease: "easeInOut"
       }
+    }
+  };
+
+  const handleFeatureClick = () => {
+    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.warning('Please sign in to access this feature!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
     }
   };
 
@@ -458,6 +486,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaCalendarAlt /> Event Management</h3>
             <p>Create, organize, and manage community events effortlessly. Set dates, venues, and track attendance all in one place.</p>
@@ -470,6 +499,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaBell /> Smart Reminders</h3>
             <p>Never miss an important event with our intelligent reminder system. Get notifications about upcoming events and important updates.</p>
@@ -482,6 +512,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaClock /> Event Scheduling</h3>
             <p>Plan ahead with our intuitive scheduling system. Check availability, avoid conflicts, and find the perfect time for your events.</p>
@@ -494,6 +525,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaComments /> Community Feedback</h3>
             <p>Share your thoughts and experiences. Rate events, provide suggestions, and help shape future community gatherings.</p>
@@ -506,6 +538,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaRss /> Real-time Updates</h3>
             <p>Stay informed with instant updates about event changes, new announcements, and community news.</p>
@@ -518,6 +551,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaRegCalendarCheck /> Community Calendar</h3>
             <p>Access a shared calendar showing all upcoming events, making it easy to plan and participate in community activities.</p>
@@ -533,6 +567,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaShieldAlt /> Data Protection</h3>
             <p>Your data is encrypted and secured using industry-standard protocols. We prioritize the safety and confidentiality of your information.</p>
@@ -545,6 +580,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaLock /> Privacy Controls</h3>
             <p>Take control of your privacy settings. Choose what you share and who can see your information within the community.</p>
@@ -557,6 +593,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaUserShield /> Secure Authentication</h3>
             <p>Multi-factor authentication and robust security measures ensure your account remains protected at all times.</p>
@@ -572,6 +609,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaHandshake /> Community Marketplace</h3>
             <p>A dedicated space for community members to buy, sell, or exchange items and services locally.</p>
@@ -584,6 +622,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaUsers /> Interest Groups</h3>
             <p>Create and join groups based on shared interests, hobbies, or activities within your community.</p>
@@ -596,6 +635,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={true}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaRocket /> Mobile App</h3>
             <p>Access UnitySpace on the go with our upcoming mobile application for iOS and Android devices.</p>
@@ -608,6 +648,7 @@ const LandingPage = () => {
             whileHover="hover"
             isBlue={false}
             theme={theme}
+            onClick={handleFeatureClick}
           >
             <h3><FaCommentDots /> Discussion Forum</h3>
             <p>Engage in meaningful conversations with community members through our dedicated discussion forum and real-time chat features.</p>

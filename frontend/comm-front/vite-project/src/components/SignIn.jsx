@@ -88,16 +88,12 @@ const SignInForm = () => {
     console.log("username:", username);
 
     try {
-      // Add loading state or spinner here if needed
       const response = await axios.post(
         "http://localhost:9997/auth/validate/user",
         {
           userName: username,
           password: password,
-        },
-        // {
-        //   timeout: 5000 // Add timeout of 5 seconds
-        // }
+        }
       );
 
       // Check if response contains required data
@@ -109,16 +105,69 @@ const SignInForm = () => {
       sessionStorage.setItem("jwtToken", token);
       sessionStorage.setItem("userId", userId);
       
-      // Navigate immediately after storing data
-      navigate("/home");
+      // Show success toast
+      toast.success('Successfully signed in!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+
+      // Navigate after toast shows
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
 
     } catch (err) {
       console.error('Login error:', err);
+      
       if (err.code === 'ECONNABORTED') {
-        setError("Request timed out. Please try again.");
+        toast.error('Request timed out. Please try again.', {
+          position: "top-right",
+          autoClose: 5000
+        });
+      } else if (err.response) {
+        // Handle different HTTP error codes
+        switch (err.response.status) {
+          case 400:
+            toast.error('Invalid username or password format', {
+              position: "top-right",
+              autoClose: 5000
+            });
+            break;
+          case 401:
+            toast.error('Invalid credentials', {
+              position: "top-right", 
+              autoClose: 5000
+            });
+            break;
+          case 404:
+            toast.error('Service not found. Please try again later.', {
+              position: "top-right",
+              autoClose: 5000
+            });
+            break;
+          case 500:
+            toast.error('Internal server error. Please try again later.', {
+              position: "top-right",
+              autoClose: 5000
+            });
+            break;
+          default:
+            toast.error('An unexpected error occurred. Please try again.', {
+              position: "top-right",
+              autoClose: 5000
+            });
+        }
       } else {
-        setError("Invalid credentials or server error. Please try again.");
+        toast.error('Network error. Please check your connection.', {
+          position: "top-right",
+          autoClose: 5000
+        });
       }
+      setError(err.message);
     }
   };
 

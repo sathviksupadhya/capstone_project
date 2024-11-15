@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from "axios";
 import "../../CSS/cardStyles.css";
+import { FaChevronDown, FaUserCircle } from 'react-icons/fa';
 
 const Nav = styled.nav`
   position: fixed;
@@ -17,7 +18,6 @@ const Nav = styled.nav`
   transition: all 0.3s ease-in-out;
   z-index: 1000;
   background: ${props => props.scrolled ? '#000000' : 'none'};
-  
   -webkit-backdrop-filter: blur(8px);
 `;
 
@@ -57,6 +57,10 @@ const NavLink = styled.a`
 
 const ProfileSection = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 `;
 
 const ProfileImage = styled.img`
@@ -64,6 +68,12 @@ const ProfileImage = styled.img`
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
+`;
+
+const ChevronIcon = styled(FaChevronDown)`
+  color: #FFFFFF;
+  transition: transform 0.3s ease;
+  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0)'};
 `;
 
 const Dropdown = styled.div`
@@ -75,17 +85,32 @@ const Dropdown = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
   display: ${props => props.isOpen ? 'block' : 'none'};
-  min-width: 150px;
+  min-width: 200px;
 `;
 
 const DropdownItem = styled.div`
   padding: 10px 20px;
   cursor: pointer;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   
   &:hover {
     background: #f5f5f5;
   }
+`;
+
+const DropdownUserName = styled.div`
+  padding: 10px 20px;
+  color: #333;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+`;
+
+const SettingsSubmenu = styled.div`
+  padding: 10px 0;
+  border-top: 1px solid #eee;
 `;
 
 const NavBar = () => {
@@ -94,6 +119,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [profileImage, setProfileImage] = useState('');
+  const [userName, setUserName] = useState('');
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
 
@@ -123,6 +149,7 @@ const NavBar = () => {
         const data = await response.json();
         console.log(data.image);
         setProfileImage(data.image);
+        setUserName(data.firstName); // Add this line to set the user name
       } catch (error) {
         console.error('Error fetching profile image:', error);
       }
@@ -139,6 +166,15 @@ const NavBar = () => {
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('jwtToken');
     navigate('/');
+  };
+
+  const handleDropdownClick = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleMyAccount = () => {
+    navigate('/home/profile');
+    setDropdownOpen(false);
   };
 
   const [cards, setCards] = useState([]);
@@ -254,8 +290,10 @@ const NavBar = () => {
           alt="Profile" 
           onClick={() => setDropdownOpen(!dropdownOpen)}
         />
+        <ChevronIcon isOpen={dropdownOpen} onClick={() => setDropdownOpen(!dropdownOpen)} />
         <Dropdown isOpen={dropdownOpen}>
-          <DropdownItem>User Details</DropdownItem>
+          <DropdownUserName>{userName || 'User'}</DropdownUserName>
+          <DropdownItem onClick={handleMyAccount}>My Account</DropdownItem>
           <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
         </Dropdown>
       </ProfileSection>
