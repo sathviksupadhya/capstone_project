@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { FocusCards } from "../ui/FocusCards";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Events() {
   const navigate = useNavigate();
-  const cards = [
+  const userId = sessionStorage.getItem('userId');
+  const token = sessionStorage.getItem('jwtToken');
+  const [cards, setCards] = useState([
     {
       title: "Forest Adventure",
       src: "https://images.unsplash.com/photo-1518710843675-2540dd79065c?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -28,7 +32,25 @@ export default function Events() {
       title: "The First Rule",
       src: "https://assets.aceternity.com/the-first-rule.png",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        console.log(userId);
+      const response = await axios.get(`http://localhost:9997/event/getAllEvents`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.data;
+      setCards(data);
+    }catch(error){
+      console.log(error);
+    }
+    };
+    fetchEvents();
+  }, []);
 
   const navigateForm = () => {
     navigate('/create-event');

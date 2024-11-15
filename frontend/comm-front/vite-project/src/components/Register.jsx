@@ -8,24 +8,45 @@ import axios from 'axios';
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add registration logic here
+    setUsernameError('');
+    
     try {
-      // Send credentials to the backend for registration
       const response = await axios.post("http://localhost:9997/auth/register", {
         userName: username,
         password: password,
         role: "Resident",
       });
 
-      navigate('/signin');
+      toast.success('Registration successful! Redirecting to sign in...', {
+        position: "top-right",
+        autoClose: 3000
+      });
+
+      setTimeout(() => {
+        navigate('/signin');
+      }, 3000);
       
     } catch (err) {
-      setError("Registration failed. Please try again.");
       console.error("Error during registration:", err);
+
+      if (err.response) {
+        switch (err.response.status) {
+          case 400:
+            toast.error('Invalid registration details. Please check your input.', {
+              position: "top-right"
+            });
+            break;
+          case 500:
+            toast.error('Name is already taken. Please try another name.', {
+              position: "top-right"
+            });
+        }
+      }
     }
   };
 
@@ -38,9 +59,13 @@ const RegisterForm = () => {
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setUsernameError('');
+            }}
             required
           />
+          {usernameError && <ErrorText>{usernameError}</ErrorText>}
           <Input
             type="password"
             placeholder="Password"
@@ -131,5 +156,11 @@ const SignInText = styled.p`
   }
 `;
 
+const ErrorText = styled.p`
+  color: #ff0000;
+  font-size: 14px;
+  margin: -15px 0 0 0;
+  padding: 0;
+`;
 
 export default RegisterForm;

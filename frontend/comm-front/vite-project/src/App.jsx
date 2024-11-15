@@ -13,6 +13,9 @@ import AdminHome from './components/Admin/AdminHome'
 import UserPage from './components/Admin/UserPage'
 import AdminEvents from './components/Admin/AdminEvents'
 import AdminAnalytics from './components/Admin/AdminAnalytics'
+import UserDashboard from './components/UserProfile/UserDashboard'
+import UserDetails from './components/UserProfile/UserDetails'
+import UserSettings from './components/UserProfile/UserSettings'
 function App() {
   return (
     <BrowserRouter>
@@ -27,6 +30,9 @@ function App() {
         <Route path="/admin/users" element={<><AdminNavBar /><UserPage /></>} />
         <Route path="/admin/events" element={<><AdminNavBar /><AdminEvents /></>} />
         <Route path="/admin/analytics" element={<><AdminNavBar /><AdminAnalytics /></>} />
+        <Route path="/home/profile" element={<><UserDashboard /></>} />
+        <Route path="/home/profile/profile" element={<UserDetails />} />
+        <Route path="/home/profile/settings" element={<UserSettings />} />
       </Routes>
     </BrowserRouter>
   )

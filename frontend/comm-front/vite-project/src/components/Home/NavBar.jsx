@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from "axios";
 import "../../CSS/cardStyles.css";
+import { FaChevronDown, FaUserCircle } from 'react-icons/fa';
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -10,6 +11,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [profileImage, setProfileImage] = useState('');
+  const [userName, setUserName] = useState('');
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
 
@@ -30,15 +32,16 @@ const NavBar = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        console.log(userId);
-        const response = await fetch(`http://localhost:9991/api/residents/${userId}`, {
+        console.log(123, userId);
+        const response = await fetch(`http://localhost:9997/api/residents/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        const data = await response.json();
+        const data = await response.data();
         console.log(data.image);
         setProfileImage(data.image);
+        setUserName(data.firstName);
       } catch (error) {
         console.error('Error fetching profile image:', error);
       }
@@ -57,6 +60,15 @@ const NavBar = () => {
     navigate('/');
   };
 
+  const handleDropdownClick = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleMyAccount = () => {
+    navigate('/home/profile');
+    setDropdownOpen(false);
+  };
+
   const [cards, setCards] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [checkboxValues, setCheckboxValues] = useState({
@@ -70,10 +82,13 @@ const NavBar = () => {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const headers = { Authorization: token };
         const response = await axios.get(
-          `http://localhost:9994/api/alert/user/${userId}`, 
-          { headers }
+          `http://localhost:9997/api/alert/user/${userId}`, 
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
         );
           setCards(response.data);
       } catch (error) {
@@ -94,7 +109,6 @@ const NavBar = () => {
 
   const handleSetRem = async (eventid) => {
     try{
-      const headers = { Authorization: token };
       const baseUrl = 'http://localhost:9997/reminder/create';
       await axios.post(`${baseUrl}`, {
         userId,
@@ -102,7 +116,11 @@ const NavBar = () => {
         needSms: checkboxValues.needsms,
         needCall: checkboxValues.needcall, 
         needEmail: checkboxValues.needemail
-      }, { headers });
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       handleIgnore(eventid);
     } catch (error) {
       console.error('Error marking alert as seen:', error);
@@ -112,12 +130,16 @@ const NavBar = () => {
   const handleIgnore = async (eventid) => {
     try {
       const headers = { Authorization: token };
-      const baseUrl = 'http://localhost:9994/api/alert';
+      const baseUrl = 'http://localhost:9997/api/alert';
 
       await axios.put(
         `${baseUrl}/seen/${userId}/${eventid}`,
         null,
-        { headers }
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
       
       setShouldRefetch(prev => !prev);
@@ -170,8 +192,10 @@ const NavBar = () => {
           alt="Profile" 
           onClick={() => setDropdownOpen(!dropdownOpen)}
         />
+        <ChevronIcon isOpen={dropdownOpen} onClick={() => setDropdownOpen(!dropdownOpen)} />
         <Dropdown isOpen={dropdownOpen}>
-          <DropdownItem>User Details</DropdownItem>
+          <DropdownUserName>{userName || 'User'}</DropdownUserName>
+          <DropdownItem onClick={handleMyAccount}>My Account</DropdownItem>
           <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
         </Dropdown>
       </ProfileSection>
@@ -342,7 +366,6 @@ const Nav = styled.nav`
   transition: all 0.3s ease-in-out;
   z-index: 1000;
   background: ${props => props.scrolled ? '#000000' : 'none'};
-  
   -webkit-backdrop-filter: blur(8px);
 `;
 
@@ -382,6 +405,10 @@ const NavLink = styled.a`
 
 const ProfileSection = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 `;
 
 const ProfileImage = styled.img`
@@ -389,6 +416,12 @@ const ProfileImage = styled.img`
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
+`;
+
+const ChevronIcon = styled(FaChevronDown)`
+  color: #FFFFFF;
+  transition: transform 0.3s ease;
+  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0)'};
 `;
 
 const Dropdown = styled.div`
@@ -400,17 +433,32 @@ const Dropdown = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
   display: ${props => props.isOpen ? 'block' : 'none'};
-  min-width: 150px;
+  min-width: 200px;
 `;
 
 const DropdownItem = styled.div`
   padding: 10px 20px;
   cursor: pointer;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   
   &:hover {
     background: #f5f5f5;
   }
+`;
+
+const DropdownUserName = styled.div`
+  padding: 10px 20px;
+  color: #333;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+`;
+
+const SettingsSubmenu = styled.div`
+  padding: 10px 0;
+  border-top: 1px solid #eee;
 `;
 
 export default NavBar;

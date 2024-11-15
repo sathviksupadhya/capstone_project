@@ -16,13 +16,13 @@ export const Card = React.memo(({
       hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
     )}>
     <img
-      src={card.src}
-      alt={card.title}
+      src={card.eventImg}
+      alt={card.eventTitle}
       fill
       className="object-cover absolute inset-0" />
-      <div className="absolute font-extrabold text-white bg-black p-0 rounded-lg right-5">
-        <h1 className="text-6xl font-black">{card.title}</h1>
-      </div>
+      {/* <div className="absolute font-bold text-white bg-black rounded-lg right-5">
+        <h1 className="text-3xl font-black">{card.title}</h1>
+      </div> */}
     <div
       className={cn(
         "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
@@ -30,7 +30,7 @@ export const Card = React.memo(({
       )}>
       <div
         className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-        {card.title}
+        {card.eventTitle}
       </div>
     </div>
   </div>

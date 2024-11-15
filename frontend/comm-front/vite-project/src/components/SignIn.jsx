@@ -16,51 +16,84 @@ const SignInForm = () => {
     console.log("username:", username);
 
     try {
-      // Add loading state or spinner here if needed
-
       const response = await axios.post(
         "http://localhost:9997/auth/validate/user",
         {
           userName: username,
           password: password,
-        },
+        }
       );
 
       // Check if response contains required data
       if (!response.data || !response.data.token || !response.data.userId) {
         throw new Error('Invalid response from server');
       }
+
       const { token, userId } = response.data;
       sessionStorage.setItem("jwtToken", token);
-      sessionStorage.setItem("userId", userId);  
+      sessionStorage.setItem("userId", userId);
 
-
-      // const user = await axios.get(`http://localhost:9997/api/residents/${userId}`,
-      //   {
-      //     headers: {
-      //       Authorization: token
-      //     }
-      //   }
-      // );
-      // const userStatus = user.data.status;
-      // console.log(userStatus);
-      // if(userStatus === "APPROVE"){ 
-      if(username.toLowerCase() === "admin"){
-        navigate("/admin");
-      }else{
-        navigate("/home");
+      try{
+      const user = await axios.get(`http://localhost:9997/api/residents/${userId}`,
+        {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
+      );
+      toast.success('Successfully signed in!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      const userStatus = user.data.status;
+      console.log(userStatus);
+      if(userStatus === "APPROVED"){ 
+        if(username.toLowerCase() === "admin"){
+          navigate("/admin");
+        }else{
+          navigate("/home");
+        }
       }
-      // }else{
-      //   setError("Your account is not approved yet. Please wait for approval.");
-      // }
-
+    }catch(error){
+      toast.error('You are not approved yet. Please wait for approval.', {
+        position: "top-right",
+        autoClose: 5000
+      });
+        }
     } catch (err) {
       console.error('Login error:', err);
+      
       if (err.code === 'ECONNABORTED') {
-        setError("Request timed out. Please try again.");
+        toast.error('Request timed out. Please try again.', {
+          position: "top-right",
+          autoClose: 5000
+        });
+      } else if (err.response) {
+        // Handle different HTTP error codes
+        switch (err.response.status) {
+          case 400:
+            toast.error('Invalid username or password format', {
+              position: "top-right",
+              autoClose: 5000
+            });
+            break;
+          case 500:
+            toast.error('Internal server error. Please try again later.', {
+              position: "top-right",
+              autoClose: 5000
+            });
+        }
       } else {
-        setError("Invalid credentials or server error. Please try again.");
+        toast.error('Network error. Please check your connection.', {
+          position: "top-right",
+          autoClose: 5000
+        });
       }
+      setError(err.message);
     }
   };
 

@@ -77,6 +77,7 @@ public class UserService {
         userFullDetails.setRole(a.getRole());
         userFullDetails.setUserName(a.getUserName());
         userFullDetails.setEmail(user.getEmail());
+        userFullDetails.setStatus(user.getStatus());
         userFullDetails.setPhoneNumber(user.getPhoneNumber());
         userFullDetails.setImage(user.getImage());
 
