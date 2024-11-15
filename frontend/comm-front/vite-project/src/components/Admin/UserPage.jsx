@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AdminNavBar from './AdminNavBar';
-import { FaSearch, FaFilter, FaEdit, FaTrash, FaUserPlus, FaSortAmountDown, FaChartBar } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaEdit, FaTrash, FaUserPlus, FaSortAmountDown, FaChartBar, FaCheck, FaTimes } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -233,11 +233,10 @@ const UserPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [showModal, setShowModal] = useState(false);
+  const token = sessionStorage.getItem('jwtToken');
   const [newUser, setNewUser] = useState({
     username: '',
-    password: '',
-    email: '',
-    phone: ''
+    password: ''
   });
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -248,7 +247,11 @@ const UserPage = () => {
   const fetchData = async () => {
     try {
       // Fetch all users using the endpoint from UserController
-      const response = await axios.get('http://localhost:9997/api/residents/all');
+      const response = await axios.get('http://localhost:9997/api/residents/all', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       setUsers(response.data);
       
       // Calculate stats
@@ -291,17 +294,29 @@ const UserPage = () => {
     
     filtered.sort((a, b) => {
       if (sortBy === 'name') return a.userName?.localeCompare(b.userName);
-      if (sortBy === 'date') return new Date(b.createdAt) - new Date(a.createdAt);
+      // if (sortBy === 'date') return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
     
     setFilteredUsers(filtered);
   }, [searchTerm, users, activeTab, sortBy]);
 
-  const handleEdit = async (userId) => {
+  const handleEdit = async (userId, action) => {
+    const param = action ? "APPROVE" : "REJECT";
     try {
-      await axios.put(`http://localhost:9997/api/residents/action/${userId}?action=APPROVE`);
-      toast.success('User approved successfully');
+      const response = await axios.put(`http://localhost:9997/api/residents/action/${userId}`, null, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        params: {
+          action: param
+        }
+      });
+      if(action){
+        toast.success('User approved successfully');
+      }else{
+        toast.success('User rejected successfully');
+      }
       fetchData();
     } catch (error) {
       console.error('Error approving user:', error);
@@ -312,7 +327,11 @@ const UserPage = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://localhost:9997/api/residents/${userId}`);
+        const response = await axios.delete(`http://localhost:9997/api/residents/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         toast.success('User deleted successfully');
         fetchData();
       } catch (error) {
@@ -328,15 +347,13 @@ const UserPage = () => {
       await axios.post("http://localhost:9997/auth/register", {
         userName: newUser.username,
         password: newUser.password,
-        email: newUser.email,
-        phone: newUser.phone,
         role: "RESIDENT"
       });
       
       toast.success("User registered successfully!");
       setShowModal(false);
       fetchData();
-      setNewUser({ username: '', password: '', email: '', phone: '' });
+      setNewUser({ username: '', password: ''});
     } catch (err) {
       toast.error("Registration failed: " + (err.response?.data?.message || "Please try again"));
       console.error("Error during registration:", err);
@@ -373,9 +390,9 @@ const UserPage = () => {
             />
           </SearchBar>
           <ButtonGroup>
-            <ActionButton onClick={() => setSortBy(sortBy === 'name' ? 'date' : 'name')}>
+            <ActionButton onClick={() => setSortBy('name')}>
               <FaSortAmountDown />
-              Sort by {sortBy === 'name' ? 'Date' : 'Name'}
+              Sort by Name
             </ActionButton>
             <ActionButton $variant="primary" onClick={() => setShowModal(true)}>
               <FaUserPlus />
@@ -394,14 +411,20 @@ const UserPage = () => {
 
         <UserGrid>
           {filteredUsers.map(user => (
-            <UserCard key={user.id}>
+            <UserCard key={user.userId}>
+                {console.log(user.userId)}
               <UserActions>
                 {user.status === 'PENDING' && (
-                  <CardActionButton onClick={() => handleEdit(user.id)}>
-                    <FaEdit />
-                  </CardActionButton>
+                  <>
+                    <CardActionButton onClick={() => handleEdit(user.userId, true)}>
+                      <FaCheck />
+                    </CardActionButton>
+                    <CardActionButton onClick={() => handleEdit(user.userId, false)}>
+                      <FaTimes /> 
+                    </CardActionButton>
+                  </>
                 )}
-                <CardActionButton $delete onClick={() => handleDelete(user.id)}>
+                <CardActionButton $delete onClick={() => handleDelete(user.userId)}>
                   <FaTrash />
                 </CardActionButton>
               </UserActions>
@@ -411,7 +434,7 @@ const UserPage = () => {
               <UserInfo>
                 <UserName>{user.userName}</UserName>
                 <UserDetail>{user.email}</UserDetail>
-                <UserDetail>{user.phone}</UserDetail>
+                <UserDetail>{user.phoneNumber}</UserDetail>
                 <UserDetail>Role: {user.role}</UserDetail>
                 <UserStatus $active={user.status === 'APPROVED'}>
                   {user.status}
@@ -438,20 +461,6 @@ const UserPage = () => {
                   placeholder="Password"
                   value={newUser.password}
                   onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                  required
-                />
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={newUser.email}
-                  onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                  required
-                />
-                <Input
-                  type="tel"
-                  placeholder="Phone"
-                  value={newUser.phone}
-                  onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
                   required
                 />
                 <ButtonGroup>

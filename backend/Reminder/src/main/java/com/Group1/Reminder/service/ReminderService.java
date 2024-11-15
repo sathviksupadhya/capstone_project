@@ -135,6 +135,11 @@ public class ReminderService {
         }
     }
 
+    public List<Reminder> getReminderByUserId(String userId) {
+        return reminderRepository.findByUserId(userId);
+    }
+
+
 //    public String SendEmail(String email, String message) {
 //
 //    }

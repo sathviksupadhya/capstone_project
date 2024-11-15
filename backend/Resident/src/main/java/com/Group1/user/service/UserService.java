@@ -85,13 +85,23 @@ public class UserService {
         return userFullDetails;
     }
 
-    public Response<List<UserDto>> getAllResidents() {
-        List<User> users = userRepository.findAll()
+    public List<userFullDetails> getAllResidents() {
+
+        return userRepository.findAll()
                 .stream()
-                .filter(user -> user.getStatus().equalsIgnoreCase("APPROVED"))
-                .toList();
-        List<UserDto> userDtos = users.stream().map(this::mapToDTO).collect(Collectors.toList());
-        return new Response<>("Approved residents retrieved successfully", userDtos);
+                .map(user -> {
+                    authentication a = authclient.getUser(user.getUserId());
+                    userFullDetails userFullDetails = new userFullDetails();
+                    userFullDetails.setUserId(user.getUserId());
+                    userFullDetails.setRole(a.getRole());
+                    userFullDetails.setUserName(a.getUserName());
+                    userFullDetails.setEmail(user.getEmail());
+                    userFullDetails.setStatus(user.getStatus());
+                    userFullDetails.setPhoneNumber(user.getPhoneNumber());
+                    userFullDetails.setImage(user.getImage());
+                    return userFullDetails;
+                })
+                .collect(Collectors.toList());
     }
 
 

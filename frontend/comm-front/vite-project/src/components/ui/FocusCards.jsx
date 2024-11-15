@@ -18,19 +18,39 @@ export const Card = React.memo(({
     <img
       src={card.eventImg}
       alt={card.eventTitle}
-      fill
-      className="object-cover absolute inset-0" />
-      {/* <div className="absolute font-bold text-white bg-black rounded-lg right-5">
-        <h1 className="text-3xl font-black">{card.title}</h1>
-      </div> */}
+      className="w-full h-full object-cover" />
+      <h1 className="absolute top-5 left-5 text-white text-2xl font-bold z-10 px-4 py-2 bg-gradient-to-r from-black/80 via-black/60 to-transparent rounded-lg shadow-lg backdrop-blur-sm border border-white/10">{card.eventTitle}</h1>
     <div
       className={cn(
-        "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
+        "absolute inset-0 bg-black/50 flex flex-col justify-end py-8 px-4 transition-opacity duration-300",
         hovered === index ? "opacity-100" : "opacity-0"
       )}>
+        <div
+        className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 mb-4">
+        {(() => {
+      const date = new Date(card.eventDate);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'short' });
+      const hour = date.getHours();
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const hour12 = hour % 12 || 12;
+      const message = `${day}${getSuffix(day)} ${month} at ${hour12}${ampm}`;
+      function getSuffix(day) {
+        if (day >= 11 && day <= 13) return 'th';
+        const lastDigit = day % 10;
+        switch (lastDigit) {
+          case 1: return 'st';
+          case 2: return 'nd'; 
+          case 3: return 'rd';
+          default: return 'th';
+        }
+      }
+      return message;
+    })()}
+      </div>
       <div
         className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-        {card.eventTitle}
+        {card.eventDescription}
       </div>
     </div>
   </div>

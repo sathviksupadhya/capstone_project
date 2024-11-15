@@ -212,6 +212,7 @@ const NavBar = () => {
           left: "50%",
           transform: "translate(-50%, -50%)",
           zIndex: 10,
+          marginTop: '15px'
         }}
       >
         <ul className="cards">
@@ -220,8 +221,11 @@ const NavBar = () => {
               key={index}
               className={getCardClass(index)}
               onClick={() => handleCardClick(index)}
+              style={{padding: '30px'}}
             >
-              <h1>{card.eventTitle}</h1>
+              <h1
+              style={{marginTop: '-14px'}}
+              >{card.eventTitle}</h1>
               <img src={card.eventImg} alt={card.title} className="card-image" />
               <p>{card.eventDescription}</p>
               <p>
@@ -232,7 +236,17 @@ const NavBar = () => {
                   const hour = date.getHours();
                   const ampm = hour >= 12 ? 'PM' : 'AM';
                   const hour12 = hour % 12 || 12;
-                  const message = `${day}th ${month} at ${hour12}${ampm}`;
+                  const message = `${day}${getSuffix(day)} ${month} at ${hour12}${ampm}`;
+                  function getSuffix(day) {
+                    if (day >= 11 && day <= 13) return 'th';
+                    const lastDigit = day % 10;
+                    switch (lastDigit) {
+                      case 1: return 'st';
+                      case 2: return 'nd'; 
+                      case 3: return 'rd';
+                      default: return 'th';
+                    }
+                  }
                   return message;
                 })()}
               </p>

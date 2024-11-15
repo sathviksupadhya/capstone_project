@@ -3,11 +3,14 @@ package com.Group1.Reminder.Controller;
 import com.Group1.Reminder.dto.*;
 import com.Group1.Reminder.feign.eventClient;
 import com.Group1.Reminder.feign.userClient;
+import com.Group1.Reminder.model.Reminder;
 import com.Group1.Reminder.repository.ReminderRepository;
 import com.Group1.Reminder.service.ReminderService;
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/reminder")
@@ -53,6 +56,10 @@ public class reminderController {
 //        String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
 //        return reminderService.SendEmail(user.getEmail(), message);
 //    }
+    @GetMapping("/getbyUserId/{userId}")
+    public List<Reminder> getReminderByUserId(@PathVariable("userId") String userId) {
+        return reminderService.getReminderByUserId(userId);
+    }
 
     @GetMapping("/sendUrgentsmsAndCall")
     public String SendUrgentSmsAndCall(@RequestBody Urgentdto dto) {

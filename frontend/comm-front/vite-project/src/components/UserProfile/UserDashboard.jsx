@@ -232,6 +232,8 @@ const SaveButton = styled.button`
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [reminders, setReminders] = useState([]);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
   const [notificationPreferences, setNotificationPreferences] = useState({
     sms: false,
@@ -252,6 +254,22 @@ const UserDashboard = () => {
         });
         const data = await response.json();
         setUserData(data);
+
+        const eventsResponse = await fetch(`http://localhost:9997/event/getAllEvents`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const eventsData = await eventsResponse.json();
+        setEvents(eventsData);
+
+        const reminder = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const reminderData = await reminder.json();
+        setReminders(reminderData);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -264,12 +282,13 @@ const UserDashboard = () => {
     return <div>Loading...</div>;
   }
 
-  const extractNameFromEmail = (email) => {
-    return email.split('@')[0];
-  };
+  // const extractNameFromEmail = (email) => {
+  //   return email.split('@')[0];
+  // };
 
   const handleProfileClick = () => {
-    navigate('/home/profile/profile');
+    console.log(userData);
+    navigate('/home/profile/profile', { state: { user: userData } });
   };
 
   const handleSettingsClick = () => {
@@ -396,7 +415,7 @@ const UserDashboard = () => {
         <Header>
           <ProfileImage src={userData.image} alt="Profile" />
           <UserInfo>
-            <h1>{extractNameFromEmail(userData.email)}</h1>
+            <h1>{userData.userName}</h1>
             <p>{userData.email}</p>
           </UserInfo>
         </Header>
@@ -404,15 +423,15 @@ const UserDashboard = () => {
         <StatsGrid>
           <StatCard>
             <h3>Total Events</h3>
-            <p>12</p>
+            <p>{events.length}</p>
           </StatCard>
           <StatCard>
             <h3>Upcoming Events</h3>
-            <p>3</p>
+            <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
           </StatCard>
           <StatCard>
             <h3>Reminders</h3>
-            <p>5</p>
+            <p>{reminders.filter(reminder => reminder.needSms || reminder.needCall || reminder.needEmail).length}</p>
           </StatCard>
           <StatCard>
             <h3>Notifications</h3>

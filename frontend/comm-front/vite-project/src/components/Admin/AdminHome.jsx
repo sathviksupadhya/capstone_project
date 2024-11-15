@@ -120,16 +120,22 @@ const AdminHome = () => {
 
     const fetchData = async () => {
       try {
-        const headers = { Authorization: `Bearer ${token}` };
-
-        // Fetch residents data
-        const residentsResponse = await axios.get('http://localhost:9997/api/residents', { headers });
+        const residentsResponse = await axios.get('http://localhost:9997/api/residents/all', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log(residentsResponse.data.length);
         const totalResidents = residentsResponse.data.length;
-        const activeResidents = residentsResponse.data.filter(resident => resident.status === 'ACTIVE').length;
+        const activeResidents = residentsResponse.data.filter(resident => resident.status === 'APPROVED').length;
         const pendingApprovals = residentsResponse.data.filter(resident => resident.status === 'PENDING').length;
 
         // Fetch events data
-        const eventsResponse = await axios.get('http://localhost:9997/api/events', { headers });
+        const eventsResponse = await axios.get('http://localhost:9997/event/getAllEvents', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         const totalEvents = eventsResponse.data.length;
 
         setStats({
@@ -144,15 +150,15 @@ const AdminHome = () => {
           ...residentsResponse.data
             .filter(resident => resident.status === 'PENDING')
             .map(resident => ({
-              id: `resident-${resident.id}`,
-              message: `New registration request from ${resident.firstName} ${resident.lastName}`,
+              id: `resident-${resident.userId}`,
+              message: `New registration request from ${resident.userName}`,
               timestamp: new Date(resident.createdAt).toLocaleString()
             })),
           ...eventsResponse.data
             .filter(event => new Date(event.eventDate) > new Date())
             .map(event => ({
               id: `event-${event.id}`,
-              message: `Upcoming event: ${event.eventName}`,
+              message: `Upcoming event: ${event.eventTitle}`,
               timestamp: new Date(event.eventDate).toLocaleString()
             }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -163,12 +169,12 @@ const AdminHome = () => {
         const activityList = [
           ...residentsResponse.data.map(resident => ({
             id: `activity-resident-${resident.id}`,
-            description: `Resident ${resident.firstName} ${resident.lastName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
+            description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
             timestamp: new Date(resident.createdAt).toLocaleString()
           })),
           ...eventsResponse.data.map(event => ({
             id: `activity-event-${event.id}`,
-            description: `New event created: ${event.eventName}`,
+            description: `New event created: ${event.eventTitle}`,
             timestamp: new Date(event.createdAt).toLocaleString()
           }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -219,7 +225,7 @@ const AdminHome = () => {
           </StatInfo>
         </StatCard>
 
-        <StatCard $theme={theme} onClick={() => navigate('/admin/registrations')}>
+        <StatCard $theme={theme} onClick={() => navigate('/admin/users', { state: { activeTab: 'inactive' }})}>
           <StatIcon>
             <FaUserClock />
           </StatIcon>

@@ -137,7 +137,9 @@ const AdminNavBar = () => {
 
   const handleLogout = () => {
     // Implement logout logic here
-    navigate('/signin');
+    sessionStorage.removeItem('jwtToken');
+    sessionStorage.removeItem('userId');
+    navigate('/');
   };
 
   const handleDropdownClick = () => {

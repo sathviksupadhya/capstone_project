@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaUser, FaPhone, FaEnvelope, FaCamera } from 'react-icons/fa';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
   height: 100vh;
@@ -170,44 +174,19 @@ const SubmitButton = styled(motion.button)`
 `;
 
 const UserDetails = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const user = location.state?.user;
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    profilePhoto: null
+    fullName: user?.userName || '',
+    email: user?.email || '',
+    phone: user?.phoneNumber || '',
+    profilePhoto: user?.image || null
   });
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:9991/api/residents/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
-        setFormData({
-          fullName: data.fullName || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          profilePhoto: data.profilePhoto || null
-        });
-        if (data.profilePhoto) {
-          setPhotoPreview(data.profilePhoto);
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    if (userId && token) {
-      fetchUserData();
-    }
-  }, [userId, token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -236,24 +215,24 @@ const UserDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        formDataToSend.append(key, formData[key]);
-      });
-
-      const response = await fetch(`http://localhost:9991/api/residents/${userId}/update`, {
-        method: 'PUT',
+      const response = await axios.put(`http://localhost:9997/api/residents/update/${userId}`, {
+        email: formData.email,
+        phoneNumber: formData.phone,
+        image: formData.profilePhoto
+      }, {
         headers: {
           'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
+        }
       });
-
-      if (response.ok) {
-        console.log('Profile updated successfully');
-      } else {
-        console.error('Failed to update profile');
-      }
+      toast.success('Successfully updated profile!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      navigate('/home/profile')
     } catch (error) {
       console.error('Error updating profile:', error);
     }
@@ -268,9 +247,10 @@ const UserDetails = () => {
             <PhotoPreview>
               <img src={photoPreview || '/default-avatar.png'} alt="Profile Preview" />
             </PhotoPreview>
-            <PhotoUploadButton>
+            <PhotoUploadButton htmlFor="photo-upload">
               <FaCamera /> Change Photo
               <input
+                id="photo-upload"
                 type="file"
                 accept="image/*"
                 onChange={handlePhotoChange}
@@ -287,9 +267,8 @@ const UserDetails = () => {
               type="text"
               name="fullName"
               value={formData.fullName}
-              onChange={handleChange}
-              placeholder="Enter your full name"
               required
+              disabled
             />
           </FormGroup>
 

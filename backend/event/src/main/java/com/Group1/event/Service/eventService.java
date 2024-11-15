@@ -3,6 +3,7 @@ package com.Group1.event.Service;
 import com.Group1.event.Model.eventModel;
 import com.Group1.event.Repository.eventRepo;
 import com.Group1.event.dto.eventdto;
+import com.Group1.event.feign.alertClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,9 @@ public class eventService {
     @Autowired
     private eventRepo repo;
 
+    @Autowired
+    private alertClient alertclient;
+
 
     public eventModel addEvent(eventdto event) {
         eventModel e = new eventModel();
@@ -23,7 +27,9 @@ public class eventService {
         e.setEventImg(event.getEventImg());
         e.setEventType(event.getEventType());
         e.setUserId(event.getUserId());
-        return repo.save(e);
+        eventModel a = repo.save(e);
+        alertclient.createAlert(a.getEventId());
+        return a;
     }
 
     public List<eventModel> getAllEvents() {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaPlus, FaChartBar, FaSort, FaUsers, FaTag, FaClock, FaUserFriends } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaPlus, FaChartBar, FaSort, FaUsers, FaTag, FaClock, FaUserFriends, FaInfo } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,45 +18,77 @@ const FormContainer = styled.div`
   z-index: 1000;
 `;
 
-const StyledForm = styled.form`
-  background: ${props => props.$theme === 'dark' ? '#333' : 'white'};
-  padding: 2rem;
+const FormCard = styled.div`
+  background: white;
+  padding: 40px;
   border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  max-width: 400px;
 `;
 
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+const Title = styled.h1`
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
 `;
 
-const Label = styled.label`
-  font-weight: 500;
-  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#000000'};
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: ${props => props.$theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#000000'};
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  
+  &:focus {
+    outline: none;
+    border-color: #000000;
+  }
+`;
+
+const Select = styled.select`
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  
+  &:focus {
+    outline: none;
+    border-color: #000000;
+  }
 `;
 
 const TextArea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
   min-height: 120px;
-  background: ${props => props.$theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#000000'};
+  
+  &:focus {
+    outline: none;
+    border-color: #000000;
+  }
+`;
+
+const Button = styled.button`
+  padding: 12px;
+  background: #000000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: #333333;
+  }
 `;
 
 const PageContainer = styled.div`
@@ -140,45 +172,6 @@ const StatCard = styled.div`
   }
 `;
 
-const FilterSection = styled.div`
-  background: ${props => props.$theme === 'dark' ? '#333' : 'white'};
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-`;
-
-const FilterSelect = styled.select`
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  background: ${props => props.$theme === 'dark' ? '#444' : 'white'};
-  color: ${props => props.$theme === 'dark' ? '#fff' : '#333'};
-`;
-
-const TagsContainer = styled.div`
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-`;
-
-const Tag = styled.span`
-  padding: 5px 10px;
-  background: ${props => props.$theme === 'dark' ? '#444' : '#e0e0e0'};
-  border-radius: 15px;
-  font-size: 12px;
-  color: ${props => props.$theme === 'dark' ? '#fff' : '#333'};
-  cursor: pointer;
-
-  &:hover {
-    background: #4CAF50;
-    color: white;
-  }
-`;
-
 const EventsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -212,14 +205,6 @@ const EventStatus = styled.div`
   color: white;
 `;
 
-const EventActions = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  gap: 5px;
-`;
-
 const EventTitle = styled.h3`
   margin: 30px 0 15px;
   color: ${props => props.$theme === 'dark' ? '#fff' : '#333'};
@@ -233,12 +218,25 @@ const EventDetail = styled.div`
   color: ${props => props.$theme === 'dark' ? '#ccc' : '#666'};
 `;
 
-const EventStats = styled.div`
+const TagsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid ${props => props.$theme === 'dark' ? '#444' : '#eee'};
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+`;
+
+const Tag = styled.span`
+  padding: 5px 10px;
+  background: ${props => props.$theme === 'dark' ? '#444' : '#e0e0e0'};
+  border-radius: 15px;
+  font-size: 12px;
+  color: ${props => props.$theme === 'dark' ? '#fff' : '#333'};
+  cursor: pointer;
+
+  &:hover {
+    background: #4CAF50;
+    color: white;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -250,10 +248,8 @@ const AdminEvents = () => {
   const navigate = useNavigate();
   const [theme] = useState('light');
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterVisible, setFilterVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('date');
   const [showEventForm, setShowEventForm] = useState(false);
+  const token = sessionStorage.getItem('jwtToken');
   const [events, setEvents] = useState({
     ongoing: [],
     upcoming: [],
@@ -270,18 +266,19 @@ const AdminEvents = () => {
     title: '',
     description: '',
     date: '',
-    time: '',
-    location: '',
-    category: '',
-    organizer: '',
-    tags: ''
+    imageUrl: '',
+    eventType: 'Event'
   });
 
   useEffect(() => {
     // Fetch all events from backend
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:8083/event/getAllEvents');
+        const response = await axios.get('http://localhost:9997/event/getAllEvents', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         const allEvents = response.data;
 
         // Categorize events based on date
@@ -294,7 +291,7 @@ const AdminEvents = () => {
         };
 
         allEvents.forEach(event => {
-          const eventDate = new Date(event.date);
+          const eventDate = new Date(event.eventDate);
           if (eventDate < now) {
             categorizedEvents.past.push(event);
           } else if (eventDate.toDateString() === now.toDateString()) {
@@ -308,7 +305,7 @@ const AdminEvents = () => {
         setStats({
           totalEvents: allEvents.length,
           activeEvents: categorizedEvents.ongoing.length + categorizedEvents.upcoming.length,
-          totalAttendees: 0 // You can add this if you track attendees
+          totalAttendees: 0
         });
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -322,46 +319,6 @@ const AdminEvents = () => {
     setShowEventForm(true);
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Create event object from form data
-      const eventData = {
-        title: formData.title,
-        description: formData.description,
-        date: formData.date,
-        time: formData.time,
-        location: formData.location,
-        category: formData.category,
-        organizer: formData.organizer,
-        tags: formData.tags.split(',').map(tag => tag.trim())
-      };
-
-      // Send POST request to create event
-      const response = await axios.post('http://localhost:8083/event/add', eventData);
-      
-      // Update events list
-      setEvents(prev => ({
-        ...prev,
-        upcoming: [...prev.upcoming, response.data]
-      }));
-
-      setShowEventForm(false);
-      setFormData({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        location: '',
-        category: '',
-        organizer: '',
-        tags: ''
-      });
-    } catch (error) {
-      console.error('Error creating event:', error);
-    }
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -370,31 +327,52 @@ const AdminEvents = () => {
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const localDateTime = new Date(formData.date).toISOString();
+
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      const userId = sessionStorage.getItem('userId');
+      const headers = { Authorization: token };
+
+      const response = await axios.post('http://localhost:9997/event/add',
+        {
+          eventTitle: formData.title,
+          eventDescription: formData.description,
+          eventDate: localDateTime,
+          eventType: formData.eventType,
+          eventImg: formData.imageUrl,
+          userId: userId
+        },
+        { headers }
+      );
+
+      setShowEventForm(false);
+      window.location.reload();
+    } catch(error) {
+      console.error('Error creating event:', error);
+    }
+  };
+
   const handleAnalytics = () => {
     navigate('/admin/analytics');
   };
 
   const renderEventCard = (event) => (
-    <EventCard key={event.id} $theme={theme}>
+    <EventCard key={event.eventId} $theme={theme}>
       <EventStatus $status={event.status}>
         {event.status ? event.status.charAt(0).toUpperCase() + event.status.slice(1) : 'Upcoming'}
       </EventStatus>
-      <EventActions>
-        <ActionButton $theme={theme}><FaEdit /></ActionButton>
-        <ActionButton $theme={theme} $delete><FaTrash /></ActionButton>
-      </EventActions>
-      <EventTitle $theme={theme}>{event.title}</EventTitle>
+      <EventTitle $theme={theme}>{event.eventTitle}</EventTitle>
       <EventDetail $theme={theme}>
-        <FaCalendarAlt /> {event.date}
+        <FaCalendarAlt /> {new Date(event.eventDate).toLocaleDateString()}
       </EventDetail>
       <EventDetail $theme={theme}>
-        <FaClock /> {event.time}
+        <FaClock /> {new Date(event.eventDate).toLocaleTimeString()}
       </EventDetail>
       <EventDetail $theme={theme}>
-        <FaTag /> {event.category}
-      </EventDetail>
-      <EventDetail $theme={theme}>
-        <FaUserFriends /> {event.organizer}
+        <FaInfo /> {event.eventDescription}
       </EventDetail>
       <TagsContainer>
         {event.tags && event.tags.map(tag => (
@@ -408,108 +386,58 @@ const AdminEvents = () => {
     <PageContainer $theme={theme}>
       {showEventForm && (
         <FormContainer>
-          <StyledForm onSubmit={handleFormSubmit}>
-            <FormGroup>
-              <Label htmlFor="title">Event Title</Label>
+          <FormCard>
+            <Title>Create Event</Title>
+            <Form onSubmit={handleSubmit}>
               <Input
                 type="text"
-                id="title"
+                placeholder="Event Title"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 required
               />
-            </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="description">Description</Label>
               <TextArea
-                id="description"
+                placeholder="Description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 required
               />
-            </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="date">Date</Label>
               <Input
-                type="date"
-                id="date"
+                type="datetime-local"
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
                 required
               />
-            </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="time">Time</Label>
-              <Input
-                type="time"
-                id="time"
-                name="time"
-                value={formData.time}
+              <Select
+                name="eventType"
+                value={formData.eventType}
                 onChange={handleChange}
                 required
-              />
-            </FormGroup>
+              >
+                <option value="Event">Event</option>
+                <option value="Emergency Message">Emergency Message</option>
+              </Select>
 
-            <FormGroup>
-              <Label htmlFor="location">Location</Label>
               <Input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
+                type="url"
+                placeholder="Image URL"
+                name="imageUrl"
+                value={formData.imageUrl}
                 onChange={handleChange}
-                required
               />
-            </FormGroup>
 
-            <FormGroup>
-              <Label htmlFor="category">Category</Label>
-              <Input
-                type="text"
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="organizer">Organizer</Label>
-              <Input
-                type="text"
-                id="organizer"
-                name="organizer"
-                value={formData.organizer}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-
-            <FormGroup>
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
-              <Input
-                type="text"
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                placeholder="music, outdoor, summer"
-              />
-            </FormGroup>
-
-            <ButtonGroup>
-              <ActionButton type="submit">Create Event</ActionButton>
-              <ActionButton type="button" $secondary onClick={() => setShowEventForm(false)}>
+              <Button type="submit">Create Event</Button>
+              <Button type="button" onClick={() => setShowEventForm(false)} style={{background: '#6c757d'}}>
                 Cancel
-              </ActionButton>
-            </ButtonGroup>
-          </StyledForm>
+              </Button>
+            </Form>
+          </FormCard>
         </FormContainer>
       )}
 
@@ -535,9 +463,6 @@ const AdminEvents = () => {
           />
         </SearchBar>
         <ButtonGroup>
-          <ActionButton onClick={() => setFilterVisible(!filterVisible)}>
-            <FaFilter /> Filter
-          </ActionButton>
           <ActionButton onClick={handleCreateEvent}>
             <FaPlus /> Create Event
           </ActionButton>
@@ -546,41 +471,6 @@ const AdminEvents = () => {
           </ActionButton>
         </ButtonGroup>
       </ControlsContainer>
-
-      {filterVisible && (
-        <FilterSection $theme={theme}>
-          <FilterSelect 
-            value={selectedCategory} 
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            $theme={theme}
-          >
-            <option value="all">All Categories</option>
-            <option value="music">Music</option>
-            <option value="technology">Technology</option>
-            <option value="food">Food & Drink</option>
-            <option value="business">Business</option>
-          </FilterSelect>
-          <FilterSelect 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            $theme={theme}
-          >
-            <option value="date">Sort by Date</option>
-            <option value="attendees">Sort by Attendees</option>
-            <option value="category">Sort by Category</option>
-          </FilterSelect>
-        </FilterSection>
-      )}
-
-      <SectionTitle $theme={theme}>Featured Events</SectionTitle>
-      <EventsGrid>
-        {events.featured.map(renderEventCard)}
-      </EventsGrid>
-
-      <SectionTitle $theme={theme}>Ongoing Events</SectionTitle>
-      <EventsGrid>
-        {events.ongoing.map(renderEventCard)}
-      </EventsGrid>
 
       <SectionTitle $theme={theme}>Upcoming Events</SectionTitle>
       <EventsGrid>

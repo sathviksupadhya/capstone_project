@@ -33,23 +33,23 @@ const EventForm = () => {
       const userId = sessionStorage.getItem('userId');
       const headers = { Authorization: token };
 
-      const filename = `eventimg${i}.jpg`; 
-      const imageUploadResponse = await axios.post(
-        `https://api.github.com/repos/sathviksupadhya/capstone_project/contents/frontend/comm-front/vite-project/src/assets/${filename}`,
-        {
-          message: 'Upload event image',
-          content: btoa(formData.imageUrl)
-        },
-        {
-          headers: {
-            'Authorization': `token ghp_yNUy41W5WO7FvcJsZhwYQD`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      // const filename = `eventimg${i}.jpg`; 
+      // const imageUploadResponse = await axios.post(
+      //   `https://api.github.com/repos/sathviksupadhya/capstone_project/contents/frontend/comm-front/vite-project/src/assets/${filename}`,
+      //   {
+      //     message: 'Upload event image',
+      //     content: btoa(formData.imageUrl)
+      //   },
+      //   {
+      //     headers: {
+      //       'Authorization': `token ghp_yNUy41W5WO7FvcJsZhwYQD`,
+      //       'Content-Type': 'application/json'
+      //     }
+      //   }
+      // );
 
 
-      const githubImageUrl = imageUploadResponse.data.content.download_url;
+      // const githubImageUrl = imageUploadResponse.data.content.download_url;
 
       const response = await axios.post('http://localhost:9997/event/add',
         {
@@ -57,12 +57,11 @@ const EventForm = () => {
           eventDescription: formData.description,
           eventDate: localDateTime,
           eventType: "Event",
-          eventImg: githubImageUrl,
+          eventImg: formData.imageUrl,
           userId: userId
         },
         { headers }
       );
-      const data = await axios.post('http://localhost:9997/api/alert/add/${eventid}');
       navigate(-1);
     } catch(error) {
       console.error('Error creating event:', error);
