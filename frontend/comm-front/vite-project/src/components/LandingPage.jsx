@@ -9,297 +9,13 @@ import { FocusCards } from './ui/FocusCards';
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon, FaShieldAlt, FaLock, FaHandshake, FaUsers, FaRocket, FaUserShield, FaCommentDots } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
-const HeroSection = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 120px 50px 20px 50px;
-  background: ${props => props.theme === 'dark' 
-    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
-    : 'linear-gradient(135deg, #e6f0ff 0%, #f5f5ff 100%)'
-  };
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-  scroll-behavior: smooth;
-
-  @media (max-width: 768px) {
-    padding: 80px 20px 20px 20px;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 0 auto;
-  gap: 4vh; // Reduced from 8vh
-
-  @media (max-width: 768px) {
-    gap: 2vh; // Reduced from 4vh
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  width: 100%;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-
-  span {
-    background: none;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-    font-weight: bold;
-  }
-`;
-
-const Description = styled(motion.p)`
-  font-size: 1.25rem;
-  line-height: 1.75;
-  color: ${props => props.theme === 'dark' ? '#e0e0e0' : '#4b5563'};
-  margin-bottom: 2rem;
-  text-align: center;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const ThemeToggleButton = styled(motion.button)`
-  padding: 1rem;
-  font-size: 1.125rem;
-  color: white;
-  background: ${props => props.theme === 'dark' 
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #2563eb, #4f46e5)'
-  };
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const GetStartedButton = styled(motion.button)`
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const KnowMoreButton = styled(motion.button)`
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  background: ${props => props.theme === 'dark'
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #1f2937, #374151)'
-  };
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const FeaturesSection = styled.div`
-  width: 100%;
-  max-width: 1200px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 1rem 0; // Reduced from 2rem
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    padding: 0.5rem; // Reduced from 1rem
-  }
-`;
-
-const FeatureItem = styled(motion.div)`
-  padding: 2rem;
-  background: ${props => props.theme === 'dark'
-    ? 'rgba(45, 45, 45, 0.9)'
-    : 'rgba(255, 255, 255, 0.95)'
-  };
-  border-radius: 1rem;
-  text-align: left;
-  box-shadow: ${props => props.theme === 'dark'
-    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
-    : '0 4px 6px rgba(37, 99, 235, 0.1)'
-  };
-  margin-bottom: 1rem;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
-  
-  h3 {
-    font-size: 1.5rem;
-    color: ${props => props.isBlue 
-      ? '#2563eb' 
-      : props.theme === 'dark' ? '#ffffff' : '#000000'
-    };
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  p {
-    color: ${props => props.theme === 'dark' 
-      ? '#e0e0e0' 
-      : props.isBlue ? '#4b5563' : '#000000'
-    };
-    line-height: 1.6;
-  }
-
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: ${props => props.theme === 'dark'
-      ? '0 25px 30px -5px rgba(0, 0, 0, 0.3), 0 15px 15px -5px rgba(0, 0, 0, 0.15)'
-      : '0 25px 30px -5px rgba(37, 99, 235, 0.2), 0 15px 15px -5px rgba(37, 99, 235, 0.1)'
-    };
-  }
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem; // Reduced from 2rem
-  text-align: center;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
-  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
-  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    margin-bottom: 0.5rem; // Added reduced margin for mobile
-  }
-`;
-
-const TeamGrid = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  width: 100%;
-  max-width: 1000px;
-  flex-wrap: wrap;
-`;
-
-const TeamCard = styled.div`
-  width: 300px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-10px);
-  }
-
-  .image-container {
-    width: 100%;
-    height: 250px;
-    overflow: hidden;
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .content {
-    padding: 1.5rem;
-    text-align: center;
-
-    h4 {
-      color: #1a1a1a;
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      color: #4f46e5;
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-  }
-
-  .social-links {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
-
-    a {
-      font-size: 1.5rem;
-      transition: color 0.3s ease;
-
-      &.linkedin {
-        color: #0077b5;
-        &:hover {
-          color: #00548c;
-        }
-      }
-
-      &.github {
-        color: #333;
-        &:hover {
-          color: #000;
-        }
-      }
-    }
-  }
-`;
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const featuresSectionRef = useRef(null);
+  const teamSectionRef = useRef(null);
+  const homeSectionRef = useRef(null);
+  const contactSectionRef = useRef(null);
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
@@ -310,8 +26,8 @@ const LandingPage = () => {
   }, []);
 
   const handleGetStarted = () => {
-    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
-    if (!isAuthenticated) {
+    const isAuthenticated = localStorage.getItem('token');
+    if (isAuthenticated) {
       toast.error('Please sign in or register to access this feature!', {
         position: "top-right",
         autoClose: 3000,
@@ -320,9 +36,10 @@ const LandingPage = () => {
         pauseOnHover: true,
         draggable: true,
       });
+      navigate('/register');
       return;
     }
-    navigate('/register');
+    navigate('/home');
   };
 
   const handleKnowMore = () => {
@@ -385,7 +102,7 @@ const LandingPage = () => {
   };
 
   const handleFeatureClick = () => {
-    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('token');
     if (!isAuthenticated) {
       toast.warning('Please sign in to access this feature!', {
         position: "top-right",
@@ -397,6 +114,10 @@ const LandingPage = () => {
       });
       return;
     }
+  };
+
+  const scrollToSection = (ref) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -412,6 +133,7 @@ const LandingPage = () => {
           ease: "easeInOut",
         }}
         className="relative flex flex-col gap-4 items-center justify-center px-4"
+        ref={homeSectionRef}
       >
           <Title
             variants={titleVariants}
@@ -612,11 +334,11 @@ const LandingPage = () => {
           </FeatureItem>
         </FeaturesSection>
 
-        <SectionTitle theme={theme}>Meet Our Team</SectionTitle>
+        <SectionTitle theme={theme} ref={teamSectionRef}>Meet Our Team</SectionTitle>
         <TeamGrid>
           <TeamCard>
             <div className="image-container">
-              <img src="" alt="profile-picture" />
+              <img src="https://a" alt="profile-picture" />
             </div>
             <div className="content">
               <h4>Sathvik S</h4>
@@ -634,7 +356,7 @@ const LandingPage = () => {
 
           <TeamCard>
             <div className="image-container">
-              <img src="" alt="profile-picture" />
+              <img src="https://av" alt="profile-picture" />
             </div>
             <div className="content">
               <h4>Rahul K</h4>
@@ -650,9 +372,377 @@ const LandingPage = () => {
             </div>
           </TeamCard>
         </TeamGrid>
+
+        <FullWidthFooter>
+          <FooterContent>
+            <FooterSection>
+              <h3>About UnitySpace</h3>
+              <p>Building stronger communities through technology and connection.</p>
+            </FooterSection>
+            <FooterSection>
+              <h3>Quick Links</h3>
+              <FooterLink onClick={() => scrollToSection(homeSectionRef)}>Home</FooterLink>
+              <FooterLink onClick={() => scrollToSection(featuresSectionRef)}>Features</FooterLink>
+              <FooterLink onClick={() => scrollToSection(teamSectionRef)}>Team</FooterLink>
+              <FooterLink onClick={() => scrollToSection(contactSectionRef)}>Contact</FooterLink>
+            </FooterSection>
+            <FooterSection ref={contactSectionRef}>
+              <h3>Contact Us</h3>
+              <p>Email: info@unityspace.com</p>
+              <p>Phone: 9448436216A</p>
+            </FooterSection>
+          </FooterContent>
+          <FooterBottom>
+            <p>&copy; 2024 UnitySpace. All rights reserved.</p>
+          </FooterBottom>
+        </FullWidthFooter>
       </ContentWrapper>
     </HeroSection>
   );
 };
+
+const HeroSection = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 120px 50px 0 50px;
+  background: ${props => props.theme === 'dark' 
+    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+    : 'linear-gradient(135deg, #e6f0ff 0%, #f5f5ff 100%)'
+  };
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  scroll-behavior: smooth;
+
+  @media (max-width: 768px) {
+    padding: 80px 20px 0 20px;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto;
+  gap: 4vh;
+
+  @media (max-width: 768px) {
+    gap: 2vh;
+  }
+`;
+
+const Title = styled(motion.h1)`
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+
+  span {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+    font-weight: bold;
+  }
+`;
+
+const Description = styled(motion.p)`
+  font-size: 1.25rem;
+  line-height: 1.75;
+  color: ${props => props.theme === 'dark' ? '#e0e0e0' : '#4b5563'};
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+const ThemeToggleButton = styled(motion.button)`
+  padding: 1rem;
+  font-size: 1.125rem;
+  color: white;
+  background: ${props => props.theme === 'dark' 
+    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
+    : 'linear-gradient(to right, #2563eb, #4f46e5)'
+  };
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const GetStartedButton = styled(motion.button)`
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const KnowMoreButton = styled(motion.button)`
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background: ${props => props.theme === 'dark'
+    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
+    : 'linear-gradient(to right, #1f2937, #374151)'
+  };
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const FeaturesSection = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+  }
+`;
+
+const FeatureItem = styled(motion.div)`
+  padding: 2rem;
+  background: ${props => props.theme === 'dark'
+    ? 'rgba(45, 45, 45, 0.9)'
+    : 'rgba(255, 255, 255, 0.95)'
+  };
+  border-radius: 1rem;
+  text-align: left;
+  box-shadow: ${props => props.theme === 'dark'
+    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
+    : '0 4px 6px rgba(37, 99, 235, 0.1)'
+  };
+  margin-bottom: 1rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  
+  h3 {
+    font-size: 1.5rem;
+    color: ${props => props.isBlue 
+      ? '#2563eb' 
+      : props.theme === 'dark' ? '#ffffff' : '#000000'
+    };
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    color: ${props => props.theme === 'dark' 
+      ? '#e0e0e0' 
+      : props.isBlue ? '#4b5563' : '#000000'
+    };
+    line-height: 1.6;
+  }
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: ${props => props.theme === 'dark'
+      ? '0 25px 30px -5px rgba(0, 0, 0, 0.3), 0 15px 15px -5px rgba(0, 0, 0, 0.15)'
+      : '0 25px 30px -5px rgba(37, 99, 235, 0.2), 0 15px 15px -5px rgba(37, 99, 235, 0.1)'
+    };
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
+  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
+  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const TeamGrid = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  flex-wrap: wrap;
+`;
+
+const TeamCard = styled.div`
+  width: 300px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+  }
+
+  .image-container {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .content {
+    padding: 1.5rem;
+    text-align: center;
+
+    h4 {
+      color: #1a1a1a;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #4f46e5;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    a {
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+
+      &.linkedin {
+        color: #0077b5;
+        &:hover {
+          color: #00548c;
+        }
+      }
+
+      &.github {
+        color: #333;
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+  }
+`;
+
+const FullWidthFooter = styled.footer`
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  background: #000000;
+  color: #ffffff;
+  padding: 4rem 0 2rem 0;
+  margin-top: 4rem;
+`;
+
+const FooterContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 0 2rem;
+`;
+
+const FooterSection = styled.div`
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+  }
+
+  p {
+    color: #cccccc;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+`;
+
+const FooterLink = styled.a`
+  display: block;
+  color: #cccccc;
+  text-decoration: none;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+
+  &:hover {
+    color: #ffffff;
+  }
+`;
+
+const FooterBottom = styled.div`
+  text-align: center;
+  padding-top: 2rem;
+  margin-top: 2rem;
+  border-top: 1px solid #333333;
+
+  p {
+    color: #cccccc;
+  }
+`;
 
 export default LandingPage;

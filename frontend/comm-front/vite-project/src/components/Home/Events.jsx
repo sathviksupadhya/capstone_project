@@ -103,7 +103,7 @@ export default function Events() {
 
   return (
     <div style={{ marginTop: "80px" }}>
-      <button className="eventform" onClick={navigateForm}>Add an Event</button>
+      <AddEventButton onClick={navigateForm}>Add an Event</AddEventButton>
       <FocusCards cards={cards} />
     </div>
   );

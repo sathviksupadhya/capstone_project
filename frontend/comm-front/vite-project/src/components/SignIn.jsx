@@ -23,13 +23,12 @@ const SignInForm = () => {
           password: password,
         }
       );
-
-      // Check if response contains required data
       if (!response.data || !response.data.token || !response.data.userId) {
         throw new Error('Invalid response from server');
       }
 
       const { token, userId } = response.data;
+      console.log(token);
       sessionStorage.setItem("jwtToken", token);
       sessionStorage.setItem("userId", userId);
 

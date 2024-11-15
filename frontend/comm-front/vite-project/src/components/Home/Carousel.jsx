@@ -33,7 +33,7 @@ export default function Carousel(){
         }, 5000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [slides.length]);
 
     const nextSlide = () => {
         setCurrentSlide((prevSlide) => 
@@ -48,7 +48,7 @@ export default function Carousel(){
     };
 
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
             {slides.map((slide, index) => (
                 <div
                     key={index}
@@ -57,7 +57,9 @@ export default function Carousel(){
                         width: '100%',
                         height: '100%',
                         opacity: index === currentSlide ? 1 : 0,
-                        transition: 'opacity 0.5s ease-in-out',
+                        transition: 'opacity 0.3s ease-in-out',
+                        transform: `translateX(${(index - currentSlide) * 100}%)`,
+                        willChange: 'transform, opacity'
                     }}
                 >
                     <img
@@ -67,7 +69,8 @@ export default function Carousel(){
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
-                            filter: 'brightness(0.7)'
+                            filter: 'brightness(0.7)',
+                            willChange: 'transform'
                         }}
                     />
                     <div style={{
@@ -108,7 +111,8 @@ export default function Carousel(){
                     borderRadius: '50%',
                     width: '40px',
                     height: '40px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    zIndex: 1
                 }}
             >
                 ←
@@ -126,7 +130,8 @@ export default function Carousel(){
                     borderRadius: '50%',
                     width: '40px',
                     height: '40px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    zIndex: 1
                 }}
             >
                 →
@@ -138,7 +143,8 @@ export default function Carousel(){
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex',
-                gap: '10px'
+                gap: '10px',
+                zIndex: 1
             }}>
                 {slides.map((_, index) => (
                     <button
