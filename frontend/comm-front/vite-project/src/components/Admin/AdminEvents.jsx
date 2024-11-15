@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaDownload, FaPlus, FaChartBar, FaSort, FaMapMarkerAlt, FaUsers, FaTag, FaClock, FaUserFriends } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaPlus, FaChartBar, FaSort, FaUsers, FaTag, FaClock, FaUserFriends } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const FormContainer = styled.div`
   position: fixed;
@@ -114,7 +116,7 @@ const ActionButton = styled.button`
 
 const StatsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 30px;
 `;
@@ -245,6 +247,7 @@ const SectionTitle = styled.h2`
 `;
 
 const AdminEvents = () => {
+  const navigate = useNavigate();
   const [theme] = useState('light');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterVisible, setFilterVisible] = useState(false);
@@ -260,8 +263,7 @@ const AdminEvents = () => {
   const [stats, setStats] = useState({
     totalEvents: 0,
     activeEvents: 0,
-    totalAttendees: 0,
-    revenue: 0
+    totalAttendees: 0
   });
 
   const [formData, setFormData] = useState({
@@ -271,109 +273,93 @@ const AdminEvents = () => {
     time: '',
     location: '',
     category: '',
-    maxCapacity: '',
     organizer: '',
     tags: ''
   });
 
   useEffect(() => {
-    // Mock data - replace with actual API calls
-    setEvents({
-      ongoing: [
-        {
-          id: 1,
-          title: "Summer Music Festival",
-          date: "2024-07-15",
-          time: "2:00 PM - 10:00 PM",
-          location: "Central Park",
-          attendees: 156,
-          maxCapacity: 200,
-          status: 'ongoing',
-          category: 'Music',
-          organizer: "Music Events Inc",
-          tags: ['music', 'outdoor', 'summer']
-        }
-      ],
-      upcoming: [
-        {
-          id: 2,
-          title: "Tech Conference 2024",
-          date: "2024-08-20",
-          time: "9:00 AM - 6:00 PM",
-          location: "Convention Center",
-          attendees: 89,
-          maxCapacity: 150,
-          status: 'upcoming',
-          category: 'Technology',
-          organizer: "TechCon Events",
-          tags: ['tech', 'business', 'networking']
-        }
-      ],
-      past: [
-        {
-          id: 3,
-          title: "Food & Wine Expo",
-          date: "2024-06-05",
-          time: "11:00 AM - 8:00 PM",
-          location: "City Hall",
-          attendees: 234,
-          maxCapacity: 300,
-          status: 'past',
-          category: 'Food',
-          organizer: "Culinary Arts Society",
-          tags: ['food', 'wine', 'tasting']
-        }
-      ],
-      featured: [
-        {
-          id: 4,
-          title: "New Year's Eve Gala",
-          date: "2024-12-31",
-          time: "8:00 PM - 1:00 AM",
-          location: "Grand Hotel",
-          attendees: 500,
-          maxCapacity: 600,
-          status: 'upcoming',
-          category: 'Entertainment',
-          organizer: "City Events Committee",
-          tags: ['gala', 'celebration', 'formal']
-        }
-      ]
-    });
+    // Fetch all events from backend
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8083/event/getAllEvents');
+        const allEvents = response.data;
 
-    setStats({
-      totalEvents: 45,
-      activeEvents: 12,
-      totalAttendees: 3456,
-      revenue: 156789
-    });
+        // Categorize events based on date
+        const now = new Date();
+        const categorizedEvents = {
+          ongoing: [],
+          upcoming: [],
+          past: [],
+          featured: []
+        };
+
+        allEvents.forEach(event => {
+          const eventDate = new Date(event.date);
+          if (eventDate < now) {
+            categorizedEvents.past.push(event);
+          } else if (eventDate.toDateString() === now.toDateString()) {
+            categorizedEvents.ongoing.push(event);
+          } else {
+            categorizedEvents.upcoming.push(event);
+          }
+        });
+
+        setEvents(categorizedEvents);
+        setStats({
+          totalEvents: allEvents.length,
+          activeEvents: categorizedEvents.ongoing.length + categorizedEvents.upcoming.length,
+          totalAttendees: 0 // You can add this if you track attendees
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
   }, []);
-
-  const handleExport = () => {
-    // Implement CSV export logic
-    console.log('Exporting events data...');
-  };
 
   const handleCreateEvent = () => {
     setShowEventForm(true);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
-    setShowEventForm(false);
-    setFormData({
-      title: '',
-      description: '',
-      date: '',
-      time: '',
-      location: '',
-      category: '',
-      maxCapacity: '',
-      organizer: '',
-      tags: ''
-    });
+    try {
+      // Create event object from form data
+      const eventData = {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        time: formData.time,
+        location: formData.location,
+        category: formData.category,
+        organizer: formData.organizer,
+        tags: formData.tags.split(',').map(tag => tag.trim())
+      };
+
+      // Send POST request to create event
+      const response = await axios.post('http://localhost:8083/event/add', eventData);
+      
+      // Update events list
+      setEvents(prev => ({
+        ...prev,
+        upcoming: [...prev.upcoming, response.data]
+      }));
+
+      setShowEventForm(false);
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        location: '',
+        category: '',
+        organizer: '',
+        tags: ''
+      });
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
   };
 
   const handleChange = (e) => {
@@ -384,10 +370,14 @@ const AdminEvents = () => {
     }));
   };
 
+  const handleAnalytics = () => {
+    navigate('/admin/analytics');
+  };
+
   const renderEventCard = (event) => (
     <EventCard key={event.id} $theme={theme}>
       <EventStatus $status={event.status}>
-        {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+        {event.status ? event.status.charAt(0).toUpperCase() + event.status.slice(1) : 'Upcoming'}
       </EventStatus>
       <EventActions>
         <ActionButton $theme={theme}><FaEdit /></ActionButton>
@@ -401,24 +391,16 @@ const AdminEvents = () => {
         <FaClock /> {event.time}
       </EventDetail>
       <EventDetail $theme={theme}>
-        <FaMapMarkerAlt /> {event.location}
-      </EventDetail>
-      <EventDetail $theme={theme}>
         <FaTag /> {event.category}
       </EventDetail>
       <EventDetail $theme={theme}>
         <FaUserFriends /> {event.organizer}
       </EventDetail>
       <TagsContainer>
-        {event.tags.map(tag => (
+        {event.tags && event.tags.map(tag => (
           <Tag key={tag} $theme={theme}>#{tag}</Tag>
         ))}
       </TagsContainer>
-      <EventStats $theme={theme}>
-        <EventDetail $theme={theme}>
-          <FaUsers /> {event.attendees}/{event.maxCapacity}
-        </EventDetail>
-      </EventStats>
     </EventCard>
   );
 
@@ -497,19 +479,6 @@ const AdminEvents = () => {
                 required
               />
             </FormGroup>
-
-            <FormGroup>
-              <Label htmlFor="maxCapacity">Maximum Capacity</Label>
-              <Input
-                type="number"
-                id="maxCapacity"
-                name="maxCapacity"
-                value={formData.maxCapacity}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-
             <FormGroup>
               <Label htmlFor="organizer">Organizer</Label>
               <Input
@@ -553,14 +522,6 @@ const AdminEvents = () => {
           <h4>Active Events</h4>
           <p>{stats.activeEvents}</p>
         </StatCard>
-        <StatCard $theme={theme}>
-          <h4>Total Attendees</h4>
-          <p>{stats.totalAttendees}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4>Revenue</h4>
-          <p>${stats.revenue.toLocaleString()}</p>
-        </StatCard>
       </StatsContainer>
 
       <ControlsContainer>
@@ -580,10 +541,7 @@ const AdminEvents = () => {
           <ActionButton onClick={handleCreateEvent}>
             <FaPlus /> Create Event
           </ActionButton>
-          <ActionButton $secondary onClick={handleExport}>
-            <FaDownload /> Export
-          </ActionButton>
-          <ActionButton $secondary>
+          <ActionButton $secondary onClick={handleAnalytics}>
             <FaChartBar /> Analytics
           </ActionButton>
         </ButtonGroup>

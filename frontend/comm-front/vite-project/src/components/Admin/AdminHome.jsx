@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaDownload, FaBell, FaComments, FaMoneyBillWave, FaUserClock } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 
 const DashboardContainer = styled.div`
   padding: 90px 50px 30px;
@@ -62,73 +63,6 @@ const SectionTitle = styled.h2`
   margin: 0;
 `;
 
-const ControlsContainer = styled.div`
-  display: flex;
-  gap: 15px;
-`;
-
-const SearchBar = styled.input`
-  padding: 8px 15px;
-  border: 1px solid ${props => props.$theme === 'dark' ? '#444' : '#ddd'};
-  border-radius: 5px;
-  background: ${props => props.$theme === 'dark' ? '#444' : '#fff'};
-  color: ${props => props.$theme === 'dark' ? '#fff' : '#333'};
-`;
-
-const Button = styled.button`
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  background: #4CAF50;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
-  &:hover {
-    background: #45a049;
-  }
-`;
-
-const EventsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-`;
-
-const EventCard = styled.div`
-  background: ${props => props.$theme === 'dark' ? '#333' : '#ffffff'};
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    cursor: pointer;
-  }
-
-  h4 {
-    margin: 0 0 10px;
-    color: ${props => props.$theme === 'dark' ? '#ffffff' : '#000000'};
-  }
-
-  p {
-    margin: 5px 0;
-    color: ${props => props.$theme === 'dark' ? '#ccc' : '#666'};
-  }
-`;
-
-const StatusBadge = styled.span`
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  background: ${props => props.$status === 'active' ? '#4CAF50' : props.$status === 'pending' ? '#ff9800' : '#f44336'};
-  color: white;
-  margin-left: 10px;
-`;
-
 const NotificationsContainer = styled.div`
   margin: 30px 0;
   background: ${props => props.$theme === 'dark' ? '#333' : '#ffffff'};
@@ -167,84 +101,90 @@ const ActivityItem = styled.div`
 const AdminHome = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
-    users: 0,
-    events: 0,
-    activeUsers: 0,
-    revenue: 0,
-    newRegistrations: 0
+    totalResidents: 0,
+    totalEvents: 0,
+    activeResidents: 0,
+    pendingApprovals: 0
   });
   
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [theme] = useState('light');
+  const token = sessionStorage.getItem('jwtToken');
 
   useEffect(() => {
-    // Fetch stats from your API
-    setStats({
-      users: 1234,
-      events: 45,
-      activeUsers: 890,
-      revenue: 15000,
-      newRegistrations: 56
-    });
+    if (!token) {
+      navigate('/');
+      return;
+    }
 
-    // Fetch notifications
-    setNotifications([
-      { id: 1, message: "New event registration request", time: "2 minutes ago" },
-      { id: 2, message: "User reported an issue", time: "1 hour ago" },
-      { id: 3, message: "System maintenance scheduled", time: "3 hours ago" }
-    ]);
+    const fetchData = async () => {
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
 
-    // Fetch recent activity
-    setRecentActivity([
-      { id: 1, action: "User John Doe registered for Summer Music Festival", time: "10 minutes ago" },
-      { id: 2, action: "New event created: Winter Workshop", time: "2 hours ago" },
-      { id: 3, action: "Payment received for Tech Conference", time: "5 hours ago" }
-    ]);
+        // Fetch residents data
+        const residentsResponse = await axios.get('http://localhost:9997/api/residents', { headers });
+        const totalResidents = residentsResponse.data.length;
+        const activeResidents = residentsResponse.data.filter(resident => resident.status === 'ACTIVE').length;
+        const pendingApprovals = residentsResponse.data.filter(resident => resident.status === 'PENDING').length;
 
-    // Fetch upcoming events
-    setUpcomingEvents([
-      {
-        id: 1,
-        title: "Summer Music Festival",
-        date: "2024-07-15",
-        location: "Central Park",
-        registrations: 156,
-        status: 'active'
-      },
-      {
-        id: 2,
-        title: "Tech Conference 2024",
-        date: "2024-06-20",
-        location: "Convention Center",
-        registrations: 89,
-        status: 'pending'
-      },
-      {
-        id: 3,
-        title: "Food & Wine Expo",
-        date: "2024-08-05",
-        location: "City Hall",
-        registrations: 234,
-        status: 'active'
+        // Fetch events data
+        const eventsResponse = await axios.get('http://localhost:9997/api/events', { headers });
+        const totalEvents = eventsResponse.data.length;
+
+        setStats({
+          totalResidents,
+          totalEvents,
+          activeResidents,
+          pendingApprovals
+        });
+
+        // Generate notifications from residents and events data
+        const notificationsList = [
+          ...residentsResponse.data
+            .filter(resident => resident.status === 'PENDING')
+            .map(resident => ({
+              id: `resident-${resident.id}`,
+              message: `New registration request from ${resident.firstName} ${resident.lastName}`,
+              timestamp: new Date(resident.createdAt).toLocaleString()
+            })),
+          ...eventsResponse.data
+            .filter(event => new Date(event.eventDate) > new Date())
+            .map(event => ({
+              id: `event-${event.id}`,
+              message: `Upcoming event: ${event.eventName}`,
+              timestamp: new Date(event.eventDate).toLocaleString()
+            }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setNotifications(notificationsList.slice(0, 5)); // Show only latest 5 notifications
+
+        // Generate activity log from residents and events data
+        const activityList = [
+          ...residentsResponse.data.map(resident => ({
+            id: `activity-resident-${resident.id}`,
+            description: `Resident ${resident.firstName} ${resident.lastName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
+            timestamp: new Date(resident.createdAt).toLocaleString()
+          })),
+          ...eventsResponse.data.map(event => ({
+            id: `activity-event-${event.id}`,
+            description: `New event created: ${event.eventName}`,
+            timestamp: new Date(event.createdAt).toLocaleString()
+          }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setRecentActivity(activityList.slice(0, 5)); // Show only latest 5 activities
+
+      } catch (error) {
+        console.error('Error fetching admin dashboard data:', error);
+        if (error.response && error.response.status === 401) {
+          navigate('/');
+        }
       }
-    ]);
-  }, [navigate]);
+    };
 
-  const handleExportData = () => {
-    console.log('Exporting data...');
-  };
-
-  const handleCardClick = (id) => {
-    navigate(`/admin/events/${id}`);
-  };
-
-  const filteredEvents = upcomingEvents.filter(event =>
-    event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    fetchData();
+  }, [navigate, token]);
 
   return (
     <DashboardContainer $theme={theme}>
@@ -254,8 +194,8 @@ const AdminHome = () => {
             <FaUsers />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.users}</h3>
-            <p>Registered Users</p>
+            <h3>{stats.totalResidents}</h3>
+            <p>Total Residents</p>
           </StatInfo>
         </StatCard>
 
@@ -264,7 +204,7 @@ const AdminHome = () => {
             <FaCalendarAlt />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.events}</h3>
+            <h3>{stats.totalEvents}</h3>
             <p>Total Events</p>
           </StatInfo>
         </StatCard>
@@ -274,18 +214,8 @@ const AdminHome = () => {
             <FaChartLine />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.activeUsers}</h3>
-            <p>Active Users</p>
-          </StatInfo>
-        </StatCard>
-
-        <StatCard $theme={theme} onClick={() => navigate('/admin/revenue')}>
-          <StatIcon>
-            <FaMoneyBillWave />
-          </StatIcon>
-          <StatInfo>
-            <h3>${stats.revenue}</h3>
-            <p>Total Revenue</p>
+            <h3>{stats.activeResidents}</h3>
+            <p>Active Residents</p>
           </StatInfo>
         </StatCard>
 
@@ -294,8 +224,8 @@ const AdminHome = () => {
             <FaUserClock />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.newRegistrations}</h3>
-            <p>New Registrations Today</p>
+            <h3>{stats.pendingApprovals}</h3>
+            <p>Pending Approvals</p>
           </StatInfo>
         </StatCard>
       </StatsGrid>
@@ -309,7 +239,7 @@ const AdminHome = () => {
             <FaBell />
             <div>
               <p>{notification.message}</p>
-              <small>{notification.time}</small>
+              <small>{notification.timestamp}</small>
             </div>
           </NotificationItem>
         ))}
@@ -321,50 +251,11 @@ const AdminHome = () => {
         </SectionHeader>
         {recentActivity.map(activity => (
           <ActivityItem key={activity.id} $theme={theme}>
-            <p>{activity.action}</p>
-            <small>{activity.time}</small>
+            <p>{activity.description}</p>
+            <small>{activity.timestamp}</small>
           </ActivityItem>
         ))}
       </RecentActivityContainer>
-
-      <SectionHeader>
-        <SectionTitle>Upcoming Events</SectionTitle>
-        <ControlsContainer>
-          <SearchBar 
-            type="text"
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            $theme={theme}
-          />
-          <Button onClick={() => navigate('/admin/events/new')}>
-            <FaCalendarAlt /> New Event
-          </Button>
-          <Button onClick={handleExportData}>
-            <FaDownload /> Export
-          </Button>
-        </ControlsContainer>
-      </SectionHeader>
-
-      <EventsGrid>
-        {filteredEvents.map(event => (
-          <EventCard 
-            key={event.id} 
-            $theme={theme}
-            onClick={() => handleCardClick(event.id)}
-          >
-            <h4>
-              {event.title}
-              <StatusBadge $status={event.status}>
-                {event.status}
-              </StatusBadge>
-            </h4>
-            <p>📅 {new Date(event.date).toLocaleDateString()}</p>
-            <p>📍 {event.location}</p>
-            <p>👥 {event.registrations} Registrations</p>
-          </EventCard>
-        ))}
-      </EventsGrid>
     </DashboardContainer>
   );
 };

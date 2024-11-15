@@ -656,4 +656,365 @@ const TeamCard = styled.div`
   }
 `;
 
+<<<<<<< HEAD
+=======
+const LandingPage = () => {
+  const navigate = useNavigate();
+  const featuresSectionRef = useRef(null);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, []);
+
+  const handleGetStarted = () => {
+    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.error('Please sign in or register to access this feature!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+    navigate('/register');
+  };
+
+  const handleKnowMore = () => {
+    featuresSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
+
+  const titleVariants = {
+    initial: {
+      opacity: 0,
+      y: -50,
+      scale: 0.8
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 2.5,
+        ease: "easeInOut",
+        staggerChildren: 0.2
+      },
+    },
+  };
+
+  const spanVariants = {
+    initial: {
+      opacity: 0,
+      y: 50,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 2.5,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const featureVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.5,
+      }
+    },
+    hover: {
+      scale: 1.05,
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const handleFeatureClick = () => {
+    const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.warning('Please sign in to access this feature!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+  };
+
+  return (
+    <HeroSection theme={theme}>
+      <ContentWrapper>
+      <AuroraBackground>
+      <motion.div
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="relative flex flex-col gap-4 items-center justify-center px-4"
+      >
+          <Title
+            variants={titleVariants}
+            initial="initial"
+            animate="animate"
+            viewport={{ once: true }}
+            theme={theme}
+          >
+            Welcome to{" "}
+            <motion.span
+              variants={spanVariants}
+            >
+              UnitySpace
+            </motion.span>
+          </Title>
+          <Description
+            initial={{ opacity: 0, z: -100 }}
+            animate={{ opacity: 1, z: 0 }}
+            transition={{ duration: 2.5, ease: "backOut" }}
+            style={{ 
+              perspective: 1000,
+              transformStyle: "preserve-3d"
+            }}
+            viewport={{ once: true }}
+            theme={theme}
+          >
+            Experience a connected community like never before. 
+            UnitySpace is your digital hub for staying updated 
+            on all events happening in your society. Whether 
+            it's a celebration, meeting, or community initiative, 
+            UnitySpace keeps you informed, engaged, and part of 
+            every moment. Join your neighbors in building a 
+            vibrant, united community!
+          </Description>
+          <ButtonContainer>
+            <ThemeToggleButton
+              onClick={toggleTheme}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              theme={theme}
+            >
+              {theme === 'light' ? <FaMoon /> : <FaSun />}
+            </ThemeToggleButton>
+            <GetStartedButton
+              onClick={handleGetStarted}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              Get Started
+            </GetStartedButton>
+            <KnowMoreButton
+              onClick={handleKnowMore}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              viewport={{ once: true }}
+              theme={theme}
+            >
+              Know More
+            </KnowMoreButton>
+          </ButtonContainer>
+        </motion.div>
+        </AuroraBackground>
+
+        <SectionTitle theme={theme} gradient={true}>Our Features</SectionTitle>
+        <FeaturesSection ref={featuresSectionRef}>
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaCalendarAlt /> Event Management</h3>
+            <p>Create, organize, and manage community events effortlessly. Set dates, venues, and track attendance all in one place.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaBell /> Smart Reminders</h3>
+            <p>Never miss an important event with our intelligent reminder system. Get notifications about upcoming events and important updates.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaClock /> Event Scheduling</h3>
+            <p>Plan ahead with our intuitive scheduling system. Check availability, avoid conflicts, and find the perfect time for your events.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaComments /> Community Feedback</h3>
+            <p>Share your thoughts and experiences. Rate events, provide suggestions, and help shape future community gatherings.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaRss /> Real-time Updates</h3>
+            <p>Stay informed with instant updates about event changes, new announcements, and community news.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaRegCalendarCheck /> Community Calendar</h3>
+            <p>Access a shared calendar showing all upcoming events, making it easy to plan and participate in community activities.</p>
+          </FeatureItem>
+        </FeaturesSection>
+
+        <SectionTitle theme={theme} gradient={true}>Coming Soon</SectionTitle>
+        <FeaturesSection>
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaHandshake /> Community Marketplace</h3>
+            <p>A dedicated space for community members to buy, sell, or exchange items and services locally.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaUsers /> Interest Groups</h3>
+            <p>Create and join groups based on shared interests, hobbies, or activities within your community.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={true}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaRocket /> Mobile App</h3>
+            <p>Access UnitySpace on the go with our upcoming mobile application for iOS and Android devices.</p>
+          </FeatureItem>
+
+          <FeatureItem
+            variants={featureVariants}
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            isBlue={false}
+            theme={theme}
+            onClick={handleFeatureClick}
+          >
+            <h3><FaCommentDots /> Discussion Forum</h3>
+            <p>Engage in meaningful conversations with community members through our dedicated discussion forum and real-time chat features.</p>
+          </FeatureItem>
+        </FeaturesSection>
+
+        <SectionTitle theme={theme}>Meet Our Team</SectionTitle>
+        <TeamGrid>
+          <TeamCard>
+            <div className="image-container">
+              <img src="" alt="profile-picture" />
+            </div>
+            <div className="content">
+              <h4>Sathvik S</h4>
+              <p>Lead Developer</p>
+            </div>
+            <div className="social-links">
+              <a href="https://linkedin.com/sathviksupadhya19/" target="_blank" rel="noopener noreferrer" className="linkedin">
+                <FaLinkedin />
+              </a>
+              <a href="https://github.com/sathviksupadhya/" target="_blank" rel="noopener noreferrer" className="github">
+                <FaGithub />
+              </a>
+            </div>
+          </TeamCard>
+
+          <TeamCard>
+            <div className="image-container">
+              <img src="" alt="profile-picture" />
+            </div>
+            <div className="content">
+              <h4>Rahul K</h4>
+              <p>Lead Developer</p>
+            </div>
+            <div className="social-links">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="linkedin">
+                <FaLinkedin />
+              </a>
+              <a href="https://github.com/Rahul-char/" target="_blank" rel="noopener noreferrer" className="github">
+                <FaGithub />
+              </a>
+            </div>
+          </TeamCard>
+        </TeamGrid>
+      </ContentWrapper>
+    </HeroSection>
+  );
+};
+
+>>>>>>> 214171d0ea98a43d9e8d4c3c1d270346f441086c
 export default LandingPage;
