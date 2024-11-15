@@ -241,137 +241,104 @@ const UserPage = () => {
   });
   const [stats, setStats] = useState({
     totalUsers: 0,
-    activeUsers: 0,
-    newUsersThisMonth: 0,
-
+    pendingUsers: 0,
+    approvedUsers: 0
   });
 
-  useEffect(() => {
-
-    const mockUsers = [
-      {
-        id: 1,
-        name: 'Sathvik S Upadhya',
-        email: 'sathvik.upadhya@example.com',
-        phone: '+919448436216',
-        status: 'active',
-        role: 'Admin',
-        
-      },
-      {
-        id: 2,
-        name: 'Rahul K',
-        email: 'rahul.k@example.com', 
-        phone: '+919448436217',
-        status: 'inactive',
-        role: 'User',
-        
-      },
-      {
-        id: 3,
-        name: 'Arpan J',
-        email: 'arpan.j@example.com',
-        phone: '+919448436218', 
-        status: 'active',
-        role: 'User',
-        
-      },
-      {
-        id: 4,
-        name: 'Mani K',
-        email: 'mani.k@example.com',
-        phone: '+919448436219',
-        status: 'active',
-        role: 'Moderator',
-        
-      },
-      {
-        id: 5,
-        name: 'Pavan B',
-        email: 'pavan.b@example.com',
-        phone: '+919448436220',
-        status: 'inactive',
-        role: 'User',
-
-      },
+  const fetchData = async () => {
+    try {
+      // Fetch all users using the endpoint from UserController
+      const response = await axios.get('http://localhost:9997/api/residents/all');
+      setUsers(response.data);
       
-    ];
-    
-    setUsers(mockUsers);
-    
-    // Calculate stats
-    setStats({
-      totalUsers: mockUsers.length,
-      activeUsers: mockUsers.filter(u => u.status === 'active').length,
-      newUsersThisMonth: mockUsers.filter(u => new Date(u.joinDate).getMonth() === new Date().getMonth()).length,
-      premiumUsers: mockUsers.filter(u => u.premium).length
-    });
+      // Calculate stats
+      const total = response.data.length;
+      const pending = response.data.filter(user => user.status === 'PENDING').length;
+      const approved = response.data.filter(user => user.status === 'APPROVED').length;
+      
+      setStats({
+        totalUsers: total,
+        pendingUsers: pending,
+        approvedUsers: approved
+      });
+    } catch (error) {
+      console.error('Error fetching residents data:', error);
+      toast.error('Failed to fetch user data');
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
     let filtered = [...users];
     
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(user => 
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        user.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
-    // Apply tab filter
     if (activeTab !== 'all') {
       filtered = filtered.filter(user => {
-        if (activeTab === 'active') return user.status === 'active';
-        if (activeTab === 'inactive') return user.status === 'inactive';
-        if (activeTab === 'premium') return user.premium;
+        if (activeTab === 'active') return user.status === 'APPROVED';
+        if (activeTab === 'inactive') return user.status === 'PENDING';
         return true;
       });
     }
     
-    // Apply sorting
     filtered.sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name);
-      if (sortBy === 'date') return new Date(b.joinDate) - new Date(a.joinDate);
+      if (sortBy === 'name') return a.userName?.localeCompare(b.userName);
+      if (sortBy === 'date') return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
     
     setFilteredUsers(filtered);
   }, [searchTerm, users, activeTab, sortBy]);
 
-  const handleEdit = (userId) => {
-    // Implement edit functionality
-    console.log('Edit user:', userId);
-  };
-
-  const handleDelete = (userId) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.id !== userId));
+  const handleEdit = async (userId) => {
+    try {
+      await axios.put(`http://localhost:9997/api/residents/action/${userId}?action=APPROVE`);
+      toast.success('User approved successfully');
+      fetchData();
+    } catch (error) {
+      console.error('Error approving user:', error);
+      toast.error('Failed to approve user');
     }
   };
 
-  const handleAddUser = () => {
-    setShowModal(true);
+  const handleDelete = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await axios.delete(`http://localhost:9997/api/residents/${userId}`);
+        toast.success('User deleted successfully');
+        fetchData();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        toast.error('Failed to delete user');
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:9997/auth/register", {
+      await axios.post("http://localhost:9997/auth/register", {
         userName: newUser.username,
         password: newUser.password,
         email: newUser.email,
         phone: newUser.phone,
-        role: "Resident",
+        role: "RESIDENT"
       });
       
       toast.success("User registered successfully!");
       setShowModal(false);
-      // Refresh users list
-      // You would typically fetch the updated list from the server here
-      
+      fetchData();
+      setNewUser({ username: '', password: '', email: '', phone: '' });
     } catch (err) {
-      toast.error("Registration failed. Please try again.");
+      toast.error("Registration failed: " + (err.response?.data?.message || "Please try again"));
       console.error("Error during registration:", err);
     }
   };
@@ -386,14 +353,13 @@ const UserPage = () => {
             <p>{stats.totalUsers}</p>
           </StatCard>
           <StatCard>
-            <h4>Active Users</h4>
-            <p>{stats.activeUsers}</p>
+            <h4>Pending Users</h4>
+            <p>{stats.pendingUsers}</p>
           </StatCard>
           <StatCard>
-            <h4>New UsersThis Month</h4>
-            <p>{stats.newUsersThisMonth}</p>
+            <h4>Approved Users</h4>
+            <p>{stats.approvedUsers}</p>
           </StatCard>
-         
         </StatsContainer>
 
         <ControlsContainer>
@@ -411,7 +377,7 @@ const UserPage = () => {
               <FaSortAmountDown />
               Sort by {sortBy === 'name' ? 'Date' : 'Name'}
             </ActionButton>
-            <ActionButton $variant="primary" onClick={handleAddUser}>
+            <ActionButton $variant="primary" onClick={() => setShowModal(true)}>
               <FaUserPlus />
               Add User
             </ActionButton>
@@ -421,9 +387,8 @@ const UserPage = () => {
         <TabContainer>
           <TabList>
             <Tab $active={activeTab === 'all'} onClick={() => setActiveTab('all')}>All Users</Tab>
-            <Tab $active={activeTab === 'active'} onClick={() => setActiveTab('active')}>Active</Tab>
-            <Tab $active={activeTab === 'inactive'} onClick={() => setActiveTab('inactive')}>Inactive</Tab>
-            <Tab $active={activeTab === 'premium'} onClick={() => setActiveTab('premium')}>Premium</Tab>
+            <Tab $active={activeTab === 'active'} onClick={() => setActiveTab('active')}>Approved</Tab>
+            <Tab $active={activeTab === 'inactive'} onClick={() => setActiveTab('inactive')}>Pending</Tab>
           </TabList>
         </TabContainer>
 
@@ -431,28 +396,26 @@ const UserPage = () => {
           {filteredUsers.map(user => (
             <UserCard key={user.id}>
               <UserActions>
-                <CardActionButton onClick={() => handleEdit(user.id)}>
-                  <FaEdit />
-                </CardActionButton>
+                {user.status === 'PENDING' && (
+                  <CardActionButton onClick={() => handleEdit(user.id)}>
+                    <FaEdit />
+                  </CardActionButton>
+                )}
                 <CardActionButton $delete onClick={() => handleDelete(user.id)}>
                   <FaTrash />
                 </CardActionButton>
               </UserActions>
               <UserAvatar>
-                {user.name.charAt(0)}
+                {user.userName?.charAt(0)}
               </UserAvatar>
               <UserInfo>
-                <UserName>{user.name}</UserName>
+                <UserName>{user.userName}</UserName>
                 <UserDetail>{user.email}</UserDetail>
                 <UserDetail>{user.phone}</UserDetail>
                 <UserDetail>Role: {user.role}</UserDetail>
-                <UserDetail>Joined: {new Date(user.joinDate).toLocaleDateString()}</UserDetail>
-                <UserStatus $active={user.status === 'active'}>
-                  {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                <UserStatus $active={user.status === 'APPROVED'}>
+                  {user.status}
                 </UserStatus>
-                {user.premium && (
-                  <UserStatus $active={true}>Premium</UserStatus>
-                )}
               </UserInfo>
             </UserCard>
           ))}

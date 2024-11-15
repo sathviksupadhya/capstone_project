@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaChartLine, FaUsers, FaCalendarAlt, FaChartBar, FaFilter, FaUserClock, FaComments, FaCommentDots } from 'react-icons/fa';
+import axios from 'axios';
 
 const PageContainer = styled.div`
   padding: 90px 50px 30px;
@@ -105,31 +106,48 @@ function AdminAnalytics() {
   const [timeRange, setTimeRange] = useState('week');
   const [chartType, setChartType] = useState('line');
   const [activeTab, setActiveTab] = useState('overview');
+  const [analyticsData, setAnalyticsData] = useState({
+    totalUsers: 0,
+    totalEvents: 0,
+    totalFeedbacks: 0
+  });
 
-  const stats = {
-    totalUsers: 1250,
-    activeEvents: 45,
-    revenue: 25000,
-    pendingUsers: 850,
-    totalComments: 3200,
-    averageAttendance: 35,
-    totalFeedbacks: 450
-  };
+  useEffect(() => {
+    const fetchAnalyticsData = async () => {
+      try {
+        const [usersResponse, eventsResponse, feedbacksResponse] = await Promise.all([
+          axios.get('http://localhost:9997/api/residents/allUsers'),
+          axios.get('http://localhost:9997/event/getAllEvents'),
+          axios.get('http://localhost:9997/feedback/get-feedbacks')
+        ]);
+
+        setAnalyticsData({
+          totalUsers: usersResponse.data.length,
+          totalEvents: eventsResponse.data.length,
+          totalFeedbacks: feedbacksResponse.data.length
+        });
+      } catch (error) {
+        console.error('Error fetching analytics data:', error);
+      }
+    };
+
+    fetchAnalyticsData();
+  }, []);
 
   return (
     <PageContainer $theme={theme}>
       <StatsContainer>
         <StatCard $theme={theme}>
           <h4><FaUsers /> Total Users</h4>
-          <p>{stats.totalUsers}</p>
+          <p>{analyticsData.totalUsers}</p>
         </StatCard>
         <StatCard $theme={theme}>
-          <h4><FaCalendarAlt /> Active Events</h4>
-          <p>{stats.activeEvents}</p>
+          <h4><FaCalendarAlt /> Total Events</h4>
+          <p>{analyticsData.totalEvents}</p>
         </StatCard>
         <StatCard $theme={theme}>
-          <h4><FaUserClock /> Pending Users</h4>
-          <p>{stats.pendingUsers}</p>
+          <h4><FaComments /> Total Feedbacks</h4>
+          <p>{analyticsData.totalFeedbacks}</p>
         </StatCard>
       </StatsContainer>
 
@@ -167,28 +185,11 @@ function AdminAnalytics() {
 
       <ChartSection $theme={theme}>
         <h3>User Activity Trends</h3>
-      
       </ChartSection>
 
       <ChartSection $theme={theme}>
         <h3>Event Performance</h3>
-        
       </ChartSection>
-
-      <DataGrid>
-        <StatCard $theme={theme}>
-          <h4><FaComments /> Total Comments</h4>
-          <p>{stats.totalComments}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4><FaUsers /> Avg. Attendance</h4>
-          <p>{stats.averageAttendance}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4><FaCommentDots /> Total Feedbacks</h4>
-          <p>{stats.totalFeedbacks}</p>
-        </StatCard>
-      </DataGrid>
     </PageContainer>
   );
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaMoneyBillWave, FaUserClock } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 
 const DashboardContainer = styled.div`
   padding: 90px 50px 30px;
@@ -100,41 +101,90 @@ const ActivityItem = styled.div`
 const AdminHome = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
-    users: 0,
-    events: 0,
-    activeUsers: 0,
-    revenue: 0,
-    newRegistrations: 0
+    totalResidents: 0,
+    totalEvents: 0,
+    activeResidents: 0,
+    pendingApprovals: 0
   });
   
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [theme] = useState('light');
+  const token = sessionStorage.getItem('jwtToken');
 
   useEffect(() => {
-    
-    setStats({
-      users: 1234,
-      events: 45,
-      activeUsers: 890,
-      revenue: 15000,
-      newRegistrations: 56
-    });
+    if (!token) {
+      navigate('/');
+      return;
+    }
 
-    
-    setNotifications([
-      { id: 1, message: "New User registration request", time: "2 minutes ago" },
-    ]);
+    const fetchData = async () => {
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
 
-    
-    setRecentActivity([
-      { id: 1, action: "User Rahul Approved", time: "5 minutes ago" },
-      { id: 2, action: "Rahul registered for Summer Music Festival", time: "10 minutes ago" },
-      { id: 3, action: "New event created: Workshop", time: "2 hours ago" },
-      
-    ]);
+        // Fetch residents data
+        const residentsResponse = await axios.get('http://localhost:9997/api/residents', { headers });
+        const totalResidents = residentsResponse.data.length;
+        const activeResidents = residentsResponse.data.filter(resident => resident.status === 'ACTIVE').length;
+        const pendingApprovals = residentsResponse.data.filter(resident => resident.status === 'PENDING').length;
 
-  }, [navigate]);
+        // Fetch events data
+        const eventsResponse = await axios.get('http://localhost:9997/api/events', { headers });
+        const totalEvents = eventsResponse.data.length;
+
+        setStats({
+          totalResidents,
+          totalEvents,
+          activeResidents,
+          pendingApprovals
+        });
+
+        // Generate notifications from residents and events data
+        const notificationsList = [
+          ...residentsResponse.data
+            .filter(resident => resident.status === 'PENDING')
+            .map(resident => ({
+              id: `resident-${resident.id}`,
+              message: `New registration request from ${resident.firstName} ${resident.lastName}`,
+              timestamp: new Date(resident.createdAt).toLocaleString()
+            })),
+          ...eventsResponse.data
+            .filter(event => new Date(event.eventDate) > new Date())
+            .map(event => ({
+              id: `event-${event.id}`,
+              message: `Upcoming event: ${event.eventName}`,
+              timestamp: new Date(event.eventDate).toLocaleString()
+            }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setNotifications(notificationsList.slice(0, 5)); // Show only latest 5 notifications
+
+        // Generate activity log from residents and events data
+        const activityList = [
+          ...residentsResponse.data.map(resident => ({
+            id: `activity-resident-${resident.id}`,
+            description: `Resident ${resident.firstName} ${resident.lastName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
+            timestamp: new Date(resident.createdAt).toLocaleString()
+          })),
+          ...eventsResponse.data.map(event => ({
+            id: `activity-event-${event.id}`,
+            description: `New event created: ${event.eventName}`,
+            timestamp: new Date(event.createdAt).toLocaleString()
+          }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setRecentActivity(activityList.slice(0, 5)); // Show only latest 5 activities
+
+      } catch (error) {
+        console.error('Error fetching admin dashboard data:', error);
+        if (error.response && error.response.status === 401) {
+          navigate('/');
+        }
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
 
   return (
     <DashboardContainer $theme={theme}>
@@ -144,8 +194,8 @@ const AdminHome = () => {
             <FaUsers />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.users}</h3>
-            <p>Registered Users</p>
+            <h3>{stats.totalResidents}</h3>
+            <p>Total Residents</p>
           </StatInfo>
         </StatCard>
 
@@ -154,7 +204,7 @@ const AdminHome = () => {
             <FaCalendarAlt />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.events}</h3>
+            <h3>{stats.totalEvents}</h3>
             <p>Total Events</p>
           </StatInfo>
         </StatCard>
@@ -164,8 +214,8 @@ const AdminHome = () => {
             <FaChartLine />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.activeUsers}</h3>
-            <p>Active Users</p>
+            <h3>{stats.activeResidents}</h3>
+            <p>Active Residents</p>
           </StatInfo>
         </StatCard>
 
@@ -174,8 +224,8 @@ const AdminHome = () => {
             <FaUserClock />
           </StatIcon>
           <StatInfo>
-            <h3>{stats.newRegistrations}</h3>
-            <p>New Users Registrations</p>
+            <h3>{stats.pendingApprovals}</h3>
+            <p>Pending Approvals</p>
           </StatInfo>
         </StatCard>
       </StatsGrid>
@@ -189,7 +239,7 @@ const AdminHome = () => {
             <FaBell />
             <div>
               <p>{notification.message}</p>
-              <small>{notification.time}</small>
+              <small>{notification.timestamp}</small>
             </div>
           </NotificationItem>
         ))}
@@ -201,8 +251,8 @@ const AdminHome = () => {
         </SectionHeader>
         {recentActivity.map(activity => (
           <ActivityItem key={activity.id} $theme={theme}>
-            <p>{activity.action}</p>
-            <small>{activity.time}</small>
+            <p>{activity.description}</p>
+            <small>{activity.timestamp}</small>
           </ActivityItem>
         ))}
       </RecentActivityContainer>
