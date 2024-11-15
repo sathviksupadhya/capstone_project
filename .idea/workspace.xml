@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bbae1511-72ed-40b5-9947-7bf92a28c349" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminAnalytics.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminAnalytics.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminEvents.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminEvents.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminHome.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/UserPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/UserPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Events.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Events.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/HomePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/NavBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/NavBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/LandingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/LandingPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/SignIn.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,10 +49,12 @@
   &quot;keyToString&quot;: {
     &quot;Application.AlertApplication.executor&quot;: &quot;Run&quot;,
     &quot;Application.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.AuthenticationApplication.executor&quot;: &quot;Run&quot;,
     &quot;Application.CommunityServerApplication.executor&quot;: &quot;Run&quot;,
     &quot;Application.EventApplication.executor&quot;: &quot;Run&quot;,
     &quot;Application.FeedbackApplication.executor&quot;: &quot;Run&quot;,
     &quot;Application.ReminderApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UserApplication.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
