@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AdminNavBar from './AdminNavBar';
-import { FaSearch, FaFilter, FaEdit, FaTrash, FaDownload, FaUserPlus, FaSortAmountDown, FaChartBar } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaEdit, FaTrash, FaUserPlus, FaSortAmountDown, FaChartBar } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -243,72 +243,58 @@ const UserPage = () => {
     totalUsers: 0,
     activeUsers: 0,
     newUsersThisMonth: 0,
-    premiumUsers: 0
+
   });
 
   useEffect(() => {
-    // Simulating API call
+
     const mockUsers = [
       {
         id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '+1 234-567-8901',
-        joinDate: '2023-01-15',
+        name: 'Sathvik S Upadhya',
+        email: 'sathvik.upadhya@example.com',
+        phone: '+919448436216',
         status: 'active',
         role: 'Admin',
-        premium: true
+        
       },
       {
         id: 2,
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com', 
-        phone: '+1 234-567-8902',
-        joinDate: '2023-02-20',
+        name: 'Rahul K',
+        email: 'rahul.k@example.com', 
+        phone: '+919448436217',
         status: 'inactive',
         role: 'User',
-        premium: false
+        
       },
       {
         id: 3,
-        name: 'Mike Johnson',
-        email: 'mike.j@example.com',
-        phone: '+1 234-567-8903', 
-        joinDate: '2023-03-10',
+        name: 'Arpan J',
+        email: 'arpan.j@example.com',
+        phone: '+919448436218', 
         status: 'active',
         role: 'User',
-        premium: true
+        
       },
       {
         id: 4,
-        name: 'Sarah Williams',
-        email: 'sarah.w@example.com',
-        phone: '+1 234-567-8904',
-        joinDate: '2023-04-05',
+        name: 'Mani K',
+        email: 'mani.k@example.com',
+        phone: '+919448436219',
         status: 'active',
         role: 'Moderator',
-        premium: false
+        
       },
       {
         id: 5,
-        name: 'David Brown',
-        email: 'david.b@example.com',
-        phone: '+1 234-567-8905',
-        joinDate: '2023-05-12',
+        name: 'Pavan B',
+        email: 'pavan.b@example.com',
+        phone: '+919448436220',
         status: 'inactive',
         role: 'User',
-        premium: false
+
       },
-      {
-        id: 6,
-        name: 'Emily Davis',
-        email: 'emily.d@example.com',
-        phone: '+1 234-567-8906',
-        joinDate: '2023-06-18',
-        status: 'active',
-        role: 'User',
-        premium: true
-      }
+      
     ];
     
     setUsers(mockUsers);
@@ -364,11 +350,6 @@ const UserPage = () => {
     }
   };
 
-  const handleExport = () => {
-    // Implement export functionality
-    console.log('Exporting user data...');
-  };
-
   const handleAddUser = () => {
     setShowModal(true);
   };
@@ -409,13 +390,10 @@ const UserPage = () => {
             <p>{stats.activeUsers}</p>
           </StatCard>
           <StatCard>
-            <h4>New This Month</h4>
+            <h4>New UsersThis Month</h4>
             <p>{stats.newUsersThisMonth}</p>
           </StatCard>
-          <StatCard>
-            <h4>Premium Users</h4>
-            <p>{stats.premiumUsers}</p>
-          </StatCard>
+         
         </StatsContainer>
 
         <ControlsContainer>
@@ -432,10 +410,6 @@ const UserPage = () => {
             <ActionButton onClick={() => setSortBy(sortBy === 'name' ? 'date' : 'name')}>
               <FaSortAmountDown />
               Sort by {sortBy === 'name' ? 'Date' : 'Name'}
-            </ActionButton>
-            <ActionButton onClick={handleExport}>
-              <FaDownload />
-              Export
             </ActionButton>
             <ActionButton $variant="primary" onClick={handleAddUser}>
               <FaUserPlus />

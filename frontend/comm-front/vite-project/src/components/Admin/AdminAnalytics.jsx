@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaChartLine, FaUsers, FaCalendarAlt, FaChartBar, FaDownload, FaFilter, FaMoneyBillWave, FaUserClock, FaComments, FaMapMarkerAlt, FaCommentDots } from 'react-icons/fa';
+import { FaChartLine, FaUsers, FaCalendarAlt, FaChartBar, FaFilter, FaUserClock, FaComments, FaCommentDots } from 'react-icons/fa';
 
 const PageContainer = styled.div`
   padding: 90px 50px 30px;
@@ -48,31 +48,9 @@ const ChartSection = styled.div`
 
 const ControlsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const ActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: ${props => props.$secondary ? '#6c757d' : '#4CAF50'};
-  color: white;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${props => props.$secondary ? '#5a6268' : '#45a049'};
-  }
 `;
 
 const FilterContainer = styled.div`
@@ -132,16 +110,10 @@ function AdminAnalytics() {
     totalUsers: 1250,
     activeEvents: 45,
     revenue: 25000,
-    activeUsers: 850,
-    engagementRate: '78%',
+    pendingUsers: 850,
     totalComments: 3200,
-    popularLocations: 12,
     averageAttendance: 35,
     totalFeedbacks: 450
-  };
-
-  const handleExport = () => {
-    console.log('Exporting analytics data...');
   };
 
   return (
@@ -156,21 +128,12 @@ function AdminAnalytics() {
           <p>{stats.activeEvents}</p>
         </StatCard>
         <StatCard $theme={theme}>
-          <h4><FaMoneyBillWave /> Revenue</h4>
-          <p>${stats.revenue}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4><FaUserClock /> Active Users</h4>
-          <p>{stats.activeUsers}</p>
+          <h4><FaUserClock /> Pending Users</h4>
+          <p>{stats.pendingUsers}</p>
         </StatCard>
       </StatsContainer>
 
       <ControlsContainer>
-        <ButtonGroup>
-          <ActionButton $secondary onClick={handleExport}>
-            <FaDownload /> Export Report
-          </ActionButton>
-        </ButtonGroup>
         <FilterContainer>
           <Select 
             value={timeRange} 
@@ -199,32 +162,23 @@ function AdminAnalytics() {
           <Tab $active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} $theme={theme}>Overview</Tab>
           <Tab $active={activeTab === 'users'} onClick={() => setActiveTab('users')} $theme={theme}>User Analytics</Tab>
           <Tab $active={activeTab === 'events'} onClick={() => setActiveTab('events')} $theme={theme}>Event Analytics</Tab>
-          <Tab $active={activeTab === 'engagement'} onClick={() => setActiveTab('engagement')} $theme={theme}>Engagement</Tab>
         </TabList>
       </TabContainer>
 
       <ChartSection $theme={theme}>
         <h3>User Activity Trends</h3>
-        {/* Chart component would go here */}
+      
       </ChartSection>
 
       <ChartSection $theme={theme}>
         <h3>Event Performance</h3>
-        {/* Chart component would go here */}
+        
       </ChartSection>
 
       <DataGrid>
         <StatCard $theme={theme}>
-          <h4><FaChartLine /> Engagement Rate</h4>
-          <p>{stats.engagementRate}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
           <h4><FaComments /> Total Comments</h4>
           <p>{stats.totalComments}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4><FaMapMarkerAlt /> Popular Locations</h4>
-          <p>{stats.popularLocations}</p>
         </StatCard>
         <StatCard $theme={theme}>
           <h4><FaUsers /> Avg. Attendance</h4>

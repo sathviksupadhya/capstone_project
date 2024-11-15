@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaDownload, FaPlus, FaChartBar, FaSort, FaMapMarkerAlt, FaUsers, FaTag, FaClock, FaUserFriends } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaCalendarAlt, FaEdit, FaTrash, FaPlus, FaChartBar, FaSort, FaUsers, FaTag, FaClock, FaUserFriends } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const FormContainer = styled.div`
   position: fixed;
@@ -114,7 +115,7 @@ const ActionButton = styled.button`
 
 const StatsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 30px;
 `;
@@ -245,6 +246,7 @@ const SectionTitle = styled.h2`
 `;
 
 const AdminEvents = () => {
+  const navigate = useNavigate();
   const [theme] = useState('light');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterVisible, setFilterVisible] = useState(false);
@@ -260,8 +262,7 @@ const AdminEvents = () => {
   const [stats, setStats] = useState({
     totalEvents: 0,
     activeEvents: 0,
-    totalAttendees: 0,
-    revenue: 0
+    totalAttendees: 0
   });
 
   const [formData, setFormData] = useState({
@@ -285,7 +286,6 @@ const AdminEvents = () => {
           title: "Summer Music Festival",
           date: "2024-07-15",
           time: "2:00 PM - 10:00 PM",
-          location: "Central Park",
           attendees: 156,
           maxCapacity: 200,
           status: 'ongoing',
@@ -299,8 +299,7 @@ const AdminEvents = () => {
           id: 2,
           title: "Tech Conference 2024",
           date: "2024-08-20",
-          time: "9:00 AM - 6:00 PM",
-          location: "Convention Center",
+          time: "9:00 AM - 6:00 PM",  
           attendees: 89,
           maxCapacity: 150,
           status: 'upcoming',
@@ -315,7 +314,7 @@ const AdminEvents = () => {
           title: "Food & Wine Expo",
           date: "2024-06-05",
           time: "11:00 AM - 8:00 PM",
-          location: "City Hall",
+          
           attendees: 234,
           maxCapacity: 300,
           status: 'past',
@@ -330,7 +329,7 @@ const AdminEvents = () => {
           title: "New Year's Eve Gala",
           date: "2024-12-31",
           time: "8:00 PM - 1:00 AM",
-          location: "Grand Hotel",
+          
           attendees: 500,
           maxCapacity: 600,
           status: 'upcoming',
@@ -344,15 +343,9 @@ const AdminEvents = () => {
     setStats({
       totalEvents: 45,
       activeEvents: 12,
-      totalAttendees: 3456,
-      revenue: 156789
+      totalAttendees: 3456
     });
   }, []);
-
-  const handleExport = () => {
-    // Implement CSV export logic
-    console.log('Exporting events data...');
-  };
 
   const handleCreateEvent = () => {
     setShowEventForm(true);
@@ -384,6 +377,10 @@ const AdminEvents = () => {
     }));
   };
 
+  const handleAnalytics = () => {
+    navigate('/admin/analytics');
+  };
+
   const renderEventCard = (event) => (
     <EventCard key={event.id} $theme={theme}>
       <EventStatus $status={event.status}>
@@ -399,9 +396,6 @@ const AdminEvents = () => {
       </EventDetail>
       <EventDetail $theme={theme}>
         <FaClock /> {event.time}
-      </EventDetail>
-      <EventDetail $theme={theme}>
-        <FaMapMarkerAlt /> {event.location}
       </EventDetail>
       <EventDetail $theme={theme}>
         <FaTag /> {event.category}
@@ -557,10 +551,6 @@ const AdminEvents = () => {
           <h4>Total Attendees</h4>
           <p>{stats.totalAttendees}</p>
         </StatCard>
-        <StatCard $theme={theme}>
-          <h4>Revenue</h4>
-          <p>${stats.revenue.toLocaleString()}</p>
-        </StatCard>
       </StatsContainer>
 
       <ControlsContainer>
@@ -580,10 +570,7 @@ const AdminEvents = () => {
           <ActionButton onClick={handleCreateEvent}>
             <FaPlus /> Create Event
           </ActionButton>
-          <ActionButton $secondary onClick={handleExport}>
-            <FaDownload /> Export
-          </ActionButton>
-          <ActionButton $secondary>
+          <ActionButton $secondary onClick={handleAnalytics}>
             <FaChartBar /> Analytics
           </ActionButton>
         </ButtonGroup>

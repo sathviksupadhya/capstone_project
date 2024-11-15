@@ -558,48 +558,6 @@ const LandingPage = () => {
           </FeatureItem>
         </FeaturesSection>
 
-        <SectionTitle theme={theme} gradient={true}>Security & Privacy</SectionTitle>
-        <FeaturesSection>
-          <FeatureItem
-            variants={featureVariants}
-            initial="initial"
-            animate="animate"
-            whileHover="hover"
-            isBlue={true}
-            theme={theme}
-            onClick={handleFeatureClick}
-          >
-            <h3><FaShieldAlt /> Data Protection</h3>
-            <p>Your data is encrypted and secured using industry-standard protocols. We prioritize the safety and confidentiality of your information.</p>
-          </FeatureItem>
-
-          <FeatureItem
-            variants={featureVariants}
-            initial="initial"
-            animate="animate"
-            whileHover="hover"
-            isBlue={false}
-            theme={theme}
-            onClick={handleFeatureClick}
-          >
-            <h3><FaLock /> Privacy Controls</h3>
-            <p>Take control of your privacy settings. Choose what you share and who can see your information within the community.</p>
-          </FeatureItem>
-
-          <FeatureItem
-            variants={featureVariants}
-            initial="initial"
-            animate="animate"
-            whileHover="hover"
-            isBlue={true}
-            theme={theme}
-            onClick={handleFeatureClick}
-          >
-            <h3><FaUserShield /> Secure Authentication</h3>
-            <p>Multi-factor authentication and robust security measures ensure your account remains protected at all times.</p>
-          </FeatureItem>
-        </FeaturesSection>
-
         <SectionTitle theme={theme} gradient={true}>Coming Soon</SectionTitle>
         <FeaturesSection>
           <FeatureItem
@@ -659,7 +617,7 @@ const LandingPage = () => {
         <TeamGrid>
           <TeamCard>
             <div className="image-container">
-              <img src="https://avatars.githubusercontent.com/u/98264659?v=4" alt="profile-picture" />
+              <img src="" alt="profile-picture" />
             </div>
             <div className="content">
               <h4>Sathvik S</h4>
@@ -677,7 +635,7 @@ const LandingPage = () => {
 
           <TeamCard>
             <div className="image-container">
-              <img src="https://avatars.githubusercontent.com/u/98264659?v=4" alt="profile-picture" />
+              <img src="" alt="profile-picture" />
             </div>
             <div className="content">
               <h4>Rahul K</h4>
