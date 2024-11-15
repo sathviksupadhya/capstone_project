@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import axios from "axios";
 import "../../CSS/cardStyles.css";
 import { FaChevronDown, FaUserCircle } from 'react-icons/fa';
+import mainLogo from '../../assets/mainlogo.jpg?url';
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -176,14 +177,15 @@ const NavBar = () => {
     <>
     <Nav scrolled={scrolled}>
       <Logo onClick={handleLogoClick}>
+        <LogoImage src={mainLogo} alt="UnitySpace Logo" />
         <LogoTitle>UnitySpace</LogoTitle>
       </Logo>
       
       <NavLinks>
-        <NavLink onClick={() => scrollToSection('home-section')} isActive={currentPath === '/home'}>Home</NavLink>
-        <NavLink onClick={() => scrollToSection('events-section')} isActive={currentPath === '/events'}>Events</NavLink>
-        <NavLink onClick={() => scrollToSection('schedules-section')} isActive={currentPath === '/schedules'}>Schedules</NavLink>
-        <NavLink onClick={() => scrollToSection('timesheet-section')} isActive={currentPath === '/timesheet'}>Timesheet</NavLink>
+        <NavLink onClick={() => scrollToSection('home-section')}>Home</NavLink>
+        <NavLink onClick={() => scrollToSection('events-section')}>Events</NavLink>
+        <NavLink onClick={() => scrollToSection('schedules-section')}>Schedules</NavLink>
+        <NavLink onClick={() => scrollToSection('timesheet-section')}>Timesheet</NavLink>
       </NavLinks>
 
       <ProfileSection>
@@ -376,6 +378,12 @@ const Logo = styled.div`
   cursor: pointer;
 `;
 
+const LogoImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+`;
+
 const LogoTitle = styled.span`
   font-size: 26px;
   font-weight: bold;
@@ -395,11 +403,21 @@ const NavLink = styled.a`
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-bottom: ${props => props.isActive ? '2px solid #ffffff' : 'none'};
-  padding-bottom: 3px;
+  position: relative;
 
-  &:hover {
-    opacity: 0.8;
+  &:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -3px;
+    left: 0;
+    background-color: #FFFFFF;
+    transition: width 0.3s ease;
+  }
+
+  &:hover:after {
+    width: 100%;
   }
 `;
 

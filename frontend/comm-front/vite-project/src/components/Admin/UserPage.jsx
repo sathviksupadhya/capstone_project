@@ -233,6 +233,7 @@ const UserPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [showModal, setShowModal] = useState(false);
+  const token = sessionStorage.getItem('jwtToken');
   const [newUser, setNewUser] = useState({
     username: '',
     password: '',
@@ -248,7 +249,13 @@ const UserPage = () => {
   const fetchData = async () => {
     try {
       // Fetch all users using the endpoint from UserController
-      const response = await axios.get('http://localhost:9997/api/residents/all');
+      const response = await axios.get('http://localhost:9997/api/residents/all',
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
       setUsers(response.data);
       
       // Calculate stats
