@@ -5,6 +5,95 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
+const SignInForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("username:", username);
+
+    try {
+      // Add loading state or spinner here if needed
+
+      const response = await axios.post(
+        "http://localhost:9997/auth/validate/user",
+        {
+          userName: username,
+          password: password,
+        },
+      );
+
+      // Check if response contains required data
+      if (!response.data || !response.data.token || !response.data.userId) {
+        throw new Error('Invalid response from server');
+      }
+      const { token, userId } = response.data;
+      sessionStorage.setItem("jwtToken", token);
+      sessionStorage.setItem("userId", userId);  
+
+
+      // const user = await axios.get(`http://localhost:9997/api/residents/${userId}`,
+      //   {
+      //     headers: {
+      //       Authorization: token
+      //     }
+      //   }
+      // );
+      // const userStatus = user.data.status;
+      // console.log(userStatus);
+      // if(userStatus === "APPROVE"){ 
+      if(username.toLowerCase() === "admin"){
+        navigate("/admin");
+      }else{
+        navigate("/home");
+      }
+      // }else{
+      //   setError("Your account is not approved yet. Please wait for approval.");
+      // }
+
+    } catch (err) {
+      console.error('Login error:', err);
+      if (err.code === 'ECONNABORTED') {
+        setError("Request timed out. Please try again.");
+      } else {
+        setError("Invalid credentials or server error. Please try again.");
+      }
+    }
+  };
+
+  return (
+    <Container>
+      <FormCard>
+        <Title>Sign In</Title>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit">Sign In</Button>
+        </Form>
+        <RegisterText>
+          First time user? <Link to="/register">Register here</Link>
+        </RegisterText>
+      </FormCard>
+      <ToastContainer />
+    </Container>
+  );
+};
+
 const Container = styled.div`
   height: 100vh;
   display: flex;
@@ -76,80 +165,5 @@ const RegisterText = styled.p`
     }
   }
 `;
-
-const SignInForm = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("username:", username);
-
-    try {
-      // Add loading state or spinner here if needed
-      const response = await axios.post(
-        "http://localhost:9997/auth/validate/user",
-        {
-          userName: username,
-          password: password,
-        },
-        // {
-        //   timeout: 5000 // Add timeout of 5 seconds
-        // }
-      );
-
-      // Check if response contains required data
-      if (!response.data || !response.data.token || !response.data.userId) {
-        throw new Error('Invalid response from server');
-      }
-
-      const { token, userId } = response.data;
-      sessionStorage.setItem("jwtToken", token);
-      sessionStorage.setItem("userId", userId);
-      
-      // Navigate immediately after storing data
-      navigate("/home");
-
-    } catch (err) {
-      console.error('Login error:', err);
-      if (err.code === 'ECONNABORTED') {
-        setError("Request timed out. Please try again.");
-      } else {
-        setError("Invalid credentials or server error. Please try again.");
-      }
-    }
-  };
-
-  return (
-    <Container>
-      <FormCard>
-        <Title>Sign In</Title>
-        <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button type="submit">Sign In</Button>
-        </Form>
-        <RegisterText>
-          First time user? <Link to="/register">Register here</Link>
-        </RegisterText>
-      </FormCard>
-      <ToastContainer />
-    </Container>
-  );
-};
 
 export default SignInForm;

@@ -2,6 +2,46 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+const Navigationbar = ({ theme }) => {
+  const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 0;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleSignIn = () => {
+    navigate('/signin');
+  };
+
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
+  return (
+    <Nav scrolled={scrolled} theme={theme}>
+      <LogoContainer onClick={handleLogoClick}>
+        <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
+        <Logo scrolled={scrolled} theme={theme}>UnitySpace</Logo>
+      </LogoContainer>
+      <ButtonGroup>
+        <Button className="signin" scrolled={scrolled} theme={theme} onClick={handleSignIn}>Sign In</Button>
+        <Button className="register" scrolled={scrolled} theme={theme} onClick={handleRegister}>Register</Button>
+      </ButtonGroup>
+    </Nav>
+  );
+};
+
 const Nav = styled.nav`
   position: fixed;
   top: 0;
@@ -101,44 +141,5 @@ const Button = styled.button`
   }
 `;
 
-const Navigationbar = ({ theme }) => {
-  const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 0;
-      setScrolled(isScrolled);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleSignIn = () => {
-    navigate('/signin');
-  };
-
-  const handleRegister = () => {
-    navigate('/register');
-  };
-
-  const handleLogoClick = () => {
-    navigate('/');
-  };
-
-  return (
-    <Nav scrolled={scrolled} theme={theme}>
-      <LogoContainer onClick={handleLogoClick}>
-        <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
-        <Logo scrolled={scrolled} theme={theme}>UnitySpace</Logo>
-      </LogoContainer>
-      <ButtonGroup>
-        <Button className="signin" scrolled={scrolled} theme={theme} onClick={handleSignIn}>Sign In</Button>
-        <Button className="register" scrolled={scrolled} theme={theme} onClick={handleRegister}>Register</Button>
-      </ButtonGroup>
-    </Nav>
-  );
-};
 
 export default Navigationbar;

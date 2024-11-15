@@ -2,78 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-const FormContainer = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  margin-top: 70px;
-`;
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const TextArea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  min-height: 120px;
-  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const RatingContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-`;
-
-const RatingButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  background: ${props => props.selected ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'transparent'};
-  color: ${props => props.selected ? 'white' : (props.theme === 'dark' ? '#ffffff' : '#000000')};
-  cursor: pointer;
-`;
-
-const SubmitButton = styled(motion.button)`
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  
-  &:hover {
-    opacity: 0.9;
-  }
-`;
-
 const FeedbackForm = ({ eventId, theme }) => {
   const [formData, setFormData] = useState({
     rating: null,
@@ -160,5 +88,78 @@ const FeedbackForm = ({ eventId, theme }) => {
     </FormContainer>
   );
 };
+
+const FormContainer = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  margin-top: 70px;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const Label = styled.label`
+  font-weight: 500;
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const Input = styled.input`
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const TextArea = styled.textarea`
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  min-height: 120px;
+  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const RatingContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+
+const RatingButton = styled.button`
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: ${props => props.selected ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'transparent'};
+  color: ${props => props.selected ? 'white' : (props.theme === 'dark' ? '#ffffff' : '#000000')};
+  cursor: pointer;
+`;
+
+const SubmitButton = styled(motion.button)`
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 
 export default FeedbackForm;

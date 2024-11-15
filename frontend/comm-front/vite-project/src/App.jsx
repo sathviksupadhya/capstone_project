@@ -8,7 +8,6 @@ import NavBar from './components/Home/NavBar'
 import HomePage from './components/Home/HomePage'
 import Events from './components/Home/Events'
 import EventForm from './components/EventForm'
-
 import AdminNavBar from './components/Admin/AdminNavBar'
 import AdminHome from './components/Admin/AdminHome'
 import UserPage from './components/Admin/UserPage'
@@ -18,12 +17,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<><Navigationbar /><LandingPage /></>} />
         <Route path="/signin" element={<><Navigationbar /><SignInForm /></>} />
         <Route path="/register" element={<><Navigationbar /><RegisterForm /></>} />
-        <Route path="/" element={<><Navigationbar /><LandingPage /></>} />
         <Route path="/home" element={<><NavBar /><HomePage /></>} />
         <Route path="/events" element={<><NavBar /><Events/></>} />
-        <Route path="/create-event" element={<EventForm />} />
+        <Route path="/create-event" element={<><NavBar /><EventForm /></>} />
         <Route path="/admin" element={<><AdminNavBar /><AdminHome /></>} />
         <Route path="/admin/users" element={<><AdminNavBar /><UserPage /></>} />
         <Route path="/admin/events" element={<><AdminNavBar /><AdminEvents /></>} />

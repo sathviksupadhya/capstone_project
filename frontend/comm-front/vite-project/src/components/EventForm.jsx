@@ -4,63 +4,6 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const FormContainer = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  margin-top: 70px; /* Add margin-top equal to navbar height */
-`;
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const TextArea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  min-height: 120px;
-  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-`;
-
-const SubmitButton = styled(motion.button)`
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  
-  &:hover {
-    opacity: 0.9;
-  }
-`;
-
 const EventForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -165,5 +108,63 @@ const EventForm = () => {
     </FormContainer>
   );
 };
+
+const FormContainer = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  margin-top: 70px; /* Add margin-top equal to navbar height */
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const Label = styled.label`
+  font-weight: 500;
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const Input = styled.input`
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const TextArea = styled.textarea`
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  min-height: 120px;
+  background: ${props => props.theme === 'dark' ? '#2d2d2d' : 'white'};
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+`;
+
+const SubmitButton = styled(motion.button)`
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 
 export default EventForm;

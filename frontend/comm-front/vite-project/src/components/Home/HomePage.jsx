@@ -26,11 +26,9 @@ export default function HomePage() {
       </section>
 
       <section id="schedules-section">
-        {/* Schedules component will go here */}
       </section>
 
       <section id="timesheet-section">
-        {/* Timesheet component will go here */}
       </section>
 
       <FeedbackForm />

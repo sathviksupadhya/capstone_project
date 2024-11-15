@@ -5,6 +5,60 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
+const RegisterForm = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Add registration logic here
+    try {
+      // Send credentials to the backend for registration
+      const response = await axios.post("http://localhost:9997/auth/register", {
+        userName: username,
+        password: password,
+        role: "Resident",
+      });
+
+      navigate('/signin');
+      
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+      console.error("Error during registration:", err);
+    }
+  };
+
+  return (
+    <Container>
+      <FormCard>
+        <Title>Register</Title>
+        <Form onSubmit={handleSubmit}>
+          <Input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit">Register</Button>
+        </Form>
+        <SignInText>
+          Already registered? <Link to="/signin">Sign in here</Link>
+        </SignInText>
+      </FormCard>
+      <ToastContainer />
+    </Container>
+  );
+};
+
 const Container = styled.div`
   height: 100vh;
   display: flex;
@@ -77,58 +131,5 @@ const SignInText = styled.p`
   }
 `;
 
-const RegisterForm = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Add registration logic here
-    try {
-      // Send credentials to the backend for registration
-      const response = await axios.post("http://localhost:9997/auth/register", {
-        userName: username,
-        password: password,
-        role: "Resident",
-      });
-
-      navigate('/signin');
-      
-    } catch (err) {
-      setError("Registration failed. Please try again.");
-      console.error("Error during registration:", err);
-    }
-  };
-
-  return (
-    <Container>
-      <FormCard>
-        <Title>Register</Title>
-        <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button type="submit">Register</Button>
-        </Form>
-        <SignInText>
-          Already registered? <Link to="/signin">Sign in here</Link>
-        </SignInText>
-      </FormCard>
-      <ToastContainer />
-    </Container>
-  );
-};
 
 export default RegisterForm;

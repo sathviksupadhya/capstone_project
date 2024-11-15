@@ -1,5 +1,4 @@
 "use client";
- 
 import React from "react";
 import { AuroraBackground } from './ui/aurora-background';
 import { motion } from 'framer-motion';
@@ -9,293 +8,6 @@ import { useEffect, useState, useRef } from 'react';
 import { FocusCards } from './ui/FocusCards';
 import { FaCalendarAlt, FaBell, FaClock, FaComments, FaRss, FaRegCalendarCheck, FaLinkedin, FaGithub, FaUserCircle, FaSun, FaMoon, FaShieldAlt, FaLock, FaHandshake, FaUsers, FaRocket, FaUserShield, FaCommentDots } from 'react-icons/fa';
 
-const HeroSection = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 120px 50px 20px 50px;
-  background: ${props => props.theme === 'dark' 
-    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
-    : 'linear-gradient(135deg, #e6f0ff 0%, #f5f5ff 100%)'
-  };
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-  scroll-behavior: smooth;
-
-  @media (max-width: 768px) {
-    padding: 80px 20px 20px 20px;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 0 auto;
-  gap: 4vh; // Reduced from 8vh
-
-  @media (max-width: 768px) {
-    gap: 2vh; // Reduced from 4vh
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 3.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-align: center;
-  width: 100%;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-
-  span {
-    background: none;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-    font-weight: bold;
-  }
-`;
-
-const Description = styled(motion.p)`
-  font-size: 1.25rem;
-  line-height: 1.75;
-  color: ${props => props.theme === 'dark' ? '#e0e0e0' : '#4b5563'};
-  margin-bottom: 2rem;
-  text-align: center;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const ThemeToggleButton = styled(motion.button)`
-  padding: 1rem;
-  font-size: 1.125rem;
-  color: white;
-  background: ${props => props.theme === 'dark' 
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #2563eb, #4f46e5)'
-  };
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const GetStartedButton = styled(motion.button)`
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const KnowMoreButton = styled(motion.button)`
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  background: ${props => props.theme === 'dark'
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #1f2937, #374151)'
-  };
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
-const FeaturesSection = styled.div`
-  width: 100%;
-  max-width: 1200px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 1rem 0; // Reduced from 2rem
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    padding: 0.5rem; // Reduced from 1rem
-  }
-`;
-
-const FeatureItem = styled(motion.div)`
-  padding: 2rem;
-  background: ${props => props.theme === 'dark'
-    ? 'rgba(45, 45, 45, 0.9)'
-    : 'rgba(255, 255, 255, 0.95)'
-  };
-  border-radius: 1rem;
-  text-align: left;
-  box-shadow: ${props => props.theme === 'dark'
-    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
-    : '0 4px 6px rgba(37, 99, 235, 0.1)'
-  };
-  margin-bottom: 1rem;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
-  
-  h3 {
-    font-size: 1.5rem;
-    color: ${props => props.isBlue 
-      ? '#2563eb' 
-      : props.theme === 'dark' ? '#ffffff' : '#000000'
-    };
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  p {
-    color: ${props => props.theme === 'dark' 
-      ? '#e0e0e0' 
-      : props.isBlue ? '#4b5563' : '#000000'
-    };
-    line-height: 1.6;
-  }
-
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: ${props => props.theme === 'dark'
-      ? '0 25px 30px -5px rgba(0, 0, 0, 0.3), 0 15px 15px -5px rgba(0, 0, 0, 0.15)'
-      : '0 25px 30px -5px rgba(37, 99, 235, 0.2), 0 15px 15px -5px rgba(37, 99, 235, 0.1)'
-    };
-  }
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem; // Reduced from 2rem
-  text-align: center;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
-  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
-  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    margin-bottom: 0.5rem; // Added reduced margin for mobile
-  }
-`;
-
-const TeamGrid = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  width: 100%;
-  max-width: 1000px;
-  flex-wrap: wrap;
-`;
-
-const TeamCard = styled.div`
-  width: 300px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: translateY(-10px);
-  }
-
-  .image-container {
-    width: 100%;
-    height: 250px;
-    overflow: hidden;
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .content {
-    padding: 1.5rem;
-    text-align: center;
-
-    h4 {
-      color: #1a1a1a;
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      color: #4f46e5;
-      font-weight: 500;
-      margin-bottom: 1rem;
-    }
-  }
-
-  .social-links {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
-
-    a {
-      font-size: 1.5rem;
-      transition: color 0.3s ease;
-
-      &.linkedin {
-        color: #0077b5;
-        &:hover {
-          color: #00548c;
-        }
-      }
-
-      &.github {
-        color: #333;
-        &:hover {
-          color: #000;
-        }
-      }
-    }
-  }
-`;
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -656,5 +368,293 @@ const LandingPage = () => {
     </HeroSection>
   );
 };
+
+const HeroSection = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 120px 50px 20px 50px;
+  background: ${props => props.theme === 'dark' 
+    ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
+    : 'linear-gradient(135deg, #e6f0ff 0%, #f5f5ff 100%)'
+  };
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  scroll-behavior: smooth;
+
+  @media (max-width: 768px) {
+    padding: 80px 20px 20px 20px;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto;
+  gap: 4vh; // Reduced from 8vh
+
+  @media (max-width: 768px) {
+    gap: 2vh; // Reduced from 4vh
+  }
+`;
+
+const Title = styled(motion.h1)`
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+
+  span {
+    background: none;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+    font-weight: bold;
+  }
+`;
+
+const Description = styled(motion.p)`
+  font-size: 1.25rem;
+  line-height: 1.75;
+  color: ${props => props.theme === 'dark' ? '#e0e0e0' : '#4b5563'};
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+const ThemeToggleButton = styled(motion.button)`
+  padding: 1rem;
+  font-size: 1.125rem;
+  color: white;
+  background: ${props => props.theme === 'dark' 
+    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
+    : 'linear-gradient(to right, #2563eb, #4f46e5)'
+  };
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const GetStartedButton = styled(motion.button)`
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const KnowMoreButton = styled(motion.button)`
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background: ${props => props.theme === 'dark'
+    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
+    : 'linear-gradient(to right, #1f2937, #374151)'
+  };
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const FeaturesSection = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0; // Reduced from 2rem
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0.5rem; // Reduced from 1rem
+  }
+`;
+
+const FeatureItem = styled(motion.div)`
+  padding: 2rem;
+  background: ${props => props.theme === 'dark'
+    ? 'rgba(45, 45, 45, 0.9)'
+    : 'rgba(255, 255, 255, 0.95)'
+  };
+  border-radius: 1rem;
+  text-align: left;
+  box-shadow: ${props => props.theme === 'dark'
+    ? '0 4px 6px rgba(0, 0, 0, 0.2)'
+    : '0 4px 6px rgba(37, 99, 235, 0.1)'
+  };
+  margin-bottom: 1rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  
+  h3 {
+    font-size: 1.5rem;
+    color: ${props => props.isBlue 
+      ? '#2563eb' 
+      : props.theme === 'dark' ? '#ffffff' : '#000000'
+    };
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  p {
+    color: ${props => props.theme === 'dark' 
+      ? '#e0e0e0' 
+      : props.isBlue ? '#4b5563' : '#000000'
+    };
+    line-height: 1.6;
+  }
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: ${props => props.theme === 'dark'
+      ? '0 25px 30px -5px rgba(0, 0, 0, 0.3), 0 15px 15px -5px rgba(0, 0, 0, 0.15)'
+      : '0 25px 30px -5px rgba(37, 99, 235, 0.2), 0 15px 15px -5px rgba(37, 99, 235, 0.1)'
+    };
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem; // Reduced from 2rem
+  text-align: center;
+  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
+  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
+  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 0.5rem; // Added reduced margin for mobile
+  }
+`;
+
+const TeamGrid = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  flex-wrap: wrap;
+`;
+
+const TeamCard = styled.div`
+  width: 300px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+  }
+
+  .image-container {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .content {
+    padding: 1.5rem;
+    text-align: center;
+
+    h4 {
+      color: #1a1a1a;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #4f46e5;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+
+    a {
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+
+      &.linkedin {
+        color: #0077b5;
+        &:hover {
+          color: #00548c;
+        }
+      }
+
+      &.github {
+        color: #333;
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+  }
+`;
 
 export default LandingPage;
