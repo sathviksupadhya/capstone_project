@@ -117,7 +117,7 @@ public class ReminderService {
         String daySuffix = getDaySuffix(day);
 
         String month = dateTime.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-        int hour = dateTime.getHour() % 12 == 0 ? 12 : dateTime.getHour() % 12;
+        int hour = dateTime.getHour() >= 12 ? dateTime.getHour() -12: dateTime.getHour();
         int minute = dateTime.getMinute();
         String amPm = dateTime.getHour() >= 12 ? "PM" : "AM";
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaChartLine, FaUsers, FaCalendarAlt, FaChartBar, FaFilter, FaUserClock, FaComments, FaCommentDots } from 'react-icons/fa';
 import axios from 'axios';
-import AdminNavBar from './AdminNavbar';
+import AdminNavBar from './AdminNavBar';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,

@@ -5,6 +5,276 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const AdminEvents = () => {
+  const navigate = useNavigate();
+  const [theme] = useState('light');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showEventForm, setShowEventForm] = useState(false);
+  const token = sessionStorage.getItem('jwtToken');
+  const [events, setEvents] = useState({
+    ongoing: [],
+    upcoming: [],
+    past: [],
+    featured: []
+  });
+  const [stats, setStats] = useState({
+    totalEvents: 0,
+    activeEvents: 0,
+    totalAttendees: 0
+  });
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    date: '',
+    imageUrl: '',
+    eventType: 'Event'
+  });
+
+  useEffect(() => {
+    // Fetch all events from backend
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get('http://localhost:9997/event/getAllEvents', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const allEvents = response.data;
+
+        // Categorize events based on date
+        const now = new Date();
+        const categorizedEvents = {
+          ongoing: [],
+          upcoming: [],
+          past: [],
+          featured: []
+        };
+
+        allEvents.forEach(event => {
+          const eventDate = new Date(event.eventDate);
+          if (eventDate < now) {
+            categorizedEvents.past.push(event);
+          } else if (eventDate.toDateString() === now.toDateString()) {
+            categorizedEvents.ongoing.push(event);
+          } else {
+            categorizedEvents.upcoming.push(event);
+          }
+        });
+
+        setEvents(categorizedEvents);
+        setStats({
+          totalEvents: allEvents.length,
+          activeEvents: categorizedEvents.ongoing.length + categorizedEvents.upcoming.length,
+          totalAttendees: 0
+        });
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const handleCreateEvent = () => {
+    setShowEventForm(true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const localDateTime = new Date(formData.date).toISOString();
+
+    try {
+      const token = sessionStorage.getItem('jwtToken');
+      const userId = sessionStorage.getItem('userId');
+
+      if (formData.eventType === 'Event') {
+
+      const response = await axios.post('http://localhost:9997/event/add',
+        {
+          eventTitle: formData.title,
+          eventDescription: formData.description,
+          eventDate: localDateTime,
+          eventImg: formData.imageUrl,
+          eventType: formData.eventType,
+          userId: userId
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+    }else {
+      console.log('jahsdc')
+      const response = await axios.get('http://localhost:9997/reminder/sendUrgentsmsAndCall',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            Message: formData.description
+          }
+        }
+      );
+    }
+      setShowEventForm(false);
+      window.location.reload();
+    } catch(error) {
+      console.error('Error creating event:', error);
+    }
+  };
+
+  const handleAnalytics = () => {
+    navigate('/admin/analytics');
+  };
+
+  const filterEvents = (eventsList) => {
+    return eventsList.filter(event => 
+      event.eventTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.eventDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.eventType.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  const renderEventCard = (event) => (
+    <EventCard key={event.eventId} $theme={theme}>
+      <EventStatus $status={event.status}>
+        {event.status ? event.status.charAt(0).toUpperCase() + event.status.slice(1) : 'Upcoming'}
+      </EventStatus>
+      <EventTitle $theme={theme}>{event.eventTitle}</EventTitle>
+      <EventDetail $theme={theme}>
+        <FaCalendarAlt /> {new Date(event.eventDate).toLocaleDateString()}
+      </EventDetail>
+      <EventDetail $theme={theme}>
+        <FaClock /> {new Date(event.eventDate).toLocaleTimeString()}
+      </EventDetail>
+      <EventDetail $theme={theme}>
+        <FaInfo /> {event.eventDescription}
+      </EventDetail>
+      <TagsContainer>
+        {event.tags && event.tags.map(tag => (
+          <Tag key={tag} $theme={theme}>#{tag}</Tag>
+        ))}
+      </TagsContainer>
+    </EventCard>
+  );
+
+  return (
+    <PageContainer $theme={theme}>
+      {showEventForm && (
+        <FormContainer>
+          <FormCard>
+            <Title>Create Event</Title>
+            <Form onSubmit={handleSubmit}>
+            {formData.eventType === 'Event' && (
+              <Input
+                type="text"
+                placeholder="Event Title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+            )}
+
+              <TextArea
+                placeholder="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+              />
+
+              <Input
+                type="datetime-local"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                required
+              />
+
+              <Select
+                name="eventType"
+                value={formData.eventType}
+                onChange={handleChange}
+                required
+              >
+                <option value="Event">Event</option>
+                <option value="Emergency Message">Emergency Message</option>
+              </Select>
+
+              {formData.eventType === 'Event' && (
+                <Input
+                  type="url"
+                  placeholder="Image URL"
+                  name="imageUrl"
+                  value={formData.imageUrl}
+                  onChange={handleChange}
+                />
+              )}
+
+              <Button type="submit">Create Event</Button>
+              <Button type="button" onClick={() => setShowEventForm(false)} style={{background: '#6c757d'}}>
+                Cancel
+              </Button>
+            </Form>
+          </FormCard>
+        </FormContainer>
+      )}
+
+      <StatsContainer>
+        <StatCard $theme={theme}>
+          <h4>Total Events</h4>
+          <p>{stats.totalEvents}</p>
+        </StatCard>
+        <StatCard $theme={theme}>
+          <h4>Active Events</h4>
+          <p>{stats.activeEvents}</p>
+        </StatCard>
+      </StatsContainer>
+
+      <ControlsContainer>
+        <SearchBar $theme={theme}>
+          <FaSearch />
+          <input 
+            type="text" 
+            placeholder="Search events..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SearchBar>
+        <ButtonGroup>
+          <ActionButton onClick={handleCreateEvent}>
+            <FaPlus /> Create Event
+          </ActionButton>
+          <ActionButton $secondary onClick={handleAnalytics}>
+            <FaChartBar /> Analytics
+          </ActionButton>
+        </ButtonGroup>
+      </ControlsContainer>
+
+      <SectionTitle $theme={theme}>Upcoming Events</SectionTitle>
+      <EventsGrid>
+        {filterEvents(events.upcoming).map(renderEventCard)}
+      </EventsGrid>
+
+      <SectionTitle $theme={theme}>Past Events</SectionTitle>
+      <EventsGrid>
+        {filterEvents(events.past).map(renderEventCard)}
+      </EventsGrid>
+    </PageContainer>
+  );
+};
+
 const FormContainer = styled.div`
   position: fixed;
   top: 0;
@@ -297,246 +567,5 @@ const SectionTitle = styled.h2`
     border-radius: 2px;
   }
 `;
-
-const AdminEvents = () => {
-  const navigate = useNavigate();
-  const [theme] = useState('light');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showEventForm, setShowEventForm] = useState(false);
-  const token = sessionStorage.getItem('jwtToken');
-  const [events, setEvents] = useState({
-    ongoing: [],
-    upcoming: [],
-    past: [],
-    featured: []
-  });
-  const [stats, setStats] = useState({
-    totalEvents: 0,
-    activeEvents: 0,
-    totalAttendees: 0
-  });
-
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    imageUrl: '',
-    eventType: 'Event'
-  });
-
-  useEffect(() => {
-    // Fetch all events from backend
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get('http://localhost:9997/event/getAllEvents', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const allEvents = response.data;
-
-        // Categorize events based on date
-        const now = new Date();
-        const categorizedEvents = {
-          ongoing: [],
-          upcoming: [],
-          past: [],
-          featured: []
-        };
-
-        allEvents.forEach(event => {
-          const eventDate = new Date(event.eventDate);
-          if (eventDate < now) {
-            categorizedEvents.past.push(event);
-          } else if (eventDate.toDateString() === now.toDateString()) {
-            categorizedEvents.ongoing.push(event);
-          } else {
-            categorizedEvents.upcoming.push(event);
-          }
-        });
-
-        setEvents(categorizedEvents);
-        setStats({
-          totalEvents: allEvents.length,
-          activeEvents: categorizedEvents.ongoing.length + categorizedEvents.upcoming.length,
-          totalAttendees: 0
-        });
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  const handleCreateEvent = () => {
-    setShowEventForm(true);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const localDateTime = new Date(formData.date).toISOString();
-
-    try {
-      const token = sessionStorage.getItem('jwtToken');
-      const userId = sessionStorage.getItem('userId');
-      const headers = { Authorization: token };
-
-      const response = await axios.post('http://localhost:9997/event/add',
-        {
-          eventTitle: formData.title,
-          eventDescription: formData.description,
-          eventDate: localDateTime,
-          eventType: formData.eventType,
-          eventImg: formData.imageUrl,
-          userId: userId
-        },
-        { headers }
-      );
-
-      setShowEventForm(false);
-      window.location.reload();
-    } catch(error) {
-      console.error('Error creating event:', error);
-    }
-  };
-
-  const handleAnalytics = () => {
-    navigate('/admin/analytics');
-  };
-
-  const renderEventCard = (event) => (
-    <EventCard key={event.eventId} $theme={theme}>
-      <EventStatus $status={event.status}>
-        {event.status ? event.status.charAt(0).toUpperCase() + event.status.slice(1) : 'Upcoming'}
-      </EventStatus>
-      <EventTitle $theme={theme}>{event.eventTitle}</EventTitle>
-      <EventDetail $theme={theme}>
-        <FaCalendarAlt /> {new Date(event.eventDate).toLocaleDateString()}
-      </EventDetail>
-      <EventDetail $theme={theme}>
-        <FaClock /> {new Date(event.eventDate).toLocaleTimeString()}
-      </EventDetail>
-      <EventDetail $theme={theme}>
-        <FaInfo /> {event.eventDescription}
-      </EventDetail>
-      <TagsContainer>
-        {event.tags && event.tags.map(tag => (
-          <Tag key={tag} $theme={theme}>#{tag}</Tag>
-        ))}
-      </TagsContainer>
-    </EventCard>
-  );
-
-  return (
-    <PageContainer $theme={theme}>
-      {showEventForm && (
-        <FormContainer>
-          <FormCard>
-            <Title>Create Event</Title>
-            <Form onSubmit={handleSubmit}>
-              <Input
-                type="text"
-                placeholder="Event Title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-              />
-
-              <TextArea
-                placeholder="Description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-              />
-
-              <Input
-                type="datetime-local"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-              />
-
-              <Select
-                name="eventType"
-                value={formData.eventType}
-                onChange={handleChange}
-                required
-              >
-                <option value="Event">Event</option>
-                <option value="Emergency Message">Emergency Message</option>
-              </Select>
-
-              <Input
-                type="url"
-                placeholder="Image URL"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-              />
-
-              <Button type="submit">Create Event</Button>
-              <Button type="button" onClick={() => setShowEventForm(false)} style={{background: '#6c757d'}}>
-                Cancel
-              </Button>
-            </Form>
-          </FormCard>
-        </FormContainer>
-      )}
-
-      <StatsContainer>
-        <StatCard $theme={theme}>
-          <h4>Total Events</h4>
-          <p>{stats.totalEvents}</p>
-        </StatCard>
-        <StatCard $theme={theme}>
-          <h4>Active Events</h4>
-          <p>{stats.activeEvents}</p>
-        </StatCard>
-      </StatsContainer>
-
-      <ControlsContainer>
-        <SearchBar $theme={theme}>
-          <FaSearch />
-          <input 
-            type="text" 
-            placeholder="Search events..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </SearchBar>
-        <ButtonGroup>
-          <ActionButton onClick={handleCreateEvent}>
-            <FaPlus /> Create Event
-          </ActionButton>
-          <ActionButton $secondary onClick={handleAnalytics}>
-            <FaChartBar /> Analytics
-          </ActionButton>
-        </ButtonGroup>
-      </ControlsContainer>
-
-      <SectionTitle $theme={theme}>Upcoming Events</SectionTitle>
-      <EventsGrid>
-        {events.upcoming.map(renderEventCard)}
-      </EventsGrid>
-
-      <SectionTitle $theme={theme}>Past Events</SectionTitle>
-      <EventsGrid>
-        {events.past.map(renderEventCard)}
-      </EventsGrid>
-    </PageContainer>
-  );
-};
 
 export default AdminEvents;

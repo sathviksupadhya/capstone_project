@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reminder")
@@ -41,33 +42,34 @@ public class reminderController {
 
     @GetMapping("/sendsms/{remid}")
     public String SendSms(@PathVariable("remid") String remId) {
-        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
+        Optional<Reminder> r = reminderRepository.findById(remId);
+        if(r.isEmpty()){
+            return "Reminder not found";
+        }
+        Reminder  reminder = r.get();
+        eventModel event = eventclient.getEvent(reminder.getEventId());
+        User user = userclient.getResidentById(reminder.getUserId());
         String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
-        Reminder r = reminderRepository.findById(remId).get();
-        r.setNeedSms(false);
-        reminderRepository.save(r);
+        reminder.setNeedSms(false);
+        reminderRepository.save(reminder);
         return reminderService.SendSms(user.getPhoneNumber(), message);
     }
 
     @GetMapping("/sendcall/{remid}")
     public String SendCall(@PathVariable("remid") String remId) {
-        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
+        Optional<Reminder> r = reminderRepository.findById(remId);
+        if(r.isEmpty()){
+            return "Reminder not found";
+        }
+        Reminder  reminder = r.get();
+        eventModel event = eventclient.getEvent(reminder.getEventId());
+        User user = userclient.getResidentById(reminder.getUserId());
         String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
-        Reminder r = reminderRepository.findById(remId).get();
-        r.setNeedCall(false);
-        reminderRepository.save(r);
+        reminder.setNeedCall(false);
+        reminderRepository.save(reminder);
         return reminderService.SendCall(user.getPhoneNumber(), message);
     }
 
-//    @GetMapping("/sendemail/{remid}")
-//    public String SendEmail(@PathVariable("remid") String remId) {
-//        eventModel event = eventclient.getEvent(reminderRepository.findById(remId).get().getEventId());
-//        User user = userclient.getResidentById(reminderRepository.findById(remId).get().getUserId());
-//        String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
-//        return reminderService.SendEmail(user.getEmail(), message);
-//    }
     @GetMapping("/getbyUserId/{userId}")
     public List<Reminder> getReminderByUserId(@PathVariable("userId") String userId) {
         return reminderService.getReminderByUserId(userId);
@@ -78,9 +80,12 @@ public class reminderController {
     public void Call() {
        reminderRepository.findAll().forEach(reminder -> {
            eventModel event = eventclient.getEvent(reminder.getEventId());
+           if(event == null){
+               return;
+           }
            LocalDateTime eventDate = event.getEventDate();
            LocalDateTime currentTime = LocalDateTime.now();
-           if (ChronoUnit.MINUTES.between(currentTime, eventDate) == 30) {
+           if (ChronoUnit.MINUTES.between(currentTime, eventDate) <= 30) {
                User user = userclient.getResidentById(reminder.getUserId());
                String message = "we have an " + event.getEventTitle() + " event on " + reminderService.formatDateTime(event.getEventDate());
                if (reminder.isNeedCall()) {
@@ -98,11 +103,14 @@ public class reminderController {
            }
        });
     }
-
+//
     @GetMapping("/sendUrgentsmsAndCall")
-    public String SendUrgentSmsAndCall(@RequestBody Urgentdto dto) {
-        reminderService.SendSms(dto.getPhoneNumber(), dto.getMessage());
-        reminderService.SendCall(dto.getPhoneNumber(), dto.getMessage());
+    public String SendUrgentSmsAndCall(@RequestParam String Message) {
+        List<User> users = userclient.getAllUsers();
+        for(User i: users) {
+            reminderService.SendSms(i.getPhoneNumber(), Message);
+            reminderService.SendCall(i.getPhoneNumber(), Message);
+        }
         return "you may receive a message and call now!!!";
     }
 

@@ -4,11 +4,11 @@ import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComm
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
-import AdminNavbar from './AdminNavbar';
 
 const PageWrapper = styled.div`
   background: #f0f2f5;
   min-height: 100vh;
+  margin-top: -30px;
 `;
 
 const DashboardContainer = styled.div`
@@ -280,18 +280,18 @@ const AdminHome = () => {
 
         const activityList = [
           ...residentsResponse.data.map(resident => ({
-            id: `activity-resident-${resident.id}`,
+            id: `activity-resident-${resident.userId}`,
             description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
             timestamp: new Date(resident.createdAt).toLocaleString()
           })),
           ...eventsResponse.data.map(event => ({
             id: `activity-event-${event.id}`,
             description: `New event created: ${event.eventTitle}`,
-            timestamp: new Date(event.createdAt).toLocaleString()
+            timestamp: new Date(event.eventDate).toLocaleString()
           }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        setRecentActivity(activityList.slice(0, 5));
+        setRecentActivity(activityList.slice(-5));
 
       } catch (error) {
         console.error('Error fetching admin dashboard data:', error);
@@ -306,7 +306,7 @@ const AdminHome = () => {
 
   return (
     <PageWrapper>
-      <AdminNavbar />
+      {/* <AdminNavBar/> */}
       <DashboardContainer>
         <DashboardHeader>
           <h1>Admin Dashboard</h1>
