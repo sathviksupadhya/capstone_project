@@ -8,14 +8,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 
 const Container = styled.div`
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  z-index: 1000;
 `;
 
-const FormContainer = styled.div`
+const FormContainer = styled(motion.div)`
   max-width: 500px;
   width: 90%;
   margin: 2rem auto;
@@ -25,6 +30,7 @@ const FormContainer = styled.div`
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   max-height: 80vh;
   overflow-y: auto;
+  position: relative;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -42,6 +48,21 @@ const FormContainer = styled.div`
     &:hover {
       background: #666;
     }
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+  
+  &:hover {
+    color: #000;
   }
 `;
 
@@ -238,15 +259,24 @@ const UserDetails = () => {
         pauseOnHover: true,
         draggable: true
       });
-      navigate('/home/profile')
+      navigate('/home/profile');
     } catch (error) {
       console.error('Error updating profile:', error);
     }
   };
 
+  const handleClose = () => {
+    navigate('/home/profile');
+  };
+
   return (
     <Container>
-      <FormContainer>
+      <FormContainer
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <CloseButton onClick={handleClose}>&times;</CloseButton>
         <Title>Update Your Profile</Title>
         <StyledForm onSubmit={handleSubmit}>
           <ProfilePhotoContainer>

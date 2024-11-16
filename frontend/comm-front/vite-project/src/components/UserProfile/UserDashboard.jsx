@@ -1,137 +1,222 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaHome, FaCalendarAlt, FaBell, FaCog, FaSignOutAlt, FaUser, FaSms, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaBell, FaCog, FaSignOutAlt, FaUser, FaSms, FaPhone, FaEnvelope, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardContainer = styled.div`
   display: flex;
   min-height: 100vh;
+  background: #E8EEF4;
+  font-family: 'Inter', sans-serif;
 `;
 
 const Sidebar = styled.div`
-  width: 250px;
-  background: #1a1a1a;
-  color: white;
-  padding: 20px;
+  width: 280px;
+  background: #000000;
+  color: #FFFFFF;
+  padding: 25px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 2;
 `;
 
 const Logo = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 40px;
-  padding: 20px 0;
-  border-bottom: 1px solid #333;
+  padding: 15px 0;
+  border-bottom: 2px solid #333333;
+  letter-spacing: 0.5px;
 `;
 
 const LogoImage = styled.img`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
+  height: 45px;
+  width: 45px;
+  border-radius: 12px;
+  object-fit: cover;
 `;
 
 const SidebarMenu = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
+  padding: 10px 0;
+  margin-top: 20px;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
+  gap: 15px;
+  padding: 16px 20px;
   cursor: pointer;
   border-radius: 8px;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  color: #FFFFFF;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  background: ${props => props.active ? '#808080' : 'transparent'};
+  transform: ${props => props.active ? 'translateX(5px)' : 'none'};
+  box-shadow: ${props => props.active ? '0 4px 15px rgba(0, 0, 0, 0.2)' : 'none'};
 
   &:hover {
-    background: #333;
+    background: #808080;
+    color: #fff;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 
   svg {
     font-size: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: #fff;
+    transform: ${props => props.active ? 'scaleY(1)' : 'scaleY(0)'};
+    transition: transform 0.2s;
+  }
+
+  &:hover:before {
+    transform: scaleY(1);
   }
 `;
 
 const MainContent = styled.div`
   flex: 1;
-  background: #f5f5f5;
-  padding: 30px;
+  padding: 40px;
+  background: #E8EEF4;
 `;
 
 const Header = styled.div`
   display: flex;
   align-items: center;
   gap: 30px;
-  margin-bottom: 30px;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+  
+  
 `;
 
 const ProfileImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
   object-fit: cover;
-  border: 3px solid #f5f5f5;
 `;
 
 const UserInfo = styled.div`
   h1 {
-    font-size: 24px;
+    font-size: 28px;
+    color: #2C3E50;
     margin: 0 0 8px;
+    font-weight: 700;
   }
   p {
-    color: #666;
+    color: #7F8C8D;
+    font-size: 16px;
     margin: 0;
   }
 `;
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
 `;
 
 const StatCard = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  text-align: center;
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: black;
+  }
 
   h3 {
-    color: #666;
+    color: #7F8C8D;
     font-size: 16px;
-    margin: 0 0 10px;
+    margin: 0 0 15px;
+    font-weight: 500;
   }
 
   p {
-    color: #333;
-    font-size: 24px;
-    font-weight: bold;
+    color: #2C3E50;
+    font-size: 36px;
+    font-weight: 700;
     margin: 0;
   }
 `;
 
 const ActivitySection = styled.div`
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  background: #FFFFFF;
+  padding: 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: black;
+  }
 
   h2 {
-    margin: 0 0 20px;
-    color: #333;
+    margin: 0 0 25px;
+    color: #2C3E50;
+    font-size: 22px;
+    font-weight: 700;
   }
 `;
 
@@ -142,15 +227,27 @@ const ActivityList = styled.div`
 `;
 
 const ActivityItem = styled.div`
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  padding: 20px;
+  background: #F8FAFC;
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: #EDF2F7;
+  }
 
   span {
-    color: #666;
+    &:first-child {
+      color: #2C3E50;
+      font-weight: 500;
+    }
+    &:last-child {
+      color: #7F8C8D;
+      font-size: 14px;
+    }
   }
 `;
 
@@ -159,48 +256,71 @@ const NotificationPopup = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #FFFFFF;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(44, 62, 80, 0.15);
   z-index: 1000;
   width: 500px;
 `;
 
+const NotificationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  h3 {
+    margin: 0;
+    color: #2C3E50;
+    font-size: 24px;
+    font-weight: 700;
+  }
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #7F8C8D;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  transition: 0.2s ease;
+  
+  &:hover {
+    color: #2C3E50;
+  }
+`;
+
 const NotificationCard = styled.div`
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
+  background: #F8FAFC;
+  padding: 25px;
+  border-radius: 16px;
   margin-bottom: 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
 
   .icon-text {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
 
     svg {
       font-size: 24px;
-      color: #666;
+      color: #000000;
     }
 
     .text {
       h4 {
         margin: 0;
-        color: #333;
+        color: #2C3E50;
+        font-size: 18px;
+        font-weight: 600;
       }
       p {
         margin: 5px 0 0;
-        color: #666;
+        color: #7F8C8D;
         font-size: 14px;
       }
     }
@@ -208,25 +328,28 @@ const NotificationCard = styled.div`
 `;
 
 const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
+  accent-color: #3498DB;
 `;
 
 const SaveButton = styled.button`
   width: 100%;
-  padding: 12px;
-  background: #1a1a1a;
+  padding: 16px;
+  background: black;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-top: 20px;
+  margin-top: 25px;
   font-size: 16px;
-  transition: background 0.3s;
+  font-weight: 600;
+  transition: 0.2s ease;
 
   &:hover {
-    background: #333;
+    opacity: 0.9;
+    transform: translateY(-2px);
   }
 `;
 
@@ -282,10 +405,6 @@ const UserDashboard = () => {
     return <div>Loading...</div>;
   }
 
-  // const extractNameFromEmail = (email) => {
-  //   return email.split('@')[0];
-  // };
-
   const handleProfileClick = () => {
     console.log(userData);
     navigate('/home/profile/profile', { state: { user: userData } });
@@ -329,7 +448,7 @@ const UserDashboard = () => {
           UnitySpace
         </Logo>
         <SidebarMenu>
-          <MenuItem>
+          <MenuItem active={true}>
             <FaHome />
             Dashboard
           </MenuItem>
@@ -358,7 +477,12 @@ const UserDashboard = () => {
 
       {showNotificationPopup && (
         <NotificationPopup>
-          <h3>Notification Preferences</h3>
+          <NotificationHeader>
+            <h3>Notification Preferences</h3>
+            <CloseButton onClick={() => setShowNotificationPopup(false)}>
+              <FaTimes />
+            </CloseButton>
+          </NotificationHeader>
           
           <NotificationCard>
             <div className="icon-text">
