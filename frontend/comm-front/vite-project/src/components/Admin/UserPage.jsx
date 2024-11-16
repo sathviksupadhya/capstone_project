@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import AdminNavBar from './AdminNavBar';
+import AdminNavBar from './AdminNavbar';
 import { FaSearch, FaFilter, FaEdit, FaTrash, FaUserPlus, FaSortAmountDown, FaChartBar, FaCheck, FaTimes } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +8,8 @@ import axios from 'axios';
 
 const PageContainer = styled.div`
   padding: 90px 50px 50px;
+  background: #f0f2f5;
+  min-height: 100vh;
 `;
 
 const ControlsContainer = styled.div`
@@ -15,22 +17,28 @@ const ControlsContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  background: #ffffff;
+  padding: 20px 30px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 `;
 
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
-  background: white;
+  background: #f8f9fa;
   border-radius: 8px;
-  padding: 8px 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 12px 20px;
   width: 300px;
+  border: 1px solid #eef2f7;
 
   input {
     border: none;
     outline: none;
     margin-left: 10px;
     width: 100%;
+    background: transparent;
+    color: #2c3e50;
   }
 `;
 
@@ -43,88 +51,109 @@ const ActionButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: ${props => props.$variant === 'primary' ? '#4CAF50' : '#2196F3'};
+  background: ${props => props.$variant === 'primary' ? '#1a237e' : '#3949ab'};
   color: white;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 
   &:hover {
-    background: ${props => props.$variant === 'primary' ? '#45a049' : '#1976D2'};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26,35,126,0.2);
   }
 `;
 
 const StatsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 25px;
   margin-bottom: 40px;
 `;
 
 const StatCard = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.3s ease;
+  border-left: 5px solid #1a237e;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
 
   h4 {
     color: #666;
-    margin: 0 0 10px;
+    margin: 0;
+    font-size: 1rem;
   }
 
   p {
-    font-size: 24px;
-    font-weight: bold;
-    color: #4CAF50;
-    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a237e;
+    margin: 5px 0 0;
   }
 `;
 
 const TabContainer = styled.div`
   margin-bottom: 30px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 `;
 
 const TabList = styled.div`
   display: flex;
   gap: 20px;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 20px;
+  border-bottom: 2px solid #eef2f7;
 `;
 
 const Tab = styled.button`
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
   background: none;
   cursor: pointer;
-  color: ${props => props.$active ? '#4CAF50' : '#666'};
-  border-bottom: 2px solid ${props => props.$active ? '#4CAF50' : 'transparent'};
+  color: ${props => props.$active ? '#1a237e' : '#666'};
+  border-bottom: 2px solid ${props => props.$active ? '#1a237e' : 'transparent'};
   margin-bottom: -2px;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  font-weight: 500;
 
   &:hover {
-    color: #4CAF50;
+    color: #1a237e;
   }
 `;
 
 const UserGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
+  gap: 25px;
 `;
 
 const UserCard = styled.div`
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  transition: transform 0.2s ease;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  transition: all 0.3s ease;
   position: relative;
+  border-left: 5px solid #1a237e;
 
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -141,10 +170,12 @@ const CardActionButton = styled.button`
   border: none;
   cursor: pointer;
   color: #666;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
+  padding: 8px;
 
   &:hover {
-    color: ${props => props.$delete ? '#ff4444' : '#4CAF50'};
+    color: ${props => props.$delete ? '#f44336' : '#1a237e'};
+    transform: scale(1.1);
   }
 `;
 
@@ -152,13 +183,13 @@ const UserAvatar = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #f0f0f0;
+  background: rgba(26,35,126,0.1);
   margin: 0 auto 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
-  color: #666;
+  color: #1a237e;
 `;
 
 const UserInfo = styled.div`
@@ -167,23 +198,25 @@ const UserInfo = styled.div`
 
 const UserName = styled.h3`
   margin: 0 0 10px;
-  color: #333;
+  color: #1a237e;
+  font-size: 1.2rem;
 `;
 
 const UserDetail = styled.p`
   margin: 5px 0;
   color: #666;
-  font-size: 14px;
+  font-size: 0.9rem;
 `;
 
 const UserStatus = styled.span`
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  background: ${props => props.$active ? '#e8f5e9' : '#ffebee'};
-  color: ${props => props.$active ? '#4caf50' : '#f44336'};
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: ${props => props.$active ? 'rgba(26,35,126,0.1)' : '#ffebee'};
+  color: ${props => props.$active ? '#1a237e' : '#f44336'};
   margin-top: 10px;
   display: inline-block;
+  font-weight: 500;
 `;
 
 const Modal = styled.div`
@@ -202,10 +235,15 @@ const Modal = styled.div`
 const FormCard = styled.div`
   background: white;
   padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 400px;
+
+  h2 {
+    color: #1a237e;
+    margin-bottom: 20px;
+  }
 `;
 
 const Form = styled.form`
@@ -216,13 +254,15 @@ const Form = styled.form`
 
 const Input = styled.input`
   padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  border: 1px solid #eef2f7;
+  border-radius: 8px;
   font-size: 16px;
+  transition: all 0.3s ease;
   
   &:focus {
     outline: none;
-    border-color: #000000;
+    border-color: #1a237e;
+    box-shadow: 0 0 0 2px rgba(26,35,126,0.1);
   }
 `;
 
@@ -246,7 +286,6 @@ const UserPage = () => {
 
   const fetchData = async () => {
     try {
-      // Fetch all users using the endpoint from UserController
       const response = await axios.get('http://localhost:9997/api/residents/all', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -254,7 +293,6 @@ const UserPage = () => {
       });
       setUsers(response.data);
       
-      // Calculate stats
       const total = response.data.length;
       const pending = response.data.filter(user => user.status === 'PENDING').length;
       const approved = response.data.filter(user => user.status === 'APPROVED').length;
@@ -294,7 +332,6 @@ const UserPage = () => {
     
     filtered.sort((a, b) => {
       if (sortBy === 'name') return a.userName?.localeCompare(b.userName);
-      // if (sortBy === 'date') return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
     
@@ -420,7 +457,7 @@ const UserPage = () => {
                       <FaCheck />
                     </CardActionButton>
                     <CardActionButton onClick={() => handleEdit(user.userId, false)}>
-                      <FaTimes /> 
+                      <FaTimes />
                     </CardActionButton>
                   </>
                 )}

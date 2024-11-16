@@ -31,8 +31,8 @@ function App() {
         <Route path="/admin/events" element={<><AdminNavBar /><AdminEvents /></>} />
         <Route path="/admin/analytics" element={<><AdminNavBar /><AdminAnalytics /></>} />
         <Route path="/home/profile" element={<><UserDashboard /></>} />
-        <Route path="/home/profile/profile" element={<UserDetails />} />
-        <Route path="/home/profile/settings" element={<UserSettings />} />
+        <Route path="/home/profile/profile" element={<><UserDashboard /><UserDetails /></>} />
+        <Route path="/home/profile/settings" element={<><UserDashboard /><UserSettings /></>} />
       </Routes>
     </BrowserRouter>
   )

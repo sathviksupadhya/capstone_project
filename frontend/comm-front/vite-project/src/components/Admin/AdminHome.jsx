@@ -1,53 +1,187 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock } from 'react-icons/fa';
+import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock, FaBuilding, FaClipboardList, FaShieldAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+import AdminNavbar from './AdminNavbar';
+
+const PageWrapper = styled.div`
+  background: #f0f2f5;
+  min-height: 100vh;
+`;
 
 const DashboardContainer = styled.div`
-  padding: 90px 50px 30px;
-  background: ${props => props.$theme === 'dark' ? '#1a1a1a' : '#f5f5f5'};
-  min-height: 100vh;
-  color: ${props => props.$theme === 'dark' ? '#ffffff' : '#000000'};
+  padding: 30px 40px;
+  margin-top: 80px; // Space for navbar
+  background: #f0f2f5;
+  min-height: calc(100vh - 80px);
+  color: #2c3e50;
+`;
+
+const DashboardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  background: #ffffff;
+  padding: 20px 30px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a237e;
+    margin: 0;
+    background: linear-gradient(45deg, #1a237e, #3949ab);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 `;
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
   margin-bottom: 40px;
 `;
 
 const StatCard = styled.div`
-  background: ${props => props.$theme === 'dark' ? '#333' : '#ffffff'};
+  background: #ffffff;
   padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   gap: 20px;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
+  border-left: 5px solid #1a237e;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(26,35,126,0.1) 100%);
+    pointer-events: none;
   }
 `;
 
 const StatIcon = styled.div`
   font-size: 2.5rem;
-  color: #4CAF50;
+  color: #1a237e;
+  background: rgba(26, 35, 126, 0.1);
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  ${StatCard}:hover & {
+    transform: scale(1.1);
+    background: rgba(26, 35, 126, 0.2);
+  }
 `;
 
 const StatInfo = styled.div`
   h3 {
-    font-size: 1.8rem;
+    font-size: 2rem;
+    font-weight: 700;
     margin: 0;
+    color: #1a237e;
+    transition: all 0.3s ease;
   }
   p {
     margin: 5px 0 0;
-    color: ${props => props.$theme === 'dark' ? '#ccc' : '#666'};
+    color: #666;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  ${StatCard}:hover & h3 {
+    transform: scale(1.05);
+  }
+`;
+
+const ContentGrid = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-top: 30px;
+`;
+
+const NotificationsContainer = styled.div`
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+`;
+
+const NotificationItem = styled.div`
+  padding: 15px;
+  border-bottom: 1px solid #eef2f7;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #f8f9fa;
+    border-radius: 8px;
+    transform: translateX(5px);
+  }
+
+  svg {
+    color: #1a237e;
+    font-size: 1.2rem;
+  }
+`;
+
+const RecentActivityContainer = styled.div`
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+`;
+
+const ActivityItem = styled.div`
+  padding: 15px;
+  border-left: 4px solid #1a237e;
+  margin: 10px 0;
+  background: #f8f9fa;
+  border-radius: 0 8px 8px 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateX(5px);
+    background: #f0f2f5;
+  }
+
+  p {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 500;
+  }
+
+  small {
+    color: #666;
+    font-size: 0.85rem;
   }
 `;
 
@@ -55,47 +189,28 @@ const SectionHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 40px 0 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eef2f7;
 `;
 
 const SectionTitle = styled.h2`
   font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a237e;
   margin: 0;
-`;
+  position: relative;
 
-const NotificationsContainer = styled.div`
-  margin: 30px 0;
-  background: ${props => props.$theme === 'dark' ? '#333' : '#ffffff'};
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const NotificationItem = styled.div`
-  padding: 15px;
-  border-bottom: 1px solid ${props => props.$theme === 'dark' ? '#444' : '#eee'};
-  display: flex;
-  align-items: center;
-  gap: 15px;
-
-  &:last-child {
-    border-bottom: none;
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #1a237e;
+    border-radius: 2px;
   }
-`;
-
-const RecentActivityContainer = styled.div`
-  margin: 30px 0;
-  background: ${props => props.$theme === 'dark' ? '#333' : '#ffffff'};
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const ActivityItem = styled.div`
-  padding: 10px;
-  border-left: 3px solid #4CAF50;
-  margin: 10px 0;
-  background: ${props => props.$theme === 'dark' ? '#444' : '#f9f9f9'};
 `;
 
 const AdminHome = () => {
@@ -109,7 +224,6 @@ const AdminHome = () => {
   
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-  const [theme] = useState('light');
   const token = sessionStorage.getItem('jwtToken');
 
   useEffect(() => {
@@ -125,12 +239,11 @@ const AdminHome = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        console.log(residentsResponse.data.length);
+        
         const totalResidents = residentsResponse.data.length;
         const activeResidents = residentsResponse.data.filter(resident => resident.status === 'APPROVED').length;
         const pendingApprovals = residentsResponse.data.filter(resident => resident.status === 'PENDING').length;
 
-        // Fetch events data
         const eventsResponse = await axios.get('http://localhost:9997/event/getAllEvents', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -145,7 +258,6 @@ const AdminHome = () => {
           pendingApprovals
         });
 
-        // Generate notifications from residents and events data
         const notificationsList = [
           ...residentsResponse.data
             .filter(resident => resident.status === 'PENDING')
@@ -163,9 +275,8 @@ const AdminHome = () => {
             }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        setNotifications(notificationsList.slice(0, 5)); // Show only latest 5 notifications
+        setNotifications(notificationsList.slice(0, 5));
 
-        // Generate activity log from residents and events data
         const activityList = [
           ...residentsResponse.data.map(resident => ({
             id: `activity-resident-${resident.id}`,
@@ -179,7 +290,7 @@ const AdminHome = () => {
           }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        setRecentActivity(activityList.slice(0, 5)); // Show only latest 5 activities
+        setRecentActivity(activityList.slice(0, 5));
 
       } catch (error) {
         console.error('Error fetching admin dashboard data:', error);
@@ -193,76 +304,85 @@ const AdminHome = () => {
   }, [navigate, token]);
 
   return (
-    <DashboardContainer $theme={theme}>
-      <StatsGrid>
-        <StatCard $theme={theme} onClick={() => navigate('/admin/users')}>
-          <StatIcon>
-            <FaUsers />
-          </StatIcon>
-          <StatInfo>
-            <h3>{stats.totalResidents}</h3>
-            <p>Total Residents</p>
-          </StatInfo>
-        </StatCard>
+    <PageWrapper>
+      <AdminNavbar />
+      <DashboardContainer>
+        <DashboardHeader>
+          <h1>Admin Dashboard</h1>
+        </DashboardHeader>
 
-        <StatCard $theme={theme} onClick={() => navigate('/admin/events')}>
-          <StatIcon>
-            <FaCalendarAlt />
-          </StatIcon>
-          <StatInfo>
-            <h3>{stats.totalEvents}</h3>
-            <p>Total Events</p>
-          </StatInfo>
-        </StatCard>
+        <StatsGrid>
+          <StatCard onClick={() => navigate('/admin/users')}>
+            <StatIcon>
+              <FaUsers />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.totalResidents}</h3>
+              <p>Total Residents</p>
+            </StatInfo>
+          </StatCard>
 
-        <StatCard $theme={theme} onClick={() => navigate('/admin/analytics')}>
-          <StatIcon>
-            <FaChartLine />
-          </StatIcon>
-          <StatInfo>
-            <h3>{stats.activeResidents}</h3>
-            <p>Active Residents</p>
-          </StatInfo>
-        </StatCard>
+          <StatCard onClick={() => navigate('/admin/events')}>
+            <StatIcon>
+              <FaCalendarAlt />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.totalEvents}</h3>
+              <p>Total Events</p>
+            </StatInfo>
+          </StatCard>
 
-        <StatCard $theme={theme} onClick={() => navigate('/admin/users', { state: { activeTab: 'inactive' }})}>
-          <StatIcon>
-            <FaUserClock />
-          </StatIcon>
-          <StatInfo>
-            <h3>{stats.pendingApprovals}</h3>
-            <p>Pending Approvals</p>
-          </StatInfo>
-        </StatCard>
-      </StatsGrid>
+          <StatCard onClick={() => navigate('/admin/analytics')}>
+            <StatIcon>
+              <FaChartLine />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.activeResidents}</h3>
+              <p>Active Residents</p>
+            </StatInfo>
+          </StatCard>
 
-      <NotificationsContainer $theme={theme}>
-        <SectionHeader>
-          <SectionTitle>Recent Notifications</SectionTitle>
-        </SectionHeader>
-        {notifications.map(notification => (
-          <NotificationItem key={notification.id} $theme={theme}>
-            <FaBell />
-            <div>
-              <p>{notification.message}</p>
-              <small>{notification.timestamp}</small>
-            </div>
-          </NotificationItem>
-        ))}
-      </NotificationsContainer>
+          <StatCard onClick={() => navigate('/admin/users', { state: { activeTab: 'inactive' }})}>
+            <StatIcon>
+              <FaUserClock />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.pendingApprovals}</h3>
+              <p>Pending Approvals</p>
+            </StatInfo>
+          </StatCard>
+        </StatsGrid>
 
-      <RecentActivityContainer $theme={theme}>
-        <SectionHeader>
-          <SectionTitle>Recent Activity</SectionTitle>
-        </SectionHeader>
-        {recentActivity.map(activity => (
-          <ActivityItem key={activity.id} $theme={theme}>
-            <p>{activity.description}</p>
-            <small>{activity.timestamp}</small>
-          </ActivityItem>
-        ))}
-      </RecentActivityContainer>
-    </DashboardContainer>
+        <ContentGrid>
+          <RecentActivityContainer>
+            <SectionHeader>
+              <SectionTitle>Recent Activity</SectionTitle>
+            </SectionHeader>
+            {recentActivity.map(activity => (
+              <ActivityItem key={activity.id}>
+                <p>{activity.description}</p>
+                <small>{activity.timestamp}</small>
+              </ActivityItem>
+            ))}
+          </RecentActivityContainer>
+
+          <NotificationsContainer>
+            <SectionHeader>
+              <SectionTitle>Notifications</SectionTitle>
+            </SectionHeader>
+            {notifications.map(notification => (
+              <NotificationItem key={notification.id}>
+                <FaBell />
+                <div>
+                  <p>{notification.message}</p>
+                  <small>{notification.timestamp}</small>
+                </div>
+              </NotificationItem>
+            ))}
+          </NotificationsContainer>
+        </ContentGrid>
+      </DashboardContainer>
+    </PageWrapper>
   );
 };
 
