@@ -40,22 +40,20 @@ const SignInForm = () => {
             }
           }
       );
-      toast.success('Successfully signed in!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      });
       const userStatus = user.data.status;
       console.log(userStatus);
       if(userStatus === "APPROVED"){ 
-        if(username.toLowerCase() === "admin"){
-          navigate("/admin");
-        }else{
-          navigate("/home");
-        }
+        toast.success('Successfully signed in!', {
+          position: "top-right",
+          autoClose: 500,
+          onClose: () => {
+            if(username.toLowerCase() === "admin"){
+              navigate("/admin");
+            }else{
+              navigate("/home");
+            }
+          }
+        });
       }
     }catch(error){
       toast.error('You are not approved yet. Please wait for approval.', {

@@ -111,9 +111,10 @@ const AdminHome = () => {
   const [recentActivity, setRecentActivity] = useState([]);
   const [theme] = useState('light');
   const token = sessionStorage.getItem('jwtToken');
+  const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
-    if (!token) {
+    if (!token || userId !== '67358a8f23bfe342e171cad3') {
       navigate('/');
       return;
     }

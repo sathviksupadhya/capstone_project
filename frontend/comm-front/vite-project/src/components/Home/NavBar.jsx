@@ -33,14 +33,14 @@ const NavBar = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        console.log(123, userId);
-        const response = await fetch(`http://localhost:9997/api/residents/${userId}`, {
+        // console.log(123, userId);
+        const response = await axios.get(`http://localhost:9997/api/residents/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        const data = await response.data();
-        console.log(data.image);
+        const data = await response.data;
+        console.log(data);
         setProfileImage(data.image);
         setUserName(data.firstName);
       } catch (error) {

@@ -58,5 +58,10 @@ public class authenticationController {
         return authenticationservice.getUser(userid);
     }
 
+    @DeleteMapping("/delete/{userid}")
+    public ResponseEntity<String> deleteUser(@PathVariable String userid) {
+        return ResponseEntity.ok(authenticationservice.deleteUser(userid));
+    }
+
 
 }

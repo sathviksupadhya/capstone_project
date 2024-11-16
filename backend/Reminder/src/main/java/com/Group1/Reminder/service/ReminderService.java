@@ -100,6 +100,7 @@ public class ReminderService {
     public String SendSms(String number, String message) {
         Message.creator(new PhoneNumber(number), new PhoneNumber("+15102963260"),
                 message).create();
+
         return "you may receive a message now!!!";
     }
 
