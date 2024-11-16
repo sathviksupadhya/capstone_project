@@ -1,9 +1,31 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock, FaBuilding, FaClipboardList, FaShieldAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
+=======
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import {
+  FaUsers,
+  FaCalendarAlt,
+  FaChartLine,
+  FaSearch,
+  FaFilter,
+  FaBell,
+  FaComments,
+  FaUserClock,
+  FaBuilding,
+  FaClipboardList,
+  FaShieldAlt,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import axios from "axios";
+import AdminNavbar from "./AdminNavbar";
+>>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
 
 const PageWrapper = styled.div`
   background: #f0f2f5;
@@ -27,8 +49,8 @@ const DashboardHeader = styled.div`
   background: #ffffff;
   padding: 20px 30px;
   border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
   h1 {
     font-size: 2.5rem;
     font-weight: 700;
@@ -67,13 +89,17 @@ const StatCard = styled.div`
   }
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     right: 0;
     width: 100px;
     height: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(26,35,126,0.1) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(26, 35, 126, 0.1) 100%
+    );
     pointer-events: none;
   }
 `;
@@ -202,7 +228,7 @@ const SectionTitle = styled.h2`
   position: relative;
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -15px;
     left: 0;
@@ -219,84 +245,119 @@ const AdminHome = () => {
     totalResidents: 0,
     totalEvents: 0,
     activeResidents: 0,
-    pendingApprovals: 0
+    pendingApprovals: 0,
   });
-  
+
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
+<<<<<<< HEAD
   const token = sessionStorage.getItem('jwtToken');
   const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
     if (!token || userId !== '67358a8f23bfe342e171cad3') {
       navigate('/');
+=======
+  const token = sessionStorage.getItem("jwtToken");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+>>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
       return;
     }
 
     const fetchData = async () => {
       try {
-        const residentsResponse = await axios.get('http://localhost:9997/api/residents/all', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const residentsResponse = await axios.get(
+          "http://localhost:9997/api/residents/all",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
-        
-        const totalResidents = residentsResponse.data.length;
-        const activeResidents = residentsResponse.data.filter(resident => resident.status === 'APPROVED').length;
-        const pendingApprovals = residentsResponse.data.filter(resident => resident.status === 'PENDING').length;
+        );
 
-        const eventsResponse = await axios.get('http://localhost:9997/event/getAllEvents', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        const totalResidents = residentsResponse.data.length;
+        const activeResidents = residentsResponse.data.filter(
+          (resident) => resident.status === "APPROVED"
+        ).length;
+        const pendingApprovals = residentsResponse.data.filter(
+          (resident) => resident.status === "PENDING"
+        ).length;
+
+        const eventsResponse = await axios.get(
+          "http://localhost:9997/event/getAllEvents",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         const totalEvents = eventsResponse.data.length;
 
         setStats({
           totalResidents,
           totalEvents,
           activeResidents,
-          pendingApprovals
+          pendingApprovals,
         });
 
         const notificationsList = [
           ...residentsResponse.data
-            .filter(resident => resident.status === 'PENDING')
-            .map(resident => ({
+            .filter((resident) => resident.status === "PENDING")
+            .map((resident) => ({
               id: `resident-${resident.userId}`,
               message: `New registration request from ${resident.userName}`,
-              timestamp: new Date(resident.createdAt).toLocaleString()
+              timestamp: new Date(resident.createdAt).toLocaleString(),
             })),
           ...eventsResponse.data
-            .filter(event => new Date(event.eventDate) > new Date())
-            .map(event => ({
+            .filter((event) => new Date(event.eventDate) > new Date())
+            .map((event) => ({
               id: `event-${event.id}`,
               message: `Upcoming event: ${event.eventTitle}`,
-              timestamp: new Date(event.eventDate).toLocaleString()
-            }))
+              timestamp: new Date(event.eventDate).toLocaleString(),
+            })),
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         setNotifications(notificationsList.slice(0, 5));
 
         const activityList = [
+<<<<<<< HEAD
           ...residentsResponse.data.map(resident => ({
             id: `activity-resident-${resident.userId}`,
             description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
             timestamp: new Date(resident.createdAt).toLocaleString()
+=======
+          ...residentsResponse.data.map((resident) => ({
+            id: `activity-resident-${resident.id}`,
+            description: `Resident ${resident.userName} ${
+              resident.status === "ACTIVE" ? "activated" : "registered"
+            }`,
+            timestamp: new Date(resident.createdAt).toLocaleString(),
+>>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
           })),
-          ...eventsResponse.data.map(event => ({
+          ...eventsResponse.data.map((event) => ({
             id: `activity-event-${event.id}`,
             description: `New event created: ${event.eventTitle}`,
+<<<<<<< HEAD
             timestamp: new Date(event.eventDate).toLocaleString()
           }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         setRecentActivity(activityList.slice(-5));
 
+=======
+            timestamp: new Date(event.createdAt).toLocaleString(),
+          })),
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setRecentActivity(activityList.slice(0, 5));
+>>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
       } catch (error) {
-        console.error('Error fetching admin dashboard data:', error);
+        console.error("Error fetching admin dashboard data:", error);
         if (error.response && error.response.status === 401) {
-          navigate('/');
+          navigate("/");
         }
       }
     };
@@ -313,7 +374,7 @@ const AdminHome = () => {
         </DashboardHeader>
 
         <StatsGrid>
-          <StatCard onClick={() => navigate('/admin/users')}>
+          <StatCard onClick={() => navigate("/admin/users")}>
             <StatIcon>
               <FaUsers />
             </StatIcon>
@@ -323,7 +384,7 @@ const AdminHome = () => {
             </StatInfo>
           </StatCard>
 
-          <StatCard onClick={() => navigate('/admin/events')}>
+          <StatCard onClick={() => navigate("/admin/events")}>
             <StatIcon>
               <FaCalendarAlt />
             </StatIcon>
@@ -333,7 +394,11 @@ const AdminHome = () => {
             </StatInfo>
           </StatCard>
 
-          <StatCard onClick={() => navigate('/admin/analytics')}>
+          <StatCard
+            onClick={() =>
+              navigate("/admin/users", { state: { activeTab: "active" } })
+            }
+          >
             <StatIcon>
               <FaChartLine />
             </StatIcon>
@@ -343,7 +408,11 @@ const AdminHome = () => {
             </StatInfo>
           </StatCard>
 
-          <StatCard onClick={() => navigate('/admin/users', { state: { activeTab: 'inactive' }})}>
+          <StatCard
+            onClick={() =>
+              navigate("/admin/users", { state: { activeTab: "inactive" } })
+            }
+          >
             <StatIcon>
               <FaUserClock />
             </StatIcon>
@@ -359,7 +428,7 @@ const AdminHome = () => {
             <SectionHeader>
               <SectionTitle>Recent Activity</SectionTitle>
             </SectionHeader>
-            {recentActivity.map(activity => (
+            {recentActivity.map((activity) => (
               <ActivityItem key={activity.id}>
                 <p>{activity.description}</p>
                 <small>{activity.timestamp}</small>
@@ -371,7 +440,7 @@ const AdminHome = () => {
             <SectionHeader>
               <SectionTitle>Notifications</SectionTitle>
             </SectionHeader>
-            {notifications.map(notification => (
+            {notifications.map((notification) => (
               <NotificationItem key={notification.id}>
                 <FaBell />
                 <div>

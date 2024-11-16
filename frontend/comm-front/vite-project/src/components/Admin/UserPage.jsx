@@ -75,13 +75,13 @@ const StatsContainer = styled.div`
 
 const StatCard = styled.div`
   background: #ffffff;
-  padding: 25px;
+  padding: 15px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   transition: all 0.3s ease;
   border-left: 5px solid #1a237e;
   position: relative;
@@ -99,10 +99,10 @@ const StatCard = styled.div`
   }
 
   p {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #1a237e;
-    margin: 5px 0 0;
+    margin: 0;
   }
 `;
 
@@ -146,7 +146,7 @@ const UserCard = styled.div`
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 25px;
+  padding: 15px;
   transition: all 0.3s ease;
   position: relative;
   border-left: 5px solid #1a237e;
@@ -172,23 +172,39 @@ const CardActionButton = styled.button`
   color: #666;
   transition: all 0.3s ease;
   padding: 8px;
+  position: relative;
 
   &:hover {
     color: ${props => props.$delete ? '#f44336' : '#1a237e'};
     transform: scale(1.1);
   }
+
+  &:hover::after {
+    content: '${props => props.$delete ? 'Delete User' : props.$approve ? 'Approve User' : 'Reject User'}';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+  }
 `;
 
 const UserAvatar = styled.div`
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: rgba(26,35,126,0.1);
-  margin: 0 auto 15px;
+  margin: 0 auto 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 24px;
   color: #1a237e;
 `;
 
@@ -197,24 +213,24 @@ const UserInfo = styled.div`
 `;
 
 const UserName = styled.h3`
-  margin: 0 0 10px;
+  margin: 0 0 5px;
   color: #1a237e;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 `;
 
 const UserDetail = styled.p`
-  margin: 5px 0;
+  margin: 3px 0;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 `;
 
 const UserStatus = styled.span`
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   background: ${props => props.$active ? 'rgba(26,35,126,0.1)' : '#ffebee'};
   color: ${props => props.$active ? '#1a237e' : '#f44336'};
-  margin-top: 10px;
+  margin-top: 5px;
   display: inline-block;
   font-weight: 500;
 `;
@@ -281,7 +297,8 @@ const UserPage = () => {
   const [stats, setStats] = useState({
     totalUsers: 0,
     pendingUsers: 0,
-    approvedUsers: 0
+    approvedUsers: 0,
+    rejectedUsers: 0
   });
 
   const fetchData = async () => {
@@ -296,11 +313,13 @@ const UserPage = () => {
       const total = response.data.length;
       const pending = response.data.filter(user => user.status === 'PENDING').length;
       const approved = response.data.filter(user => user.status === 'APPROVED').length;
+      const rejected = response.data.filter(user => user.status === 'REJECTED').length;
       
       setStats({
         totalUsers: total,
         pendingUsers: pending,
-        approvedUsers: approved
+        approvedUsers: approved,
+        rejectedUsers: rejected
       });
     } catch (error) {
       console.error('Error fetching residents data:', error);
@@ -326,6 +345,7 @@ const UserPage = () => {
       filtered = filtered.filter(user => {
         if (activeTab === 'active') return user.status === 'APPROVED';
         if (activeTab === 'inactive') return user.status === 'PENDING';
+        if (activeTab === 'rejected') return user.status === 'REJECTED';
         return true;
       });
     }
@@ -414,6 +434,10 @@ const UserPage = () => {
             <h4>Approved Users</h4>
             <p>{stats.approvedUsers}</p>
           </StatCard>
+          <StatCard>
+            <h4>Rejected Users</h4>
+            <p>{stats.rejectedUsers}</p>
+          </StatCard>
         </StatsContainer>
 
         <ControlsContainer>
@@ -443,6 +467,7 @@ const UserPage = () => {
             <Tab $active={activeTab === 'all'} onClick={() => setActiveTab('all')}>All Users</Tab>
             <Tab $active={activeTab === 'active'} onClick={() => setActiveTab('active')}>Approved</Tab>
             <Tab $active={activeTab === 'inactive'} onClick={() => setActiveTab('inactive')}>Pending</Tab>
+            <Tab $active={activeTab === 'rejected'} onClick={() => setActiveTab('rejected')}>Rejected</Tab>
           </TabList>
         </TabContainer>
 
@@ -453,7 +478,7 @@ const UserPage = () => {
               <UserActions>
                 {user.status === 'PENDING' && (
                   <>
-                    <CardActionButton onClick={() => handleEdit(user.userId, true)}>
+                    <CardActionButton $approve onClick={() => handleEdit(user.userId, true)}>
                       <FaCheck />
                     </CardActionButton>
                     <CardActionButton onClick={() => handleEdit(user.userId, false)}>

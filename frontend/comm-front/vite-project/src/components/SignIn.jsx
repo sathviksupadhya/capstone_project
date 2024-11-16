@@ -99,20 +99,41 @@ const SignInForm = () => {
       <FormCard>
         <Title>Sign In</Title>
         <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <FormField>
+            <Label htmlFor="username">Username</Label>
+            <div className="group relative">
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="peer"
+              />
+              <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
+                Enter your registered username
+              </span>
+            </div>
+          </FormField>
+
+          <FormField>
+            <Label htmlFor="password">Password</Label>
+            <div className="group relative">
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter your password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="peer"
+              />
+              <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
+                Enter your secure password
+              </span>
+            </div>
+          </FormField>
           <Button type="submit">Sign In</Button>
         </Form>
         <RegisterText>
@@ -151,6 +172,18 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 20px;
+`;
+
+const FormField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Label = styled.label`
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
 `;
 
 const Input = styled.input`
