@@ -59,4 +59,8 @@ public class eventService {
     public eventModel getEvent(String eventId) {
         return repo.findById(eventId).orElse(null);
     }
+
+    public List<eventModel> getEventsByUserId(String userId) {
+        return repo.findByUserId(userId);
+    }
 }

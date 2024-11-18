@@ -48,4 +48,11 @@ public class eventController {
         return service.getEvent(eventId);
     }
 
+    @GetMapping("/getbyUserId/{userId}")
+    public ResponseEntity<List<eventModel>> getEventsByUserId(@PathVariable String userId) {
+        List<eventModel> events = service.getEventsByUserId(userId);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
+
+
 }

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaCamera } from 'react-icons/fa';
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -11,8 +12,9 @@ const EventForm = () => {
     title: '',
     description: '',
     date: '',
-    imageUrl: ''
+    imageUrl: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +22,25 @@ const EventForm = () => {
       ...prevState,
       [name]: value
     }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const result = reader.result;
+        setImagePreview(result);
+        setFormData(prevState => ({
+          ...prevState,
+          imageUrl: result
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,30 +54,11 @@ const EventForm = () => {
       const userId = sessionStorage.getItem('userId');
       const headers = { Authorization: token };
 
-      // const filename = `eventimg${i}.jpg`; 
-      // const imageUploadResponse = await axios.post(
-      //   `https://api.github.com/repos/sathviksupadhya/capstone_project/contents/frontend/comm-front/vite-project/src/assets/${filename}`,
-      //   {
-      //     message: 'Upload event image',
-      //     content: btoa(formData.imageUrl)
-      //   },
-      //   {
-      //     headers: {
-      //       'Authorization': `token ghp_yNUy41W5WO7FvcJsZhwYQD`,
-      //       'Content-Type': 'application/json'
-      //     }
-      //   }
-      // );
-
-
-      // const githubImageUrl = imageUploadResponse.data.content.download_url;
-
       const response = await axios.post('http://localhost:9997/event/add',
         {
           eventTitle: formData.title,
           eventDescription: formData.description,
           eventDate: localDateTime,
-          eventType: "Event",
           eventImg: formData.imageUrl,
           userId: userId
         },
@@ -73,38 +75,58 @@ const EventForm = () => {
       <FormCard>
         <Title>Create Event</Title>
         <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Event Title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
+          <FormGroup>
+            <Label>Event Title</Label>
+            <Input
+              type="text"
+              placeholder="Enter event title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
 
-          <TextArea
-            placeholder="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
+          <FormGroup>
+            <Label>Event Description</Label>
+            <TextArea
+              placeholder="Enter event description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
 
-          <Input
-            type="datetime-local"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
+          <FormGroup>
+            <Label>Event Date & Time</Label>
+            <Input
+              type="datetime-local"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
 
-          <Input
-            type="url"
-            placeholder="Image URL"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-          />
+          <FormGroup>
+            <Label>Event Image</Label>
+            <ImageUploadContainer>
+              <ImagePreviewContainer>
+                <img src={imagePreview || '/default-event.png'} alt="Event Preview" />
+              </ImagePreviewContainer>
+              <PhotoUploadButton htmlFor="image-upload">
+                <FaCamera /> Upload Event Image
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: 'none' }}
+                />
+              </PhotoUploadButton>
+            </ImageUploadContainer>
+          </FormGroup>
 
           <Button type="submit">Create Event</Button>
         </Form>
@@ -168,6 +190,53 @@ const TextArea = styled.textarea`
   }
 `;
 
+const ImageUploadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+`;
+
+const ImagePreviewContainer = styled.div`
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #000000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const PhotoUploadButton = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 20px;
+  background: #000000;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #333333;
+    transform: translateY(-1px);
+  }
+
+  svg {
+    font-size: 1.1rem;
+  }
+`;
+
 const Button = styled.button`
   padding: 12px;
   background: #000000;
@@ -187,7 +256,7 @@ const FormContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
-  margin-top: 70px; /* Add margin-top equal to navbar height */
+  margin-top: 70px;
 `;
 
 const StyledForm = styled.form`
@@ -220,6 +289,5 @@ const SubmitButton = styled(motion.button)`
     opacity: 0.9;
   }
 `;
-
 
 export default EventForm;
