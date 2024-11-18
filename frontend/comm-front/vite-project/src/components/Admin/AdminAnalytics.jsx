@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { FaChartLine, FaUsers, FaCalendarAlt, FaChartBar, FaFilter, FaUserClock, FaComments, FaCommentDots } from 'react-icons/fa';
-import axios from 'axios';
-import AdminNavBar from './AdminNavBar';
-import { Line, Bar, Pie } from 'react-chartjs-2';
-=======
 import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import {
@@ -21,7 +13,6 @@ import {
 import axios from "axios";
 import AdminNavBar from "./AdminNavbar";
 import { Line, Bar, Pie, Doughnut } from "react-chartjs-2";
->>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
 import {
   Chart as ChartJS,
   CategoryScale,

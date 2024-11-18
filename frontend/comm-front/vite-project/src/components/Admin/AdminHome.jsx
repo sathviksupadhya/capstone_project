@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { FaUsers, FaCalendarAlt, FaChartLine, FaSearch, FaFilter, FaBell, FaComments, FaUserClock, FaBuilding, FaClipboardList, FaShieldAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import axios from 'axios';
-=======
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
@@ -24,8 +16,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "./AdminNavbar";
->>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
 
 const PageWrapper = styled.div`
   background: #f0f2f5;
@@ -250,20 +240,12 @@ const AdminHome = () => {
 
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-<<<<<<< HEAD
   const token = sessionStorage.getItem('jwtToken');
   const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
     if (!token || userId !== '67358a8f23bfe342e171cad3') {
       navigate('/');
-=======
-  const token = sessionStorage.getItem("jwtToken");
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/");
->>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
       return;
     }
 
@@ -323,37 +305,20 @@ const AdminHome = () => {
         setNotifications(notificationsList.slice(0, 5));
 
         const activityList = [
-<<<<<<< HEAD
           ...residentsResponse.data.map(resident => ({
             id: `activity-resident-${resident.userId}`,
             description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
             timestamp: new Date(resident.createdAt).toLocaleString()
-=======
-          ...residentsResponse.data.map((resident) => ({
-            id: `activity-resident-${resident.id}`,
-            description: `Resident ${resident.userName} ${
-              resident.status === "ACTIVE" ? "activated" : "registered"
-            }`,
-            timestamp: new Date(resident.createdAt).toLocaleString(),
->>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
           })),
           ...eventsResponse.data.map((event) => ({
             id: `activity-event-${event.id}`,
             description: `New event created: ${event.eventTitle}`,
-<<<<<<< HEAD
             timestamp: new Date(event.eventDate).toLocaleString()
           }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         setRecentActivity(activityList.slice(-5));
 
-=======
-            timestamp: new Date(event.createdAt).toLocaleString(),
-          })),
-        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        setRecentActivity(activityList.slice(0, 5));
->>>>>>> e66a5f468486238febd2d4ed924845bb84db0725
       } catch (error) {
         console.error("Error fetching admin dashboard data:", error);
         if (error.response && error.response.status === 401) {
