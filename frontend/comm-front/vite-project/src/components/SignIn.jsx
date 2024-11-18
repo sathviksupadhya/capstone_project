@@ -97,7 +97,7 @@ const SignInForm = () => {
   return (
     <Container>
       <FormCard>
-        <Title>Sign In</Title>
+        <Title>Welcome Back! to UnitySpace</Title>
         <Form onSubmit={handleSubmit}>
           <FormField>
             <Label htmlFor="username">Username</Label>
@@ -151,6 +151,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background: #f5f5f5;
+  font-family: 'Poppins', sans-serif;
 `;
 
 const FormCard = styled.div`
@@ -160,12 +161,17 @@ const FormCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  font-family: 'Poppins', sans-serif;
 `;
 
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 30px;
   color: #333;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 0.5px;
 `;
 
 const Form = styled.form`
@@ -178,19 +184,25 @@ const FormField = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 `;
 
 const Label = styled.label`
   font-size: 14px;
   font-weight: 600;
   color: #333;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.3px;
 `;
 
 const Input = styled.input`
+  width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
   
   &:focus {
     outline: none;
@@ -199,6 +211,7 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
+  width: 100%;
   padding: 12px;
   background: #000000;
   color: white;
@@ -207,6 +220,9 @@ const Button = styled.button`
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
   
   &:hover {
     background: #333333;
@@ -217,11 +233,14 @@ const RegisterText = styled.p`
   text-align: center;
   margin-top: 20px;
   color: #666;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
   
   a {
     color: #000000;
     text-decoration: none;
     font-weight: bold;
+    font-family: 'Inter', sans-serif;
     
     &:hover {
       text-decoration: underline;

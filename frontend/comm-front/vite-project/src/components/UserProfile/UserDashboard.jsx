@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaHome, FaCalendarAlt, FaBell, FaCog, FaSignOutAlt, FaUser, FaSms, FaPhone, FaEnvelope, FaTimes } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaBell, FaCog, FaSignOutAlt, FaUser, FaSms, FaPhone, FaEnvelope, FaTimes, FaHouseUser, FaChartPie, FaColumns } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const DashboardContainer = styled.div`
@@ -129,8 +129,6 @@ const Header = styled.div`
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
-  
-  
 `;
 
 const ProfileImage = styled.img`
@@ -353,11 +351,42 @@ const SaveButton = styled.button`
   }
 `;
 
+const EventsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+`;
+
+const EventCard = styled.div`
+  background: #FFFFFF;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin: 0 0 10px;
+    color: #2C3E50;
+  }
+
+  p {
+    color: #7F8C8D;
+    margin: 5px 0;
+  }
+
+  .date {
+    color: #3498DB;
+    font-weight: 600;
+  }
+`;
+
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [events, setEvents] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [showEvents, setShowEvents] = useState(false);
   const [notificationPreferences, setNotificationPreferences] = useState({
     sms: false,
     call: false,
@@ -386,6 +415,14 @@ const UserDashboard = () => {
         const eventsData = await eventsResponse.json();
         setEvents(eventsData);
 
+        const userEventsResponse = await fetch(`http://localhost:9997/event/getByUserId/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const userEventsData = await userEventsResponse.json();
+        setUserEvents(userEventsData);
+
         const reminder = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -406,7 +443,6 @@ const UserDashboard = () => {
   }
 
   const handleProfileClick = () => {
-    console.log(userData);
     navigate('/home/profile/profile', { state: { user: userData } });
   };
 
@@ -416,6 +452,10 @@ const UserDashboard = () => {
 
   const handleNotificationClick = () => {
     setShowNotificationPopup(true);
+  };
+
+  const handleEventsClick = () => {
+    setShowEvents(!showEvents);
   };
 
   const handleCheckboxChange = (type) => {
@@ -448,11 +488,15 @@ const UserDashboard = () => {
           UnitySpace
         </Logo>
         <SidebarMenu>
-          <MenuItem active={true}>
-            <FaHome />
+          <MenuItem onClick={() => navigate('/home')}>
+            <FaHouseUser />
+            Home
+          </MenuItem>
+          <MenuItem active={!showEvents}>
+            <FaColumns />
             Dashboard
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={handleEventsClick} active={showEvents}>
             <FaCalendarAlt />
             Events
           </MenuItem>
@@ -544,42 +588,60 @@ const UserDashboard = () => {
           </UserInfo>
         </Header>
 
-        <StatsGrid>
-          <StatCard>
-            <h3>Total Events</h3>
-            <p>{events.length}</p>
-          </StatCard>
-          <StatCard>
-            <h3>Upcoming Events</h3>
-            <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
-          </StatCard>
-          <StatCard>
-            <h3>Reminders</h3>
-            <p>{reminders.filter(reminder => reminder.needSms || reminder.needCall || reminder.needEmail).length}</p>
-          </StatCard>
-          <StatCard>
-            <h3>Notifications</h3>
-            <p>8</p>
-          </StatCard>
-        </StatsGrid>
+        {showEvents ? (
+          <>
+            <h2>Your Events</h2>
+            <EventsGrid>
+              {userEvents.map((event, index) => (
+                <EventCard key={index}>
+                  <h3>{event.eventName}</h3>
+                  <p className="date">{new Date(event.eventDate).toLocaleDateString()}</p>
+                  <p>{event.eventDescription}</p>
+                  <p>Location: {event.eventLocation}</p>
+                </EventCard>
+              ))}
+            </EventsGrid>
+          </>
+        ) : (
+          <>
+            <StatsGrid>
+              <StatCard>
+                <h3>Total Events</h3>
+                <p>{events.length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>Upcoming Events</h3>
+                <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>Reminders</h3>
+                <p>{reminders.filter(reminder => reminder.needSms || reminder.needCall || reminder.needEmail).length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>Notifications</h3>
+                <p>8</p>
+              </StatCard>
+            </StatsGrid>
 
-        <ActivitySection>
-          <h2>Recent Activity</h2>
-          <ActivityList>
-            <ActivityItem>
-              <span>Registered for Community BBQ</span>
-              <span>2 hours ago</span>
-            </ActivityItem>
-            <ActivityItem>
-              <span>Updated Profile Information</span>
-              <span>1 day ago</span>
-            </ActivityItem>
-            <ActivityItem>
-              <span>Set Reminder for Pool Party</span>
-              <span>2 days ago</span>
-            </ActivityItem>
-          </ActivityList>
-        </ActivitySection>
+            <ActivitySection>
+              <h2>Recent Activity</h2>
+              <ActivityList>
+                <ActivityItem>
+                  <span>Registered for Community BBQ</span>
+                  <span>2 hours ago</span>
+                </ActivityItem>
+                <ActivityItem>
+                  <span>Updated Profile Information</span>
+                  <span>1 day ago</span>
+                </ActivityItem>
+                <ActivityItem>
+                  <span>Set Reminder for Pool Party</span>
+                  <span>2 days ago</span>
+                </ActivityItem>
+              </ActivityList>
+            </ActivitySection>
+          </>
+        )}
       </MainContent>
     </DashboardContainer>
   );

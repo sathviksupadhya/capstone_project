@@ -10,13 +10,26 @@ const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1"); // Default to US
   const [usernameError, setUsernameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const navigate = useNavigate();
 
-  const validatePhone = (phoneNumber) => {
-    const phoneRegex = /^\d{10}$/;
-    return phoneRegex.test(phoneNumber);
+  const countryPhoneLengths = {
+    "+1": 10,   // USA/Canada
+    "+44": 10,  // UK
+    "+91": 10,  // India
+    "+86": 11,  // China
+    "+81": 10,  // Japan
+    "+82": 10,  // South Korea
+    "+61": 9,   // Australia
+    "+33": 9,   // France
+    "+49": 11,  // Germany
+  };
+
+  const validatePhone = (phoneNumber, selectedCountryCode) => {
+    const minLength = countryPhoneLengths[selectedCountryCode];
+    return phoneNumber.length >= minLength;
   };
 
   const handleSubmit = async (e) => {
@@ -24,10 +37,10 @@ const RegisterForm = () => {
     setUsernameError("");
     setPhoneError("");
 
-    // if (!validatePhone(phone)) {
-    //   setPhoneError("Phone number must be exactly 10 digits");
-    //   return;
-    // }
+    if (!validatePhone(phone, countryCode)) {
+      setPhoneError(`Phone number must be at least ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+      return;
+    }
 
     try {
       // First register the user
@@ -54,7 +67,7 @@ const RegisterForm = () => {
         `http://localhost:9997/api/residents/update/${userId}`,
         {
           email: email,
-          phoneNumber: phone,
+          phoneNumber: countryCode + phone, // Include country code with phone
           image: "",
         },
         {
@@ -128,17 +141,36 @@ const RegisterForm = () => {
 
           <InputGroup>
             <Label>Phone Number</Label>
-            <Input
-              type="tel"
-              placeholder="10-digit phone number"
-              value={phone}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                setPhone(value);
-                setPhoneError("");
-              }}
-              required
-            />
+            <PhoneInputContainer>
+              <CountryCodeSelect 
+                value={countryCode}
+                onChange={(e) => {
+                  setCountryCode(e.target.value);
+                  setPhoneError("");
+                }}
+              >
+                <option value="+1">+1 (USA/Canada)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+91">+91 (India)</option>
+                <option value="+86">+86 (China)</option>
+                <option value="+81">+81 (Japan)</option>
+                <option value="+82">+82 (South Korea)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+33">+33 (France)</option>
+                <option value="+49">+49 (Germany)</option>
+              </CountryCodeSelect>
+              <PhoneInput
+                type="tel"
+                placeholder={`Min ${countryPhoneLengths[countryCode]} digits`}
+                value={phone}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  setPhone(value);
+                  setPhoneError("");
+                }}
+                required
+              />
+            </PhoneInputContainer>
             {phoneError && <ErrorText>{phoneError}</ErrorText>}
           </InputGroup>
 
@@ -170,6 +202,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background: #f5f5f5;
+  font-family: 'Poppins', sans-serif;
 `;
 
 const FormCard = styled.div`
@@ -179,19 +212,24 @@ const FormCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  font-family: 'Poppins', sans-serif;
 `;
 
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 20px;
   color: #333;
-  font-size: 24px;
+  font-size: 28px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  font-family: 'Roboto', sans-serif;
 `;
 
 const InputGroup = styled.div`
@@ -203,13 +241,17 @@ const InputGroup = styled.div`
 const Label = styled.label`
   font-size: 14px;
   color: #333;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.3px;
 `;
 
 const Input = styled.input`
-  padding: 8px;
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
+  font-family: 'Inter', sans-serif;
 
   &:focus {
     outline: none;
@@ -217,16 +259,42 @@ const Input = styled.input`
   }
 `;
 
+const PhoneInputContainer = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const CountryCodeSelect = styled.select`
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 140px;
+  font-family: 'Inter', sans-serif;
+
+  &:focus {
+    outline: none;
+    border-color: #000000;
+  }
+`;
+
+const PhoneInput = styled(Input)`
+  flex: 1;
+`;
+
 const Button = styled.button`
-  padding: 10px;
+  padding: 12px;
   background: #000000;
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease;
   margin-top: 8px;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
 
   &:hover {
     background: #333333;
@@ -238,6 +306,7 @@ const SignInText = styled.p`
   margin-top: 15px;
   color: #666;
   font-size: 14px;
+  font-family: 'Inter', sans-serif;
 
   a {
     color: #000000;
@@ -255,6 +324,7 @@ const ErrorText = styled.p`
   font-size: 12px;
   margin: 0;
   padding: 0;
+  font-family: 'Inter', sans-serif;
 `;
 
 export default RegisterForm;
