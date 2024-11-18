@@ -21,6 +21,7 @@ import AdminNavbar from "./AdminNavbar";
 const PageWrapper = styled.div`
   background: #f0f2f5;
   min-height: 100vh;
+  margin-top: -30px;
 `;
 
 const DashboardContainer = styled.div`
@@ -240,11 +241,12 @@ const AdminHome = () => {
 
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-  const token = sessionStorage.getItem("jwtToken");
+  const token = sessionStorage.getItem('jwtToken');
+  const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
-    if (!token) {
-      navigate("/");
+    if (!token || userId !== '67358a8f23bfe342e171cad3') {
+      navigate('/');
       return;
     }
 
@@ -314,11 +316,12 @@ const AdminHome = () => {
           ...eventsResponse.data.map((event) => ({
             id: `activity-event-${event.id}`,
             description: `New event created: ${event.eventTitle}`,
-            timestamp: new Date(event.createdAt).toLocaleString(),
-          })),
+            timestamp: new Date(event.eventDate).toLocaleString()
+          }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        setRecentActivity(activityList.slice(0, 5));
+        setRecentActivity(activityList.slice(-5));
+
       } catch (error) {
         console.error("Error fetching admin dashboard data:", error);
         if (error.response && error.response.status === 401) {
@@ -332,7 +335,7 @@ const AdminHome = () => {
 
   return (
     <PageWrapper>
-      <AdminNavbar />
+      {/* <AdminNavBar/> */}
       <DashboardContainer>
         <DashboardHeader>
           <h1>Admin Dashboard</h1>

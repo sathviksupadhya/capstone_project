@@ -206,6 +206,7 @@ const UserDetails = () => {
   });
 
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [githubImageUrl, setGithubImageUrl] = useState(null);
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
 
@@ -216,19 +217,23 @@ const UserDetails = () => {
       [name]: value
     }));
   };
-
+  
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
+    
     if (file) {
-      setFormData(prevState => ({
-        ...prevState,
-        profilePhoto: file
-      }));
-      
       const reader = new FileReader();
+      
       reader.onloadend = () => {
-        setPhotoPreview(reader.result);
+        const result = reader.result;
+        setPhotoPreview(result);
+        setFormData(prevState => ({
+          ...prevState,
+          profilePhoto: reader.result
+        }));
+        console.log(formData.profilePhoto);
       };
+
       reader.readAsDataURL(file);
     }
   };
@@ -236,6 +241,7 @@ const UserDetails = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(formData);
       const response = await axios.put(`http://localhost:9997/api/residents/update/${userId}`, {
         email: formData.email,
         phoneNumber: formData.phone,

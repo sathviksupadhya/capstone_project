@@ -100,6 +100,7 @@ public class ReminderService {
     public String SendSms(String number, String message) {
         Message.creator(new PhoneNumber(number), new PhoneNumber("+15102963260"),
                 message).create();
+
         return "you may receive a message now!!!";
     }
 
@@ -116,7 +117,7 @@ public class ReminderService {
         String daySuffix = getDaySuffix(day);
 
         String month = dateTime.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
-        int hour = dateTime.getHour() % 12 == 0 ? 12 : dateTime.getHour() % 12;
+        int hour = dateTime.getHour() >= 12 ? dateTime.getHour() -12: dateTime.getHour();
         int minute = dateTime.getMinute();
         String amPm = dateTime.getHour() >= 12 ? "PM" : "AM";
 

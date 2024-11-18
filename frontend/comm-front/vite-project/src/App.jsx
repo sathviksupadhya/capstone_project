@@ -26,7 +26,7 @@ function App() {
         <Route path="/home" element={<><NavBar /><HomePage /></>} />
         <Route path="/events" element={<><NavBar /><Events/></>} />
         <Route path="/create-event" element={<><NavBar /><EventForm /></>} />
-        <Route path="/admin" element={<><AdminNavBar /><AdminHome /></>} />
+        <Route path="/admin" element={<><AdminNavBar/><AdminHome /></>} />
         <Route path="/admin/users" element={<><AdminNavBar /><UserPage /></>} />
         <Route path="/admin/events" element={<><AdminNavBar /><AdminEvents /></>} />
         <Route path="/admin/analytics" element={<><AdminNavBar /><AdminAnalytics /></>} />

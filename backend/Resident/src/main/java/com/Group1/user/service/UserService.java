@@ -61,6 +61,7 @@ public class UserService {
         userRepository.findById(userid)
                 .orElseThrow(() -> new RuntimeException("Resident not found with ID: " + userid));
         userRepository.deleteById(userid);
+        authclient.deleteUser(userid);
         return new Response<>("Resident deleted successfully", null);
     }
 

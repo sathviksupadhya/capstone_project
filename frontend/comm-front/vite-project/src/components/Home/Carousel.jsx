@@ -11,17 +11,20 @@ export default function Carousel(){
         {
             image: img1,
             title: "Welcome to UnitySpace",
-            buttonText: "Learn More"
+            buttonText: "Check Stats",
+            Navigate: '/home/profile'
         },
         {
             image: img2,
             title: "Discover Events",
-            buttonText: "View Events"
+            buttonText: "Browse Events",
+            Navigate: 'events-section'
         },
         {
             image: img3,
-            title: "Join Our Community", 
-            buttonText: "Get Started"
+            title: "Schedule Meetings", 
+            buttonText: "Add Reminders",
+            Navigate: 'schedules-section'
         }
     ];
 
@@ -39,6 +42,17 @@ export default function Carousel(){
         setCurrentSlide((prevSlide) => 
             prevSlide === slides.length - 1 ? 0 : prevSlide + 1
         );
+    };
+
+    const scrollToSection = (sectionId) => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
+    const handleNavigate = (path) => {
+        navigate(`${path}`);
     };
 
     const prevSlide = () => {
@@ -82,7 +96,7 @@ export default function Carousel(){
                     }}>
                         <h2 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>{slide.title}</h2>
                         <button
-                            onClick={() => navigate('/')}
+                            onClick={() => slide.image === 'img1' ? handleNavigate(slide.Navigate) : scrollToSection(slide.Navigate)}
                             style={{
                                 padding: '10px 25px',
                                 fontSize: '1.1rem',

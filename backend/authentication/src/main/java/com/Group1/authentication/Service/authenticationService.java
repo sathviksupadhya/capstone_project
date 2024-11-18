@@ -58,4 +58,9 @@ public class authenticationService {
     public authentication getUser(String userid) {
         return authrepo.findByUserId(userid);
     }
+
+    public String deleteUser(String userid) {
+        authrepo.deleteById(userid);
+        return "User deleted";
+    }
 }

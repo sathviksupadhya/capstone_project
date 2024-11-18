@@ -15,6 +15,13 @@ export default function HomePage() {
     }
   }, [])
 
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = 'smooth';
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, []);
+
   return (
     <div style={{display: "flex", flexDirection: "column", gap: "2rem"}}>
       <section id="home-section">
@@ -29,10 +36,9 @@ export default function HomePage() {
         <Schedule />
       </section>
 
-      <section id="timesheet-section">
+      <section id="feedback-section">
+        <FeedbackForm />
       </section>
-
-      <FeedbackForm />
     </div>
   );
 }
