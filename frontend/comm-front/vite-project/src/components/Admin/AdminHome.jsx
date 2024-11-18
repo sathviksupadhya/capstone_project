@@ -16,7 +16,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "./AdminNavbar";
 
 const PageWrapper = styled.div`
   background: #f0f2f5;
@@ -306,12 +305,10 @@ const AdminHome = () => {
         setNotifications(notificationsList.slice(0, 5));
 
         const activityList = [
-          ...residentsResponse.data.map((resident) => ({
-            id: `activity-resident-${resident.id}`,
-            description: `Resident ${resident.userName} ${
-              resident.status === "ACTIVE" ? "activated" : "registered"
-            }`,
-            timestamp: new Date(resident.createdAt).toLocaleString(),
+          ...residentsResponse.data.map(resident => ({
+            id: `activity-resident-${resident.userId}`,
+            description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
+            timestamp: new Date(resident.createdAt).toLocaleString()
           })),
           ...eventsResponse.data.map((event) => ({
             id: `activity-event-${event.id}`,

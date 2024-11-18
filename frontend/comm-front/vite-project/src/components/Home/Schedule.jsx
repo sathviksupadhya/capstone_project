@@ -9,68 +9,120 @@ const localizer = momentLocalizer(moment);
 
 const Schedule = () => {
   const [events, setEvents] = useState([]);
+  const [availableEvents, setAvailableEvents] = useState([]);
   const [showAddReminder, setShowAddReminder] = useState(false);
   const [newReminder, setNewReminder] = useState({
-    datetime: '',
-    message: ''
+    eventId: '',
+    needsSms: false,
+    needsCall: false, 
+    needsEmail: false
   });
 
   const token = sessionStorage.getItem('jwtToken');
   const userId = sessionStorage.getItem('userId');
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await axios.get(`http://localhost:9997/event/getAllEvents`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const formattedEvents = response.data.map(event => {
-        const eventDate = new Date(event.eventDate);
-        return {
-          id: event.id,
-          title: event.eventTitle,
-          start: eventDate,
-          end: new Date(eventDate.setHours(eventDate.getHours() + 1)),
-          description: event.eventDescription
-        };
-      });
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-  };
-
-  const handleAddReminder = async (e) => {
-    e.preventDefault();
-    if (newReminder.datetime && newReminder.message) {
+    const fetchAllData = async () => {
       try {
-        const reminderDateTime = new Date(newReminder.datetime);
-        
-        const reminderData = {
-          eventDate: reminderDateTime.toISOString(),
-          eventDescription: newReminder.message,
-          userId: userId
-        };
-
-        const response = await axios.post('http://localhost:9997/api/alert/create', reminderData, {
+        // Get all events
+        const eventsResponse = await axios.get(`http://localhost:9997/event/getAllEvents`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
 
-        fetchEvents();
-        setNewReminder({ datetime: '', message: '' });
-        setShowAddReminder(false);
+        // Get user's reminders
+        const reminderResponse = await axios.get(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const reminderEventIds = new Set(reminderResponse.data.map(reminder => reminder.eventId));
+
+        // Format and set events for calendar with reminder status
+        const formattedEvents = eventsResponse.data.map(event => {
+          const eventDate = new Date(event.eventDate);
+          const hasReminder = reminderEventIds.has(event.eventId);
+          return {
+            id: event.eventId,
+            title: event.eventTitle,
+            start: eventDate,
+            end: new Date(eventDate.setHours(eventDate.getHours() + 1)),
+            description: event.eventDescription,
+            reminderSet: hasReminder,
+            allDay: false
+          };
+        });
+        setEvents(formattedEvents);
+
+        // Filter and set available events
+        const availableEvents = eventsResponse.data.filter(event => !reminderEventIds.has(event.eventId));
+        setAvailableEvents(availableEvents);
+
       } catch (error) {
-        setShowAddReminder(false);
-        console.error('Error adding reminder:', error);
+        console.error('Error fetching data:', error);
       }
+    };
+
+    fetchAllData();
+  }, []);
+
+  const handleAddReminder = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(
+        'http://localhost:9997/reminder/create',
+        {
+          userId,
+          eventId: newReminder.eventId,
+          needSms: newReminder.needsSms,
+          needCall: newReminder.needsCall,
+          needEmail: newReminder.needsEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      // Reset form and close modal
+      setNewReminder({
+        eventId: '',
+        needsSms: false,
+        needsCall: false,
+        needsEmail: false
+      });
+      setShowAddReminder(false);
+      
+      // Refresh data
+      fetchAllData();
+
+    } catch (error) {
+      console.error("Error creating reminder:", error);
     }
+  };
+
+  const eventStyleGetter = (event) => {
+    if (event.reminderSet) {
+      return {
+        style: {
+          backgroundColor: '#4CAF50',
+          borderRadius: '5px',
+          opacity: 0.8,
+          color: 'white',
+          border: '0px',
+          display: 'block'
+        }
+      };
+    }
+    return {};
+  };
+
+  const formats = {
+    eventTimeRangeFormat: () => null,
+    timeGutterFormat: (date, culture, localizer) =>
+      localizer.format(date, 'HH:mm', culture),
   };
 
   return (
@@ -96,6 +148,8 @@ const Schedule = () => {
             endAccessor="end"
             style={{ height: '100%' }}
             className="p-4"
+            eventPropGetter={eventStyleGetter}
+            formats={formats}
           />
         </div>
 
@@ -118,25 +172,57 @@ const Schedule = () => {
               <div className="p-6">
                 <form onSubmit={handleAddReminder} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Date & Time</label>
-                    <input
-                      type="datetime-local"
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Select Event</label>
+                    <select
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      value={newReminder.datetime}
-                      onChange={(e) => setNewReminder({...newReminder, datetime: e.target.value})}
+                      value={newReminder.eventId}
+                      onChange={(e) => setNewReminder({...newReminder, eventId: e.target.value})}
                       required
-                    />
+                    >
+                      <option value="">Select an event</option>
+                      {availableEvents.map(event => (
+                        <option key={event.eventId} value={event.eventId}>
+                          {event.eventTitle} - {new Date(event.eventDate).toLocaleString()}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
-                    <textarea
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      value={newReminder.message}
-                      onChange={(e) => setNewReminder({...newReminder, message: e.target.value})}
-                      rows="3"
-                      required
-                    />
+
+                  <div className="space-y-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="needsSms"
+                        className="mr-2"
+                        checked={newReminder.needsSms}
+                        onChange={(e) => setNewReminder({...newReminder, needsSms: e.target.checked})}
+                      />
+                      <label htmlFor="needsSms" className="text-sm text-gray-700">Send SMS Reminder</label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="needsCall"
+                        className="mr-2"
+                        checked={newReminder.needsCall}
+                        onChange={(e) => setNewReminder({...newReminder, needsCall: e.target.checked})}
+                      />
+                      <label htmlFor="needsCall" className="text-sm text-gray-700">Send Call Reminder</label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="needsEmail"
+                        className="mr-2"
+                        checked={newReminder.needsEmail}
+                        onChange={(e) => setNewReminder({...newReminder, needsEmail: e.target.checked})}
+                      />
+                      <label htmlFor="needsEmail" className="text-sm text-gray-700">Send Email Reminder</label>
+                    </div>
                   </div>
+
                   <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
                     <button 
                       type="submit"

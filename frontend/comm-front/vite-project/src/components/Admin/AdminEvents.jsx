@@ -140,8 +140,7 @@ const AdminEvents = () => {
   const filterEvents = (eventsList) => {
     return eventsList.filter(event => 
       event.eventTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.eventDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.eventType.toLowerCase().includes(searchTerm.toLowerCase())
+      event.eventDescription.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 

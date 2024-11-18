@@ -19,6 +19,4 @@ public class Reminder {
     private boolean needSms;
     private boolean needCall;
     private boolean needEmail;
-
-
 }
