@@ -172,7 +172,7 @@ const ContentContainer = styled.div`
 const LeftSection = styled.div`
   flex: 1;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3') center/cover;
+    url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3') center/cover;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -125,6 +125,34 @@ const Input = styled.input`
     border-color: #000000;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
   }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+  }
+`;
+
+const PhoneInputContainer = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const StyledCountrySelect = styled.select`
+  width: 140px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 15px;
+
+  &:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const StyledPhoneInput = styled(Input)`
+  flex: 1;
 `;
 
 const ProfilePhotoContainer = styled.div`
@@ -201,14 +229,33 @@ const UserDetails = () => {
   const [formData, setFormData] = useState({
     fullName: user?.userName || '',
     email: user?.email || '',
-    phone: user?.phoneNumber || '',
+    phone: user?.phoneNumber?.replace(/^\+\d+/, '') || '',
     profilePhoto: user?.image || null
   });
 
+  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneError, setPhoneError] = useState("");
   const [photoPreview, setPhotoPreview] = useState(null);
   const [githubImageUrl, setGithubImageUrl] = useState(null);
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
+
+  const countryPhoneLengths = {
+    "+1": 10,
+    "+44": 10,
+    "+91": 10,
+    "+86": 11,
+    "+81": 10,
+    "+82": 10,
+    "+61": 9,
+    "+33": 9,
+    "+49": 11,
+  };
+
+  const validatePhone = (phoneNumber, selectedCountryCode) => {
+    const exactLength = countryPhoneLengths[selectedCountryCode];
+    return phoneNumber.length === exactLength;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -216,6 +263,17 @@ const UserDetails = () => {
       ...prevState,
       [name]: value
     }));
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= countryPhoneLengths[countryCode]) {
+      setFormData(prevState => ({
+        ...prevState,
+        phone: value
+      }));
+      setPhoneError("");
+    }
   };
   
   const handlePhotoChange = (e) => {
@@ -231,7 +289,6 @@ const UserDetails = () => {
           ...prevState,
           profilePhoto: reader.result
         }));
-        console.log(formData.profilePhoto);
       };
 
       reader.readAsDataURL(file);
@@ -240,11 +297,16 @@ const UserDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validatePhone(formData.phone, countryCode)) {
+      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+      return;
+    }
+
     try {
-      console.log(formData);
       const response = await axios.put(`http://localhost:9997/api/residents/update/${userId}`, {
         email: formData.email,
-        phoneNumber: formData.phone,
+        phoneNumber: countryCode + formData.phone,
         image: formData.profilePhoto
       }, {
         headers: {
@@ -297,13 +359,12 @@ const UserDetails = () => {
 
           <FormGroup>
             <Label>
-              <FaUser /> Full Name
+              <FaUser /> Username
             </Label>
             <Input
               type="text"
               name="fullName"
               value={formData.fullName}
-              required
               disabled
             />
           </FormGroup>
@@ -326,14 +387,35 @@ const UserDetails = () => {
             <Label>
               <FaPhone /> Phone Number
             </Label>
-            <Input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-              required
-            />
+            <PhoneInputContainer>
+              <StyledCountrySelect
+                value={countryCode}
+                onChange={(e) => {
+                  setCountryCode(e.target.value);
+                  setPhoneError("");
+                }}
+              >
+                <option value="+1">+1 (USA/Canada)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+91">+91 (India)</option>
+                <option value="+86">+86 (China)</option>
+                <option value="+81">+81 (Japan)</option>
+                <option value="+82">+82 (South Korea)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+33">+33 (France)</option>
+                <option value="+49">+49 (Germany)</option>
+              </StyledCountrySelect>
+              <StyledPhoneInput
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handlePhoneChange}
+                placeholder={`${countryPhoneLengths[countryCode]} digits`}
+                maxLength={countryPhoneLengths[countryCode]}
+                required
+              />
+            </PhoneInputContainer>
+            {phoneError && <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>{phoneError}</div>}
           </FormGroup>
 
           <SubmitButton
