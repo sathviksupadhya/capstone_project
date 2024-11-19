@@ -17,8 +17,6 @@ const RegisterForm = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-=======
   const countryPhoneLengths = {
     "+1": 10,
     "+44": 10,
@@ -47,20 +45,16 @@ const RegisterForm = () => {
     });
   };
 
->>>>>>> 990332193b0cdf40256f37d107813de0f697af5b
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUsernameError("");
     setPhoneError("");
 
-<<<<<<< HEAD
-=======
     if (!validatePhone(phone, countryCode)) {
       setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
       return;
     }
 
->>>>>>> 990332193b0cdf40256f37d107813de0f697af5b
     try {
       const registerResponse = await axios.post(
         "http://localhost:9997/auth/register",

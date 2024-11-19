@@ -171,11 +171,11 @@ const Schedule = () => {
         <div className="mt-4 text-sm text-gray-600 flex items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-[#4CAF50] rounded"></div>
-            <span>Events with reminders set</span>
+            <span>Events with reminder</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-[#3174ad] rounded"></div>
-            <span>Events without reminders</span>
+            <span>Events without reminder</span>
           </div>
         </div>
 

@@ -76,59 +76,6 @@ const EventForm = () => {
   };
 
   return (
-<<<<<<< HEAD
-      <FormCard>
-        <Title>Create Event</Title>
-        <Form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label>Event Title</Label>
-            <Input
-              type="text"
-              placeholder="Enter event title"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Event Description</Label>
-            <TextArea
-              placeholder="Enter event description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Event Date & Time</Label>
-            <Input
-              type="datetime-local"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Event Image</Label>
-            <ImageUploadContainer>
-              <ImagePreviewContainer>
-                <img src={imagePreview || '/default-event.png'} alt="Event Preview" />
-              </ImagePreviewContainer>
-              <PhotoUploadButton htmlFor="image-upload">
-                <FaCamera /> Upload Event Image
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  style={{ display: 'none' }}
-=======
     <PageContainer>
       <ContentContainer>
         <LeftSection>
@@ -148,18 +95,9 @@ const EventForm = () => {
                   value={formData.title}
                   onChange={handleChange}
                   required
->>>>>>> 990332193b0cdf40256f37d107813de0f697af5b
                 />
               </FormGroup>
 
-<<<<<<< HEAD
-          <Button type="submit">Create Event</Button>
-        </Form>
-      </FormCard>
-  );
-};
-
-=======
               <FormGroup>
                 <Label>Event Description</Label>
                 <TextArea
@@ -269,7 +207,6 @@ const RightSection = styled.div`
   overflow-y: auto; // Added scrolling for right section
 `;
 
->>>>>>> 990332193b0cdf40256f37d107813de0f697af5b
 const FormCard = styled.div`
   width: 100%;
   max-width: 450px;
