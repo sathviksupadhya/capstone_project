@@ -527,13 +527,13 @@ const UserDashboard = () => {
     navigate('/home/profile/profile', { state: { user: userData } });
   };
 
-  const handleSettingsClick = () => {
-    navigate('/home/profile/settings');
-  };
+  // const handleSettingsClick = () => {
+  //   navigate('/home/profile/settings');
+  // };
 
-  const handleNotificationClick = () => {
-    setShowNotificationPopup(true);
-  };
+  // const handleNotificationClick = () => {
+  //   setShowNotificationPopup(true);
+  // };
 
   const handleEventsClick = () => {
     setShowEvents(!showEvents);
@@ -543,21 +543,21 @@ const UserDashboard = () => {
     setShowEvents(false);
   };
 
-  const handleCheckboxChange = (type) => {
-    setNotificationPreferences(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
-  };
+  // const handleCheckboxChange = (type) => {
+  //   setNotificationPreferences(prev => ({
+  //     ...prev,
+  //     [type]: !prev[type]
+  //   }));
+  // };
 
-  const handleSaveNotifications = () => {
-    alert('Notification preferences saved: ' + 
-          Object.entries(notificationPreferences)
-            .filter(([_, value]) => value)
-            .map(([key]) => key)
-            .join(', '));
-    setShowNotificationPopup(false);
-  };
+  // const handleSaveNotifications = () => {
+  //   alert('Notification preferences saved: ' + 
+  //         Object.entries(notificationPreferences)
+  //           .filter(([_, value]) => value)
+  //           .map(([key]) => key)
+  //           .join(', '));
+  //   setShowNotificationPopup(false);
+  // };
 
   const handleLogout = () => {
     sessionStorage.removeItem('userId');
@@ -584,10 +584,6 @@ const UserDashboard = () => {
           <MenuItem onClick={handleEventsClick} active={showEvents}>
             <FaCalendarAlt />
             Events
-          </MenuItem>
-          <MenuItem onClick={handleNotificationClick}>
-            <FaBell />
-            Notifications
           </MenuItem>
           <MenuItem onClick={handleProfileClick}>
             <FaUser />

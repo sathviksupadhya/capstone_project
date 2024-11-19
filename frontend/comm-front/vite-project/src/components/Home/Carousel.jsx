@@ -1,7 +1,4 @@
 import { useState, useEffect } from 'react';
-import img1 from '../../assets/img1.jpg'
-import img2 from '../../assets/img2.jpg'
-import img3 from '../../assets/img3.jpg'
 import { useNavigate } from 'react-router-dom';
 
 export default function Carousel(){
@@ -9,19 +6,19 @@ export default function Carousel(){
     const navigate = useNavigate();
     const slides = [
         {
-            image: img1,
+            image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
             title: "Welcome to UnitySpace",
             buttonText: "Check Stats",
             Navigate: '/home/profile'
         },
         {
-            image: img2,
+            image: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80",
             title: "Discover Events",
             buttonText: "Browse Events",
             Navigate: 'events-section'
         },
         {
-            image: img3,
+            image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
             title: "Schedule Meetings", 
             buttonText: "Add Reminders",
             Navigate: 'schedules-section'
@@ -96,7 +93,7 @@ export default function Carousel(){
                     }}>
                         <h2 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>{slide.title}</h2>
                         <button
-                            onClick={() => slide.image === 'img1' ? handleNavigate(slide.Navigate) : scrollToSection(slide.Navigate)}
+                            onClick={() => slide.image === slides[0].image ? handleNavigate(slide.Navigate) : scrollToSection(slide.Navigate)}
                             style={{
                                 padding: '10px 25px',
                                 fontSize: '1.1rem',

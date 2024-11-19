@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bbae1511-72ed-40b5-9947-7bf92a28c349" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/EventForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/EventForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminAnalytics.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminAnalytics.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -68,8 +68,13 @@ const StatCard = styled.div`
   background: ${(props) => (props.$theme === "dark" ? "#333" : "#ffffff")};
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-left: 5px solid #1a237e;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
 
   h4 {
     color: #1a237e;
@@ -83,23 +88,32 @@ const StatCard = styled.div`
   p {
     font-size: 28px;
     font-weight: bold;
-    color: #1a237e;
+    background: linear-gradient(45deg, #1a237e, #3949ab);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin: 0;
   }
 `;
 
 const ChartSection = styled.div`
   background: ${(props) => (props.$theme === "dark" ? "#333" : "#ffffff")};
-  padding: 20px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 15px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border-left: 5px solid #1a237e;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
 
   h3 {
     color: #1a237e;
     margin-bottom: 20px;
     font-size: 1.5rem;
+    border-bottom: 2px solid #e8eaf6;
+    padding-bottom: 10px;
   }
 
   canvas {
@@ -110,6 +124,7 @@ const ChartSection = styled.div`
 const ChartContainer = styled.div`
   height: 300px;
   margin: 20px 0;
+  position: relative;
 `;
 
 const TabContainer = styled.div`
@@ -117,7 +132,7 @@ const TabContainer = styled.div`
   background: #ffffff;
   padding: 20px;
   border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 `;
 
 const TabList = styled.div`
@@ -131,34 +146,38 @@ const Tab = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  color: ${(props) => (props.$active ? "#1a237e" : "#1a237e")};
-  border-bottom: 2px solid
+  color: ${(props) => (props.$active ? "#1a237e" : "#757575")};
+  border-bottom: 3px solid
     ${(props) => (props.$active ? "#1a237e" : "transparent")};
   margin-bottom: -2px;
   transition: all 0.3s ease;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1.1rem;
 
   &:hover {
     color: #1a237e;
+    background: #f5f5f5;
+    border-radius: 8px 8px 0 0;
   }
 `;
 
 const ChartRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 25px;
   margin-bottom: 30px;
 `;
 
 const DataInsight = styled.div`
   margin-top: 15px;
-  padding: 15px;
+  padding: 20px;
   background: ${(props) => (props.$theme === "dark" ? "#444" : "#f8f9fa")};
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 1.1rem;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #1a237e;
+  border-left: 4px solid #1a237e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `;
 
 function AdminAnalytics() {
@@ -236,45 +255,53 @@ function AdminAnalytics() {
   }, [token]);
 
   const userActivityData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: ["Total Residents", "Active Residents", "Pending", "Rejected"],
     datasets: [
       {
-        label: "Active Users",
+        label: "Resident Distribution",
         data: [
+          stats.totalResidents,
           stats.activeResidents,
-          stats.activeResidents + 5,
-          stats.activeResidents + 3,
-          stats.activeResidents + 8,
-          stats.activeResidents + 2,
-          stats.activeResidents,
+          stats.pendingResidents,
+          stats.rejectedResidents
         ],
-        borderColor: "#1a237e",
-        backgroundColor: "rgba(26, 35, 126, 0.1)",
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: "Events",
-        data: [2, 4, 3, 6, 4, 5],
-        borderColor: "#e53935",
-        backgroundColor: "rgba(229, 57, 53, 0.1)",
-        tension: 0.4,
-        fill: true,
-      },
-    ],
+        backgroundColor: [
+          'rgba(26, 35, 126, 0.7)',  // Deep blue
+          'rgba(46, 125, 50, 0.7)',  // Green
+          'rgba(251, 192, 45, 0.7)', // Amber
+          'rgba(211, 47, 47, 0.7)'   // Red
+        ],
+        borderColor: [
+          'rgba(26, 35, 126, 1)',
+          'rgba(46, 125, 50, 1)',
+          'rgba(251, 192, 45, 1)',
+          'rgba(211, 47, 47, 1)'
+        ],
+        borderWidth: 2,
+        borderRadius: 6,
+        labels: {
+          padding: 20,
+          font: {
+            size: 12,
+            weight: 'bold'
+          }
+        }
+      }
+    ]
   };
 
   const eventPerformanceData = {
-    labels: ["Completed", "Upcoming"],
+    labels: ["Completed Events", "Upcoming Events"],
     datasets: [
       {
         data: [stats.pastEvents, stats.upcomingEvents],
         backgroundColor: [
-          "rgba(255, 0, 0, 0.8)", // Red color for completed events
-          "rgba(26, 35, 126, 0.8)", // Blue color for upcoming events
+          "rgba(233, 30, 99, 0.8)", // Pink for completed
+          "rgba(0, 150, 136, 0.8)",  // Teal for upcoming
         ],
+        borderColor: ["#ffffff", "#ffffff"],
         borderWidth: 2,
-        borderColor: "#ffffff",
+        hoverOffset: 4,
       },
     ],
   };
@@ -289,12 +316,20 @@ function AdminAnalytics() {
           stats.rejectedResidents,
         ],
         backgroundColor: [
-          "rgba(26, 35, 126, 0.8)", // Dark blue for approved
-          "rgba(255, 193, 7, 0.8)", // Amber for pending
-          "rgba(244, 67, 54, 0.8)", // Red for rejected
+          "rgba(76, 175, 80, 0.8)",  // Green for approved
+          "rgba(255, 152, 0, 0.8)",  // Orange for pending
+          "rgba(244, 67, 54, 0.8)",  // Red for rejected
         ],
-        borderWidth: 2,
         borderColor: "#ffffff",
+        borderWidth: 2,
+        hoverOffset: 4,
+        labels: {
+          padding: 20,
+          font: {
+            size: 12,
+            weight: 'bold'
+          }
+        }
       },
     ],
   };
@@ -305,12 +340,42 @@ function AdminAnalytics() {
     plugins: {
       legend: {
         position: "bottom",
+        labels: {
+          padding: 20,
+          font: {
+            size: 12,
+            weight: 'bold'
+          }
+        }
       },
-      animation: {
-        duration: 2000,
-        easing: "easeInOutQuart",
-      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: 'bold'
+        },
+        bodyFont: {
+          size: 13
+        },
+        displayColors: true,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1
+      }
     },
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            weight: 'bold'
+          }
+        }
+      }
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeInOutQuart'
+    }
   };
 
   return (
@@ -377,14 +442,14 @@ function AdminAnalytics() {
         {activeTab === "overview" && (
           <>
             <ChartSection $theme={theme}>
-              <h3>User Activity Trends</h3>
+              <h3>Resident Distribution Overview</h3>
               <ChartContainer>
-                <Line data={userActivityData} options={options} />
+                <Bar data={userActivityData} options={options} />
               </ChartContainer>
               <DataInsight $theme={theme}>
-                The graph shows a steady increase in active users over the past
-                6 months, with peak activity in April. This indicates a growing
-                community engagement trend.
+                Current resident distribution shows {stats.activeResidents} active residents 
+                out of {stats.totalResidents} total residents. There are {stats.pendingResidents} pending 
+                and {stats.rejectedResidents} rejected applications.
               </DataInsight>
             </ChartSection>
 
@@ -395,10 +460,9 @@ function AdminAnalytics() {
                   <Pie data={eventPerformanceData} options={options} />
                 </ChartContainer>
                 <DataInsight $theme={theme}>
-                  Currently showing {stats.pastEvents} completed events and{" "}
-                  {stats.upcomingEvents} upcoming events.
+                  Event Analysis: {stats.pastEvents} completed events and {stats.upcomingEvents} upcoming events.
                   {stats.pastEvents > stats.upcomingEvents
-                    ? " There's room to schedule more future events."
+                    ? " Consider scheduling more future events to maintain engagement."
                     : " Good balance of upcoming events maintained."}
                 </DataInsight>
               </ChartSection>
@@ -409,15 +473,11 @@ function AdminAnalytics() {
                   <Doughnut data={userTypeData} options={options} />
                 </ChartContainer>
                 <DataInsight $theme={theme}>
-                  Approved users: {stats.activeResidents}, Pending users:{" "}
-                  {stats.pendingResidents}, Rejected users:{" "}
-                  {stats.rejectedResidents}. Total approval rate is
+                  User Status Breakdown: {stats.activeResidents} approved, {stats.pendingResidents} pending, 
+                  and {stats.rejectedResidents} rejected. Overall approval rate: {" "}
                   {stats.totalResidents
-                    ? Math.round(
-                        (stats.activeResidents / stats.totalResidents) * 100
-                      )
-                    : 0}
-                  %.
+                    ? Math.round((stats.activeResidents / stats.totalResidents) * 100)
+                    : 0}%.
                 </DataInsight>
               </ChartSection>
             </ChartRow>
