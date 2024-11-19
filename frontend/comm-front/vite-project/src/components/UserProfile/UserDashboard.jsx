@@ -378,6 +378,66 @@ const EventCard = styled.div`
     color: #3498DB;
     font-weight: 600;
   }
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+`;
+
+const ContentGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-top: 40px;
+`;
+
+const RecentActivityContainer = styled.div`
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+`;
+
+const NotificationsContainer = styled.div`
+  background: #FFFFFF;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+`;
+
+const SectionHeader = styled.div`
+  margin-bottom: 20px;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+`;
+
+const NotificationItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+
+  svg {
+    color: #1a237e;
+  }
+
+  p {
+    margin: 0;
+    color: #2c3e50;
+  }
+
+  small {
+    color: #7f8c8d;
+  }
 `;
 
 const UserDashboard = () => {
@@ -392,6 +452,8 @@ const UserDashboard = () => {
     call: false,
     email: false
   });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const userId = sessionStorage.getItem('userId');
   const token = sessionStorage.getItem('jwtToken');
   const navigate = useNavigate();
@@ -415,21 +477,40 @@ const UserDashboard = () => {
         const eventsData = await eventsResponse.json();
         setEvents(eventsData);
 
-        const userEventsResponse = await fetch(`http://localhost:9997/event/getByUserId/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const userEventsData = await userEventsResponse.json();
-        setUserEvents(userEventsData);
+        // Set recent activity based on events
+        const recentActivityData = eventsData
+          .filter(event => event.userId === userId)
+          .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+          .slice(0, 5)
+          .map(event => ({
+            id: event.eventId,
+            description: `Created event: ${event.eventTitle}`,
+            timestamp: new Date(event.eventDate).toLocaleDateString()
+          }));
+        setRecentActivity(recentActivityData);
 
-        const reminder = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
+        // Fetch reminders and combine with event data
+        const reminderResponse = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        const reminderData = await reminder.json();
+        const reminderData = await reminderResponse.json();
         setReminders(reminderData);
+
+        // Create notifications with reminder details
+        const notificationsData = reminderData.map(reminder => ({
+          id: reminder.remId,
+          message: `Reminder for event: ${reminder.eventTitle}`,
+          reminderType: `${reminder.needSms ? 'SMS ' : ''}${reminder.needCall ? 'Call ' : ''}${reminder.needEmail ? 'Email' : ''}`,
+          reminderDate: new Date(reminder.reminderDate).toLocaleDateString(),
+          eventTitle: reminder.eventTitle
+        }));
+        setNotifications(notificationsData);
+      
+        const userEventsData = eventsData.filter(event => event.userId === userId);
+        setUserEvents(userEventsData || []); 
+
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -458,6 +539,10 @@ const UserDashboard = () => {
     setShowEvents(!showEvents);
   };
 
+  const handleDashboardClick = () => {
+    setShowEvents(false);
+  };
+
   const handleCheckboxChange = (type) => {
     setNotificationPreferences(prev => ({
       ...prev,
@@ -482,7 +567,7 @@ const UserDashboard = () => {
 
   return (
     <DashboardContainer>
-      <Sidebar>
+      <Sidebar style={{ position: 'fixed', top: 0, left: 0, height: '100vh', overflowY: 'hidden' }}>
         <Logo onClick={() => navigate('/home')}>
           <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
           UnitySpace
@@ -492,7 +577,7 @@ const UserDashboard = () => {
             <FaHouseUser />
             Home
           </MenuItem>
-          <MenuItem active={!showEvents}>
+          <MenuItem onClick={handleDashboardClick} active={!showEvents}>
             <FaColumns />
             Dashboard
           </MenuItem>
@@ -508,78 +593,14 @@ const UserDashboard = () => {
             <FaUser />
             Profile
           </MenuItem>
-          <MenuItem onClick={handleSettingsClick}>
-            <FaCog />
-            Settings
-          </MenuItem>
-          <MenuItem style={{ marginTop: 'auto' }} onClick={handleLogout}>
+          <MenuItem onClick={handleLogout}>
             <FaSignOutAlt />
             Logout
           </MenuItem>
         </SidebarMenu>
       </Sidebar>
 
-      {showNotificationPopup && (
-        <NotificationPopup>
-          <NotificationHeader>
-            <h3>Notification Preferences</h3>
-            <CloseButton onClick={() => setShowNotificationPopup(false)}>
-              <FaTimes />
-            </CloseButton>
-          </NotificationHeader>
-          
-          <NotificationCard>
-            <div className="icon-text">
-              <FaSms />
-              <div className="text">
-                <h4>SMS Notifications</h4>
-                <p>Receive updates via text message</p>
-              </div>
-            </div>
-            <Checkbox
-              type="checkbox"
-              checked={notificationPreferences.sms}
-              onChange={() => handleCheckboxChange('sms')}
-            />
-          </NotificationCard>
-
-          <NotificationCard>
-            <div className="icon-text">
-              <FaPhone />
-              <div className="text">
-                <h4>Phone Calls</h4>
-                <p>Get important alerts via phone call</p>
-              </div>
-            </div>
-            <Checkbox
-              type="checkbox"
-              checked={notificationPreferences.call}
-              onChange={() => handleCheckboxChange('call')}
-            />
-          </NotificationCard>
-
-          <NotificationCard>
-            <div className="icon-text">
-              <FaEnvelope />
-              <div className="text">
-                <h4>Email Notifications</h4>
-                <p>Receive detailed updates in your inbox</p>
-              </div>
-            </div>
-            <Checkbox
-              type="checkbox"
-              checked={notificationPreferences.email}
-              onChange={() => handleCheckboxChange('email')}
-            />
-          </NotificationCard>
-
-          <SaveButton onClick={handleSaveNotifications}>
-            Save Preferences
-          </SaveButton>
-        </NotificationPopup>
-      )}
-
-      <MainContent>
+      <MainContent style={{ marginLeft: '280px' }}>
         <Header>
           <ProfileImage src={userData.image} alt="Profile" />
           <UserInfo>
@@ -590,14 +611,20 @@ const UserDashboard = () => {
 
         {showEvents ? (
           <>
-            <h2>Your Events</h2>
+            <h2 style={{fontSize: '20px', fontWeight: 'bold'}}>My Events</h2>
             <EventsGrid>
-              {userEvents.map((event, index) => (
+              {Array.isArray(userEvents) && userEvents.map((event, index) => (
                 <EventCard key={index}>
-                  <h3>{event.eventName}</h3>
+                  <img src={event.eventImg} alt={event.eventName} />
+                  <h3 style={{fontSize: '20px', fontWeight: 'bold'}}>{event.eventTitle}</h3>
                   <p className="date">{new Date(event.eventDate).toLocaleDateString()}</p>
                   <p>{event.eventDescription}</p>
-                  <p>Location: {event.eventLocation}</p>
+                  {reminders.filter(r => r.eventId === event.eventId).map((reminder, rIndex) => (
+                    <p key={rIndex} style={{color: '#e74c3c', marginTop: '10px'}}>
+                      Reminder set for: {new Date(reminder.reminderDate).toLocaleDateString()} 
+                      ({reminder.needSms ? 'SMS ' : ''}{reminder.needCall ? 'Call ' : ''}{reminder.needEmail ? 'Email' : ''})
+                    </p>
+                  ))}
                 </EventCard>
               ))}
             </EventsGrid>
@@ -614,32 +641,46 @@ const UserDashboard = () => {
                 <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
               </StatCard>
               <StatCard>
+                <h3>My Events</h3>
+                <p>{userEvents.length}</p>
+              </StatCard>
+              <StatCard>
                 <h3>Reminders</h3>
                 <p>{reminders.filter(reminder => reminder.needSms || reminder.needCall || reminder.needEmail).length}</p>
               </StatCard>
-              <StatCard>
-                <h3>Notifications</h3>
-                <p>8</p>
-              </StatCard>
             </StatsGrid>
 
-            <ActivitySection>
-              <h2>Recent Activity</h2>
-              <ActivityList>
-                <ActivityItem>
-                  <span>Registered for Community BBQ</span>
-                  <span>2 hours ago</span>
-                </ActivityItem>
-                <ActivityItem>
-                  <span>Updated Profile Information</span>
-                  <span>1 day ago</span>
-                </ActivityItem>
-                <ActivityItem>
-                  <span>Set Reminder for Pool Party</span>
-                  <span>2 days ago</span>
-                </ActivityItem>
-              </ActivityList>
-            </ActivitySection>
+            <ContentGrid>
+              <RecentActivityContainer>
+                <SectionHeader>
+                  <SectionTitle>Recent Activity</SectionTitle>
+                </SectionHeader>
+                {recentActivity.map((activity) => (
+                  <ActivityItem key={activity.id}>
+                    <span>{activity.description}</span>
+                    <span>{activity.timestamp}</span>
+                  </ActivityItem>
+                ))}
+              </RecentActivityContainer>
+
+              <NotificationsContainer>
+                <SectionHeader>
+                  <SectionTitle>Notifications</SectionTitle>
+                </SectionHeader>
+                {notifications.map((notification) => (
+                  <NotificationItem key={notification.id}>
+                    <FaBell />
+                    <div>
+                      <p>{notification.message}</p>
+                      <small>
+                        Reminder Date: {notification.reminderDate}<br/>
+                        Type: {notification.reminderType}
+                      </small>
+                    </div>
+                  </NotificationItem>
+                ))}
+              </NotificationsContainer>
+            </ContentGrid>
           </>
         )}
       </MainContent>

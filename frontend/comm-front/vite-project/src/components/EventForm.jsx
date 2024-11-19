@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaCamera } from 'react-icons/fa';
 
 const EventForm = () => {
   const navigate = useNavigate();
@@ -11,8 +12,9 @@ const EventForm = () => {
     title: '',
     description: '',
     date: '',
-    imageUrl: ''
+    imageUrl: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,6 +22,25 @@ const EventForm = () => {
       ...prevState,
       [name]: value
     }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const result = reader.result;
+        setImagePreview(result);
+        setFormData(prevState => ({
+          ...prevState,
+          imageUrl: result
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,30 +54,11 @@ const EventForm = () => {
       const userId = sessionStorage.getItem('userId');
       const headers = { Authorization: token };
 
-      // const filename = `eventimg${i}.jpg`; 
-      // const imageUploadResponse = await axios.post(
-      //   `https://api.github.com/repos/sathviksupadhya/capstone_project/contents/frontend/comm-front/vite-project/src/assets/${filename}`,
-      //   {
-      //     message: 'Upload event image',
-      //     content: btoa(formData.imageUrl)
-      //   },
-      //   {
-      //     headers: {
-      //       'Authorization': `token ghp_yNUy41W5WO7FvcJsZhwYQD`,
-      //       'Content-Type': 'application/json'
-      //     }
-      //   }
-      // );
-
-
-      // const githubImageUrl = imageUploadResponse.data.content.download_url;
-
       const response = await axios.post('http://localhost:9997/event/add',
         {
           eventTitle: formData.title,
           eventDescription: formData.description,
           eventDate: localDateTime,
-          eventType: "Event",
           eventImg: formData.imageUrl,
           userId: userId
         },
@@ -69,85 +71,132 @@ const EventForm = () => {
   };
 
   return (
-    <Container>
-      <FormCard>
-        <Title>Create Event</Title>
-        <Form onSubmit={handleSubmit}>
-          <Input
-            type="text"
-            placeholder="Event Title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
+    <PageContainer>
+      {/* <NavBar>
+        <NavTitle>Event Management</NavTitle>
+      </NavBar> */}
+      <ContentContainer>
+        <FormCard>
+          <Title>Create Event</Title>
+          <Form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label>Event Title</Label>
+              <Input
+                type="text"
+                placeholder="Enter event title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
 
-          <TextArea
-            placeholder="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
+            <FormGroup>
+              <Label>Event Description</Label>
+              <TextArea
+                placeholder="Enter event description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
 
-          <Input
-            type="datetime-local"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
+            <FormGroup>
+              <Label>Event Date & Time</Label>
+              <Input
+                type="datetime-local"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                required
+              />
+            </FormGroup>
 
-          <Input
-            type="url"
-            placeholder="Image URL"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleChange}
-          />
+            <FormGroup>
+              <Label>Event Image</Label>
+              <ImageUploadContainer>
+                <ImagePreviewContainer>
+                  <img src={imagePreview || '/default-event.png'} alt="Event Preview" />
+                </ImagePreviewContainer>
+                <PhotoUploadButton htmlFor="image-upload">
+                  <FaCamera /> Upload Event Image
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                  />
+                </PhotoUploadButton>
+              </ImageUploadContainer>
+            </FormGroup>
 
-          <Button type="submit">Create Event</Button>
-        </Form>
-      </FormCard>
-    </Container>
+            <Button type="submit">Create Event</Button>
+          </Form>
+        </FormCard>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 
-const Container = styled.div`
-  height: 100vh;
+const PageContainer = styled.div`
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+`;
+
+const NavBar = styled.nav`
+  background: #000000;
+  color: white;
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+`;
+
+const NavTitle = styled.h1`
+  margin: 0;
+  font-size: 1.5rem;
+`;
+
+const ContentContainer = styled.div`
+  margin-top: 80px;
+  padding: 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-  padding-top: 70px;
+  overflow-y: auto;
 `;
 
 const FormCard = styled.div`
   background: white;
-  padding: 40px;
+  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
 `;
 
-const Title = styled.h1`
+const Title = styled.h2`
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #333;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 `;
 
 const Input = styled.input`
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px;
   
   &:focus {
     outline: none;
@@ -156,11 +205,11 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
-  min-height: 120px;
+  font-size: 14px;
+  min-height: 100px;
   
   &:focus {
     outline: none;
@@ -168,32 +217,64 @@ const TextArea = styled.textarea`
   }
 `;
 
+const ImageUploadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+`;
+
+const ImagePreviewContainer = styled.div`
+  width: 180px;
+  height: 130px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #000000;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const PhotoUploadButton = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 15px;
+  background: #000000;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #333333;
+  }
+
+  svg {
+    font-size: 1rem;
+  }
+`;
+
 const Button = styled.button`
-  padding: 12px;
+  padding: 10px;
   background: #000000;
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.3s ease;
   
   &:hover {
     background: #333333;
   }
-`;
-
-const FormContainer = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  margin-top: 70px; /* Add margin-top equal to navbar height */
-`;
-
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 `;
 
 const FormGroup = styled.div`
@@ -204,22 +285,7 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-weight: 500;
-  color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
+  color: #333;
 `;
-
-const SubmitButton = styled(motion.button)`
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  
-  &:hover {
-    opacity: 0.9;
-  }
-`;
-
 
 export default EventForm;

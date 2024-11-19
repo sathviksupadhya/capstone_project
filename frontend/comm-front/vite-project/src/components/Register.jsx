@@ -13,6 +13,8 @@ const RegisterForm = () => {
   const [countryCode, setCountryCode] = useState("+1"); // Default to US
   const [usernameError, setUsernameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
   const countryPhoneLengths = {
@@ -28,8 +30,20 @@ const RegisterForm = () => {
   };
 
   const validatePhone = (phoneNumber, selectedCountryCode) => {
-    const minLength = countryPhoneLengths[selectedCountryCode];
-    return phoneNumber.length >= minLength;
+    const exactLength = countryPhoneLengths[selectedCountryCode];
+    return phoneNumber.length === exactLength;
+  };
+
+  const handleVerifyClick = () => {
+    if (!validatePhone(phone, countryCode)) {
+      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+      return;
+    }
+    // Here you would typically make an API call to send OTP
+    setShowOtpField(true);
+    toast.info("OTP sent to your phone number!", {
+      position: "top-right",
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -38,7 +52,7 @@ const RegisterForm = () => {
     setPhoneError("");
 
     if (!validatePhone(phone, countryCode)) {
-      setPhoneError(`Phone number must be at least ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
       return;
     }
 
@@ -110,6 +124,7 @@ const RegisterForm = () => {
 
   return (
     <Container>
+      <ToastContainer />
       <FormCard>
         <Title>Register</Title>
         <Form onSubmit={handleSubmit}>
@@ -161,17 +176,33 @@ const RegisterForm = () => {
               </CountryCodeSelect>
               <PhoneInput
                 type="tel"
-                placeholder={`Min ${countryPhoneLengths[countryCode]} digits`}
+                placeholder={`Exactly ${countryPhoneLengths[countryCode]} digits`}
                 value={phone}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, "");
-                  setPhone(value);
-                  setPhoneError("");
+                  if (value.length <= countryPhoneLengths[countryCode]) {
+                    setPhone(value);
+                    setPhoneError("");
+                  }
                 }}
+                maxLength={countryPhoneLengths[countryCode]}
                 required
               />
             </PhoneInputContainer>
-            {phoneError && <ErrorText>{phoneError}</ErrorText>}
+            {/* {phoneError && <ErrorText>{phoneError}</ErrorText>}
+            <VerifyContainer>
+              <VerifyButton type="button" onClick={handleVerifyClick}>
+                Verify
+              </VerifyButton>
+              {showOtpField && (
+                <OtpInput
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+              )}
+            </VerifyContainer> */}
           </InputGroup>
 
           <InputGroup>
@@ -191,18 +222,20 @@ const RegisterForm = () => {
           Already registered? <Link to="/signin">Sign in here</Link>
         </SignInText>
       </FormCard>
-      <ToastContainer />
     </Container>
   );
 };
 
 const Container = styled.div`
-  min-height: 100vh;
+  min-height: calc(100vh - 60px); /* Subtract notification bar height */
+  margin-top: 60px; /* Add margin equal to notification bar height */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Changed from center to flex-start */
   background: #f5f5f5;
   font-family: 'Poppins', sans-serif;
+  padding: 20px;
+  overflow-y: auto; /* Enable scrolling */
 `;
 
 const FormCard = styled.div`
@@ -213,6 +246,7 @@ const FormCard = styled.div`
   width: 100%;
   max-width: 400px;
   font-family: 'Poppins', sans-serif;
+  margin-bottom: 40px; /* Add bottom margin to ensure card is fully visible */
 `;
 
 const Title = styled.h1`
@@ -281,6 +315,32 @@ const CountryCodeSelect = styled.select`
 const PhoneInput = styled(Input)`
   flex: 1;
 `;
+
+// const VerifyContainer = styled.div`
+//   display: flex;
+//   gap: 8px;
+//   margin-top: 8px;
+// `;
+
+// const VerifyButton = styled.button`
+//   padding: 8px 16px;
+//   background: #000000;
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   font-size: 14px;
+//   cursor: pointer;
+//   transition: background 0.3s ease;
+//   font-family: 'Poppins', sans-serif;
+
+//   &:hover {
+//     background: #333333;
+//   }
+// `;
+
+// const OtpInput = styled(Input)`
+//   flex: 1;
+// `;
 
 const Button = styled.button`
   padding: 12px;

@@ -5,30 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bbae1511-72ed-40b5-9947-7bf92a28c349" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/assets/sathvik.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/Controller/reminderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/Controller/reminderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/ReminderApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/ReminderApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/config/RestTemplateConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/config/schedulerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/feign/userClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/feign/userClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/service/ReminderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Reminder/src/main/java/com/Group1/Reminder/service/ReminderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Resident/src/main/java/com/Group1/user/feign/authClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Resident/src/main/java/com/Group1/user/feign/authClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/Resident/src/main/java/com/Group1/user/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Resident/src/main/java/com/Group1/user/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/Controller/authenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/Controller/authenticationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/Service/authenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/authentication/src/main/java/com/Group1/authentication/Service/authenticationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Controller/eventController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Controller/eventController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Repository/eventRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Repository/eventRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Service/eventService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/event/src/main/java/com/Group1/event/Service/eventService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminEvents.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminEvents.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminHome.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Feedbackform.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Feedbackform.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Carousel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Events.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Events.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/HomePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminNavBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Admin/AdminNavBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/EventForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/EventForm.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/NavBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/NavBar.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Schedule.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Home/Schedule.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/SignIn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDetails.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDetails.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/ui/FocusCards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/ui/FocusCards.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/LandingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/LandingPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Register.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/Register.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/comm-front/vite-project/src/components/UserProfile/UserDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,24 +46,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.AlertApplication.executor": "Run",
-    "Application.ApiGatewayApplication.executor": "Run",
-    "Application.AuthenticationApplication.executor": "Run",
-    "Application.CommunityServerApplication.executor": "Run",
-    "Application.EventApplication.executor": "Run",
-    "Application.FeedbackApplication.executor": "Run",
-    "Application.ReminderApplication.executor": "Run",
-    "Application.UserApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Administrator/Downloads/Community-Server",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.AlertApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.AuthenticationApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.CommunityServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.EventApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.FeedbackApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ReminderApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UserApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Administrator/Downloads/Community-Server&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
       <MavenSettings>

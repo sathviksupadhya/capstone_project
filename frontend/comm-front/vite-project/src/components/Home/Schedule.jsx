@@ -56,7 +56,11 @@ const Schedule = () => {
         setEvents(formattedEvents);
 
         // Filter and set available events
-        const availableEvents = eventsResponse.data.filter(event => !reminderEventIds.has(event.eventId));
+        const currentDate = new Date();
+        const availableEvents = eventsResponse.data.filter(event => {
+          const eventDate = new Date(event.eventDate);
+          return !reminderEventIds.has(event.eventId) && eventDate >= currentDate;
+        });
         setAvailableEvents(availableEvents);
 
       } catch (error) {

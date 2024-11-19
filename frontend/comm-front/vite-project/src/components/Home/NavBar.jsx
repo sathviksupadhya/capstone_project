@@ -192,23 +192,46 @@ const NavBar = () => {
 
   return (
     <>
-      <Nav scrolled={scrolled}>
+      <Nav>
         <Logo onClick={handleLogoClick}>
           <LogoImage src={mainLogo} alt="UnitySpace Logo" />
           <LogoTitle>UnitySpace</LogoTitle>
         </Logo>
-
         <NavLinks>
-          <NavLink onClick={() => scrollToSection("home-section")}>
+          <NavLink onClick={() => {
+            navigate('/home');
+            setTimeout(() => {
+              const element = document.getElementById("home-section");
+              if(element) element.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}>
             Home
           </NavLink>
-          <NavLink onClick={() => scrollToSection("events-section")}>
+          <NavLink onClick={() => {
+            navigate('/home');
+            setTimeout(() => {
+              const element = document.getElementById("events-section");
+              if(element) element.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}>
             Events
           </NavLink>
-          <NavLink onClick={() => scrollToSection("schedules-section")}>
+          <NavLink onClick={() => {
+            navigate('/home');
+            setTimeout(() => {
+              const element = document.getElementById("schedules-section");
+              if(element) element.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}>
             Schedules
           </NavLink>
-          <NavLink onClick={() => scrollToSection("timesheet-section")}>
+          <NavLink onClick={() => {
+            navigate('/home');
+            setTimeout(() => {
+              const element = document.getElementById("timesheet-section");
+              if(element) element.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}>
             Timesheet
           </NavLink>
         </NavLinks>
@@ -487,8 +510,8 @@ const Nav = styled.nav`
   padding: 0 50px;
   transition: all 0.3s ease-in-out;
   z-index: 1000;
-  background: ${(props) => (props.scrolled ? "#000000" : "none")};
-  -webkit-backdrop-filter: blur(8px);
+  background: #000000;
+  color: #ffffff;
 `;
 
 const Logo = styled.div`

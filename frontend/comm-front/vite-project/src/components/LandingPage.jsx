@@ -389,7 +389,8 @@ const LandingPage = () => {
             <FooterSection ref={contactSectionRef}>
               <h3>Contact Us</h3>
               <p>Email: info@unityspace.com</p>
-              <p>Phone: 9448436216A</p>
+              <p>Phone: 9448436216</p>
+              <p>Phone: 9121340152</p>
             </FooterSection>
           </FooterContent>
           <FooterBottom>
