@@ -192,7 +192,7 @@ const NavBar = () => {
 
   return (
     <>
-      <Nav scrolled={scrolled}>
+      <Nav>
         <Logo onClick={handleLogoClick}>
           <LogoImage src={mainLogo} alt="UnitySpace Logo" />
           <LogoTitle>UnitySpace</LogoTitle>
@@ -510,8 +510,8 @@ const Nav = styled.nav`
   padding: 0 50px;
   transition: all 0.3s ease-in-out;
   z-index: 1000;
-  background: ${(props) => (props.scrolled ? "#000000" : "none")};
-  -webkit-backdrop-filter: blur(8px);
+  background: #000000;
+  color: #ffffff;
 `;
 
 const Logo = styled.div`

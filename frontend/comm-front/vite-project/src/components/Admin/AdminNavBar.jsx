@@ -215,10 +215,10 @@ const AdminNavBar = () => {
           <ProfileImage $theme={theme} />
           <ChevronIcon $isOpen={dropdownOpen} $theme={theme} />
           <Dropdown $isOpen={dropdownOpen} $theme={theme}>
-            <DropdownItem onClick={() => navigate('/admin/profile')} $theme={theme}>
+            <DropdownItem onClick={() => navigate('/admin')} $theme={theme}>
               <FaUserCircle /> Profile
             </DropdownItem>
-            <SettingsSubmenu $theme={theme}>
+            {/* <SettingsSubmenu $theme={theme}>
               <DropdownItem onClick={toggleTheme} $theme={theme}>
                 {theme === 'light' ? <FaMoon /> : <FaSun />}
                 {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
@@ -231,7 +231,7 @@ const AdminNavBar = () => {
                 <FaLanguage />
                 Language: {language === 'en' ? 'English' : 'Español'}
               </DropdownItem>
-            </SettingsSubmenu>
+            </SettingsSubmenu> */}
             <DropdownItem onClick={handleLogout} $theme={theme}>
               Logout
             </DropdownItem>
