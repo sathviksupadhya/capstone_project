@@ -3,7 +3,8 @@ import { FocusCards } from "../ui/FocusCards";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { FaFilter, FaSearch, FaSortAmountDown } from "react-icons/fa";
+import { FaFilter, FaSearch, FaSortAmountDown, FaTimes } from "react-icons/fa";
+import EventForm from "../EventForm";
 
 const EventsContainer = styled.div`
   margin-top: 140px;
@@ -121,6 +122,70 @@ const SortButton = styled.button`
   }
 `;
 
+const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ScrollableEventForm = styled.div`
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  
+  /* Custom scrollbar styles */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  z-index: 1;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+`;
+
 export default function Events() {
   const navigate = useNavigate();
   const userId = sessionStorage.getItem("userId");
@@ -131,6 +196,7 @@ export default function Events() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
   const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'upcoming', or 'past'
+  const [showEventForm, setShowEventForm] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -196,10 +262,6 @@ export default function Events() {
     setFilteredCards(filtered);
   }, [selectedMonth, searchTerm, cards, sortOrder, timeFilter]);
 
-  const navigateForm = () => {
-    navigate("/create-event");
-  };
-
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value);
   };
@@ -210,6 +272,17 @@ export default function Events() {
 
   return (
     <div style={{ marginTop: "80px" }}>
+      {showEventForm && (
+        <Modal onClick={() => setShowEventForm(false)}>
+          <ScrollableEventForm onClick={e => e.stopPropagation()}>
+            <CloseButton onClick={() => setShowEventForm(false)}>
+              <FaTimes />
+            </CloseButton>
+            <EventForm />
+          </ScrollableEventForm>
+        </Modal>
+      )}
+      
       <TopControls>
         <SearchContainer>
           <FaSearch color="#666" />
@@ -221,7 +294,7 @@ export default function Events() {
           />
         </SearchContainer>
 
-        <AddEventButton onClick={navigateForm}>Add an Event</AddEventButton>
+        <AddEventButton onClick={() => setShowEventForm(true)}>Add an Event</AddEventButton>
 
         <SortButton onClick={toggleSortOrder}>
           <FaSortAmountDown />

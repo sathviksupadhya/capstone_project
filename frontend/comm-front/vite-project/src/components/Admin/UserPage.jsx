@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import AdminNavBar from './AdminNavbar';
 import { FaSearch, FaFilter, FaEdit, FaTrash, FaUserPlus, FaSortAmountDown, FaChartBar, FaCheck, FaTimes } from 'react-icons/fa';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 const PageContainer = styled.div`
@@ -323,7 +321,6 @@ const UserPage = () => {
       });
     } catch (error) {
       console.error('Error fetching residents data:', error);
-      toast.error('Failed to fetch user data');
     }
   };
 
@@ -369,15 +366,9 @@ const UserPage = () => {
           action: param
         }
       });
-      if(action){
-        toast.success('User approved successfully');
-      }else{
-        toast.success('User rejected successfully');
-      }
       fetchData();
     } catch (error) {
       console.error('Error approving user:', error);
-      toast.error('Failed to approve user');
     }
   };
 
@@ -389,11 +380,9 @@ const UserPage = () => {
             'Authorization': `Bearer ${token}`
           }
         });
-        toast.success('User deleted successfully');
         fetchData();
       } catch (error) {
         console.error('Error deleting user:', error);
-        toast.error('Failed to delete user');
       }
     }
   };
@@ -407,12 +396,10 @@ const UserPage = () => {
         role: "RESIDENT"
       });
       
-      toast.success("User registered successfully!");
       setShowModal(false);
       fetchData();
       setNewUser({ username: '', password: ''});
     } catch (err) {
-      toast.error("Registration failed: " + (err.response?.data?.message || "Please try again"));
       console.error("Error during registration:", err);
     }
   };
@@ -474,7 +461,6 @@ const UserPage = () => {
         <UserGrid>
           {filteredUsers.map(user => (
             <UserCard key={user.userId}>
-                {console.log(user.userId)}
               <UserActions>
                 {user.status === 'PENDING' && (
                   <>
@@ -538,7 +524,6 @@ const UserPage = () => {
           </Modal>
         )}
       </PageContainer>
-      <ToastContainer />
     </>
   );
 };

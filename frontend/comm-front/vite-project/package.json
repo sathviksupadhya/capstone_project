@@ -10,6 +10,7 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@eslint/plugin-kit": "^0.2.3",
     "@tabler/icons-react": "^3.22.0",
     "axios": "^1.7.7",
     "clsx": "^2.1.1",

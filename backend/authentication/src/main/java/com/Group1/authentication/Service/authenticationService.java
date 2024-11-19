@@ -3,6 +3,7 @@ package com.Group1.authentication.Service;
 import com.Group1.authentication.Model.authentication;
 import com.Group1.authentication.Repository.authenticationRepo;
 import com.Group1.authentication.dto.authdto;
+import com.Group1.authentication.feign.alertClient;
 import com.Group1.authentication.feign.userClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,6 +22,8 @@ public class authenticationService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private userClient userclient;
+    @Autowired
+    private alertClient alertclient;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initializeAdminUser() {
@@ -43,6 +46,7 @@ public class authenticationService {
         a.setPassword(passwordEncoder.encode(auth.getPassword()));
         authentication b = authrepo.save(a);
         userclient.create(b.getUserId());
+        alertclient.createAlertByUserId(b.getUserId());
         return b;
     }
 

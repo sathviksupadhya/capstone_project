@@ -59,7 +59,7 @@ const NavBar = () => {
         const data = await response.data;
         console.log(data);
         setProfileImage(data.image);
-        setUserName(data.firstName);
+        setUserName(data.userName);
       } catch (error) {
         console.error("Error fetching profile image:", error);
       }
@@ -228,11 +228,11 @@ const NavBar = () => {
           <NavLink onClick={() => {
             navigate('/home');
             setTimeout(() => {
-              const element = document.getElementById("timesheet-section");
+              const element = document.getElementById("feedback-section");
               if(element) element.scrollIntoView({ behavior: "smooth" });
             }, 100);
           }}>
-            Timesheet
+            Reviews
           </NavLink>
         </NavLinks>
 

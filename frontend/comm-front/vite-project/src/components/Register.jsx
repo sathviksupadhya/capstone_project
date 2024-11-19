@@ -14,20 +14,10 @@ const RegisterForm = () => {
   const [phoneError, setPhoneError] = useState("");
   const navigate = useNavigate();
 
-  const validatePhone = (phoneNumber) => {
-    const phoneRegex = /^\d{10}$/;
-    return phoneRegex.test(phoneNumber);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUsernameError("");
     setPhoneError("");
-
-    // if (!validatePhone(phone)) {
-    //   setPhoneError("Phone number must be exactly 10 digits");
-    //   return;
-    // }
 
     try {
       // First register the user
@@ -40,7 +30,7 @@ const RegisterForm = () => {
           role: "Resident",
         }
       );
-
+      console.log("dsfas");
       const validateResponse = await axios.post(
         "http://localhost:9997/auth/validate/user",
         {

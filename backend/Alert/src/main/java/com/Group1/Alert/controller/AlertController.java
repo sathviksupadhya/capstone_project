@@ -33,6 +33,11 @@ public class AlertController {
         return new ResponseEntity<>(alertService.createAlert(eventid), HttpStatus.CREATED);
     }
 
+    @PostMapping("/createAlertforUsers/{userId}")
+    public ResponseEntity<String> createAlertByUserId(@PathVariable String userId) {
+        return new ResponseEntity<>(alertService.createAlertByUserId(userId), HttpStatus.CREATED);
+    }
+
     @PutMapping("/seen/{userid}/{eventid}")
     public ResponseEntity<Alert> updateAlert(@PathVariable("userid") String userId, @PathVariable("eventid") String eventid) {
         alertService.updateAlert(userId, eventid);

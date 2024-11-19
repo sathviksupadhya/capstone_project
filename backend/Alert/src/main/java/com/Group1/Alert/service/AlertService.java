@@ -8,8 +8,10 @@ import com.Group1.Alert.model.Alert;
 import com.Group1.Alert.dto.User;
 import com.Group1.Alert.repository.AlertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,5 +69,19 @@ public class AlertService {
 
     public List<Alert> getAllAlerts() {
         return alertRepository.findAll();
+    }
+
+    public String createAlertByUserId(String userId) {
+        List<eventModel> events =  eventclient.getAllEvents().getBody();
+
+        for(eventModel event : events){
+            if (event.getEventDate().isAfter(LocalDateTime.now())) {
+                Alert alert = new Alert();
+                alert.setUserId(userId);
+                alert.setEventId(event.getEventId());
+                alertRepository.save(alert);
+            }
+        }
+        return "saved all";
     }
 }

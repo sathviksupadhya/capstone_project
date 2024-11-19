@@ -71,7 +71,6 @@ const EventForm = () => {
   };
 
   return (
-    <Container>
       <FormCard>
         <Title>Create Event</Title>
         <Form onSubmit={handleSubmit}>
@@ -131,18 +130,8 @@ const EventForm = () => {
           <Button type="submit">Create Event</Button>
         </Form>
       </FormCard>
-    </Container>
   );
 };
-
-const Container = styled.div`
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-  padding-top: 70px;
-`;
 
 const FormCard = styled.div`
   background: white;
