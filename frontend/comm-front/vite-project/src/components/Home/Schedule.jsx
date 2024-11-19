@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import CommentSection from '../Feedbackform';
 
 const localizer = momentLocalizer(moment);
 
@@ -11,6 +12,8 @@ const Schedule = () => {
   const [events, setEvents] = useState([]);
   const [availableEvents, setAvailableEvents] = useState([]);
   const [showAddReminder, setShowAddReminder] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showComments, setShowComments] = useState(false);
   const [newReminder, setNewReminder] = useState({
     eventId: '',
     needsSms: false,
@@ -50,7 +53,9 @@ const Schedule = () => {
             end: new Date(eventDate.setHours(eventDate.getHours() + 1)),
             description: event.eventDescription,
             reminderSet: hasReminder,
-            allDay: false
+            allDay: false,
+            eventImg: event.eventImg,
+            eventData: event
           };
         });
         setEvents(formattedEvents);
@@ -107,6 +112,11 @@ const Schedule = () => {
     }
   };
 
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    setShowComments(true);
+  };
+
   const eventStyleGetter = (event) => {
     if (event.reminderSet) {
       return {
@@ -154,8 +164,33 @@ const Schedule = () => {
             className="p-4"
             eventPropGetter={eventStyleGetter}
             formats={formats}
+            onSelectEvent={handleSelectEvent}
           />
         </div>
+
+        <div className="mt-4 text-sm text-gray-600 flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-[#4CAF50] rounded"></div>
+            <span>Events with reminders set</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-[#3174ad] rounded"></div>
+            <span>Events without reminders</span>
+          </div>
+        </div>
+
+        {/* Comments Modal */}
+        {selectedEvent && (
+          <CommentSection 
+            eventId={selectedEvent.id}
+            eventData={selectedEvent.eventData}
+            isOpen={showComments}
+            onClose={() => {
+              setShowComments(false);
+              setSelectedEvent(null);
+            }}
+          />
+        )}
 
         {/* Add Reminder Modal */}
         {showAddReminder && (

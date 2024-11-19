@@ -5,6 +5,7 @@ import axios from "axios";
 import "../../CSS/cardStyles.css";
 import { FaChevronDown, FaUserCircle } from "react-icons/fa";
 import mainLogo from "../../assets/mainlogo.jpg?url";
+import { motion } from 'framer-motion';
 
 const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -13,6 +14,10 @@ const NavBar = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [profileImage, setProfileImage] = useState("");
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [box, setBox] = useState(false);
   const userId = sessionStorage.getItem("userId");
   const token = sessionStorage.getItem("jwtToken");
   const dropdownRef = useRef(null);
@@ -59,7 +64,9 @@ const NavBar = () => {
         const data = await response.data;
         console.log(data);
         setProfileImage(data.image);
-        setUserName(data.firstName);
+        setUserName(data.userName);
+        setUserEmail(data.email);
+        setUserPhone(data.phoneNumber);
       } catch (error) {
         console.error("Error fetching profile image:", error);
       }
@@ -126,6 +133,9 @@ const NavBar = () => {
   };
 
   const handleSetRem = async (eventid) => {
+    if(!box) {
+      setShowConfirmation(true);
+    }
     try {
       const baseUrl = "http://localhost:9997/reminder/create";
       await axios.post(
@@ -159,7 +169,11 @@ const NavBar = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      setCheckboxValues({
+        needsms: false,
+        needcall: false,
+        needemail: false,
+      });
       setShouldRefetch((prev) => !prev);
     } catch (error) {
       console.error("Error marking alert as seen:", error);
@@ -228,11 +242,11 @@ const NavBar = () => {
           <NavLink onClick={() => {
             navigate('/home');
             setTimeout(() => {
-              const element = document.getElementById("timesheet-section");
+              const element = document.getElementById("feedback-section");
               if(element) element.scrollIntoView({ behavior: "smooth" });
             }, 100);
           }}>
-            Timesheet
+            Reviews
           </NavLink>
         </NavLinks>
 
@@ -253,6 +267,31 @@ const NavBar = () => {
           </Dropdown>
         </ProfileSection>
       </Nav>
+      {showConfirmation && (
+        <ConfirmationContainer>
+          <ConfirmationBox
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2>Confirmation</h2>
+            <p>You will receive updates on:</p>
+            <ContactInfo>
+              {userPhone && <p>Phone: {userPhone}</p>}
+              {userEmail && <p>Email: {userEmail}</p>}
+            </ContactInfo>
+            <p>Want to update your contact details?</p>
+            <ButtonGroup>
+              <UpdateButton onClick={() => navigate('/home/profile/profile')}>
+                Update Profile
+              </UpdateButton>
+              <CloseButton onClick={() => {setShowConfirmation(false); setBox(true)}}>
+                Close
+              </CloseButton>
+            </ButtonGroup>
+          </ConfirmationBox>
+        </ConfirmationContainer>
+      )}
       {cards.length > 0 && (
         <ul
           className="cards"
@@ -620,6 +659,89 @@ const DropdownUserName = styled.div`
 const SettingsSubmenu = styled.div`
   padding: 10px 0;
   border-top: 1px solid #eee;
+`;
+
+const ConfirmationContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+`;
+
+const ConfirmationBox = styled(motion.div)`
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: #666;
+  }
+`;
+
+const ContactInfo = styled.div`
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 5px;
+
+  p {
+    margin: 0.5rem 0;
+    color: #333;
+    font-weight: 500;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+`;
+
+const UpdateButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #45a049;
+  }
+`;
+
+const CloseButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #da190b;
+  }
 `;
 
 export default NavBar;

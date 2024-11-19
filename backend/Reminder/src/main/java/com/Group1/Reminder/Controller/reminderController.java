@@ -48,6 +48,9 @@ public class reminderController {
         }
         Reminder  reminder = r.get();
         eventModel event = eventclient.getEvent(reminder.getEventId());
+        if(event == null){
+            return "Event not found";
+        }
         User user = userclient.getResidentById(reminder.getUserId());
         String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
         reminder.setNeedSms(false);
@@ -63,6 +66,9 @@ public class reminderController {
         }
         Reminder  reminder = r.get();
         eventModel event = eventclient.getEvent(reminder.getEventId());
+        if(event == null){
+            return "Event not found";
+        }
         User user = userclient.getResidentById(reminder.getUserId());
         String message = "we have an "+ event.getEventTitle() +" event on " + reminderService.formatDateTime(event.getEventDate());
         reminder.setNeedCall(false);

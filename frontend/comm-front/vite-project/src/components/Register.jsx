@@ -64,7 +64,7 @@ const RegisterForm = () => {
           role: "Resident",
         }
       );
-
+      console.log("dsfas");
       const validateResponse = await axios.post(
         "http://localhost:9997/auth/validate/user",
         {

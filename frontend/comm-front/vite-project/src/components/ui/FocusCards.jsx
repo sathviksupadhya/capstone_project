@@ -18,10 +18,19 @@ export const Card = React.memo(({
       "rounded-lg relative bg-gray-100 dark:bg-neutral-900 overflow-hidden h-60 md:h-96 w-full transition-all duration-300 ease-out cursor-pointer",
       hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
     )}>
-    <img
-      src={card.eventImg}
-      alt={card.eventTitle}
-      className="w-full h-full object-cover" />
+    {card.eventImg ? (
+      <img
+        src={card.eventImg}
+        alt={card.eventTitle}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-800">
+        <h1 className="text-4xl font-bold text-gray-600 dark:text-gray-400">
+          {card.eventTitle}
+        </h1>
+      </div>
+    )}
     <div
       className={cn(
         "absolute inset-0 bg-black/50 flex flex-col justify-end py-8 px-4 transition-opacity duration-300",

@@ -6,7 +6,7 @@ import RegisterForm from "./components/Register";
 import LandingPage from "./components/LandingPage";
 import NavBar from "./components/Home/NavBar";
 import HomePage from "./components/Home/HomePage";
-import Events from "./components/Home/Events";
+import Events from "./components/Home/events";
 import EventForm from "./components/EventForm";
 import AdminNavBar from "./components/Admin/AdminNavbar";
 import AdminHome from "./components/Admin/AdminHome";

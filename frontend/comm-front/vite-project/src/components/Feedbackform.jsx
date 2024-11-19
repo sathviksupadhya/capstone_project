@@ -257,22 +257,12 @@ const EventImageWrapper = styled.div`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.02);
-  }
 `;
 
 const EventImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
-  
-  &:hover {
-    transform: scale(1.1);
-  }
 `;
 
 const EventTitle = styled.h2`
@@ -313,26 +303,26 @@ const SectionTitle = styled.h3`
   font-size: 1.5rem;
   color: #1a1a1a;
   font-weight: 700;
-  border-bottom: 3px solid #2563eb;
+  border-bottom: 3px solid #000000;
   padding-bottom: 0.5rem;
 `;
 
 const CommentCount = styled(motion.div)`
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
   font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 `;
 
 const MessageText = styled(motion.div)`
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  color: #1565c0;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  color: #000000;
   text-align: center;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -354,7 +344,7 @@ const CommentsList = styled.div`
   }
   
   &::-webkit-scrollbar-thumb {
-    background: #2563eb;
+    background: #000000;
     border-radius: 4px;
   }
 `;
@@ -399,22 +389,22 @@ const CommentInput = styled.textarea`
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-size: 1rem;
-  min-height: 120px;
+  min-height: 30px;
   resize: none;
   transition: all 0.3s ease;
   background: #f8fafc;
 
   &:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.2);
     background: white;
   }
 `;
 
 const SubmitButton = styled(motion.button)`
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
   border: none;
   border-radius: 12px;
