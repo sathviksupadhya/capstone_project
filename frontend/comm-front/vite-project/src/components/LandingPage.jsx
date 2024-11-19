@@ -123,7 +123,7 @@ const LandingPage = () => {
   return (
     <HeroSection theme={theme}>
       <ContentWrapper>
-      <AuroraBackground>
+      <AuroraBackground theme={theme}>
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -337,9 +337,6 @@ const LandingPage = () => {
         <SectionTitle theme={theme} ref={teamSectionRef}>Meet Our Team</SectionTitle>
         <TeamGrid>
           <TeamCard>
-            <div className="image-container">
-              <img src="https://a" alt="profile-picture" />
-            </div>
             <div className="content">
               <h4>Sathvik S</h4>
               <p>Lead Developer</p>
@@ -355,9 +352,6 @@ const LandingPage = () => {
           </TeamCard>
 
           <TeamCard>
-            <div className="image-container">
-              <img src="https://av" alt="profile-picture" />
-            </div>
             <div className="content">
               <h4>Rahul K</h4>
               <p>Lead Developer</p>
@@ -442,7 +436,7 @@ const Title = styled(motion.h1)`
   margin-bottom: 1.5rem;
   background: linear-gradient(to right, #2563eb, #4f46e5);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
   text-align: center;
   width: 100%;
 
@@ -485,10 +479,7 @@ const ThemeToggleButton = styled(motion.button)`
   padding: 1rem;
   font-size: 1.125rem;
   color: white;
-  background: ${props => props.theme === 'dark' 
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #2563eb, #4f46e5)'
-  };
+  background: #000000;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -507,7 +498,7 @@ const GetStartedButton = styled(motion.button)`
   font-size: 1.125rem;
   font-weight: 600;
   color: white;
-  background: linear-gradient(to right, #2563eb, #4f46e5);
+  background: #000000;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -523,10 +514,7 @@ const KnowMoreButton = styled(motion.button)`
   font-size: 1.125rem;
   font-weight: 600;
   color: white;
-  background: ${props => props.theme === 'dark'
-    ? 'linear-gradient(to right, #4f46e5, #6366f1)'
-    : 'linear-gradient(to right, #1f2937, #374151)'
-  };
+  background: #000000;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -623,43 +611,30 @@ const TeamGrid = styled.div`
 
 const TeamCard = styled.div`
   width: 300px;
-  background: white;
+  background: #000000;
   border-radius: 15px;
+  padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   transition: transform 0.3s ease;
 
   &:hover {
     transform: translateY(-10px);
   }
 
-  .image-container {
-    width: 100%;
-    height: 250px;
-    overflow: hidden;
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
   .content {
-    padding: 1.5rem;
     text-align: center;
+    margin-bottom: 1.5rem;
 
     h4 {
-      color: #1a1a1a;
+      color: #ffffff;
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
 
     p {
-      color: #4f46e5;
+      color: #cccccc;
       font-weight: 500;
-      margin-bottom: 1rem;
     }
   }
 
@@ -667,23 +642,22 @@ const TeamCard = styled.div`
     display: flex;
     justify-content: center;
     gap: 1.5rem;
-    padding-bottom: 1.5rem;
 
     a {
       font-size: 1.5rem;
       transition: color 0.3s ease;
 
       &.linkedin {
-        color: #0077b5;
+        color: #ffffff;
         &:hover {
-          color: #00548c;
+          color: #0077b5;
         }
       }
 
       &.github {
-        color: #333;
+        color: #ffffff;
         &:hover {
-          color: #000;
+          color: #6e5494;
         }
       }
     }

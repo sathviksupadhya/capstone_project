@@ -43,17 +43,18 @@ const SignInForm = () => {
       const userStatus = user.data.status;
       console.log(userStatus);
       if(userStatus === "APPROVED"){ 
-        toast.success('Successfully signed in!', {
+        toast.success("Sign in successful! Redirecting to your dashboard...", {
           position: "top-right",
-          autoClose: 500,
-          onClose: () => {
-            if(username.toLowerCase() === "admin"){
-              navigate("/admin");
-            }else{
-              navigate("/home");
-            }
-          }
+          autoClose: 2000,
         });
+  
+        setTimeout(() => {
+          if(username.toLowerCase() === "admin"){
+            navigate("/admin");
+          }else{
+            navigate("/home");
+          }
+        }, 1000);
       }
     }catch(error){
       toast.error('You are not approved yet. Please wait for approval.', {
