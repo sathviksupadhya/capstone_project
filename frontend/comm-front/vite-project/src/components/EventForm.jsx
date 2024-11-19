@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -15,6 +15,11 @@ const EventForm = () => {
     imageUrl: null
   });
   const [imagePreview, setImagePreview] = useState(null);
+
+  // Add useEffect to scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,69 +77,72 @@ const EventForm = () => {
 
   return (
     <PageContainer>
-      {/* <NavBar>
-        <NavTitle>Event Management</NavTitle>
-      </NavBar> */}
       <ContentContainer>
-        <FormCard>
-          <Title>Create Event</Title>
-          <Form onSubmit={handleSubmit}>
-            <FormGroup>
-              <Label>Event Title</Label>
-              <Input
-                type="text"
-                placeholder="Enter event title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
+        <LeftSection>
+          <WelcomeText>Create Memorable Events</WelcomeText>
+          <Description>Plan and organize amazing events for our community</Description>
+        </LeftSection>
+        <RightSection>
+          <FormCard>
+            <Title>Create Event</Title>
+            <Form onSubmit={handleSubmit}>
+              <FormGroup>
+                <Label>Event Title</Label>
+                <Input
+                  type="text"
+                  placeholder="Enter event title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label>Event Description</Label>
-              <TextArea
-                placeholder="Enter event description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
+              <FormGroup>
+                <Label>Event Description</Label>
+                <TextArea
+                  placeholder="Enter event description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label>Event Date & Time</Label>
-              <Input
-                type="datetime-local"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
+              <FormGroup>
+                <Label>Event Date & Time</Label>
+                <Input
+                  type="datetime-local"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  required
+                />
+              </FormGroup>
 
-            <FormGroup>
-              <Label>Event Image</Label>
-              <ImageUploadContainer>
-                <ImagePreviewContainer>
-                  <img src={imagePreview || '/default-event.png'} alt="Event Preview" />
-                </ImagePreviewContainer>
-                <PhotoUploadButton htmlFor="image-upload">
-                  <FaCamera /> Upload Event Image
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    style={{ display: 'none' }}
-                  />
-                </PhotoUploadButton>
-              </ImageUploadContainer>
-            </FormGroup>
+              <FormGroup>
+                <Label>Event Image</Label>
+                <ImageUploadContainer>
+                  <ImagePreviewContainer>
+                    <img src={imagePreview || '/default-event.png'} alt="Event Preview" />
+                  </ImagePreviewContainer>
+                  <PhotoUploadButton htmlFor="image-upload">
+                    <FaCamera /> Upload Event Image
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      style={{ display: 'none' }}
+                    />
+                  </PhotoUploadButton>
+                </ImageUploadContainer>
+              </FormGroup>
 
-            <Button type="submit">Create Event</Button>
-          </Form>
-        </FormCard>
+              <Button type="submit">Create Event</Button>
+            </Form>
+          </FormCard>
+        </RightSection>
       </ContentContainer>
     </PageContainer>
   );
@@ -144,76 +152,106 @@ const PageContainer = styled.div`
   min-height: 100vh;
   background: #f5f5f5;
   display: flex;
-  flex-direction: column;
-`;
-
-const NavBar = styled.nav`
-  background: #000000;
-  color: white;
-  padding: 1rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-`;
-
-const NavTitle = styled.h1`
-  margin: 0;
-  font-size: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 `;
 
 const ContentContainer = styled.div`
-  margin-top: 80px;
-  padding: 20px;
   display: flex;
+  width: 90%;
+  max-width: 1200px;
+  min-height: 600px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-top: 60px; // Added to account for navbar
+`;
+
+const LeftSection = styled.div`
+  flex: 1;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3') center/cover;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  overflow-y: auto;
+  padding: 40px;
+  color: white;
+
+  @media (max-width: 968px) {
+    display: none;
+  }
+`;
+
+const WelcomeText = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+`;
+
+const Description = styled.p`
+  font-size: 1.2rem;
+  line-height: 1.6;
+  font-family: 'Poppins', sans-serif;
+`;
+
+const RightSection = styled.div`
+  flex: 1;
+  padding: 40px;
+  background: white;
+  display: flex;
+  align-items: flex-start; // Changed from center to flex-start
+  justify-content: center;
+  overflow-y: auto; // Added scrolling for right section
 `;
 
 const FormCard = styled.div`
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
+  max-width: 450px;
 `;
 
 const Title = styled.h2`
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   color: #333;
+  font-size: 2rem;
+  font-family: 'Poppins', sans-serif;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 `;
 
 const Input = styled.input`
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
   font-size: 14px;
+  transition: all 0.3s ease;
   
   &:focus {
     outline: none;
     border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
   }
 `;
 
 const TextArea = styled.textarea`
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
   font-size: 14px;
-  min-height: 100px;
+  min-height: 120px;
+  transition: all 0.3s ease;
   
   &:focus {
     outline: none;
     border-color: #000000;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
   }
 `;
 
@@ -222,15 +260,16 @@ const ImageUploadContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.5rem;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
 `;
 
 const ImagePreviewContainer = styled.div`
-  width: 180px;
-  height: 130px;
-  border-radius: 8px;
+  width: 200px;
+  height: 150px;
+  border-radius: 12px;
   overflow: hidden;
   border: 2px solid #000000;
   
@@ -245,47 +284,51 @@ const PhotoUploadButton = styled.label`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 10px 15px;
+  padding: 12px 20px;
   background: #000000;
   color: white;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s ease;
   
   &:hover {
     background: #333333;
+    transform: translateY(-2px);
   }
 
   svg {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 `;
 
 const Button = styled.button`
-  padding: 10px;
+  padding: 12px;
   background: #000000;
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
   
   &:hover {
     background: #333333;
+    transform: translateY(-2px);
   }
 `;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.8rem;
 `;
 
 const Label = styled.label`
-  font-weight: 500;
+  font-weight: 600;
   color: #333;
+  font-size: 0.9rem;
 `;
 
 export default EventForm;

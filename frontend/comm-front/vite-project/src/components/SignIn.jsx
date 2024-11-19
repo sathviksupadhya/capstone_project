@@ -94,52 +94,61 @@ const SignInForm = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
     <Container>
-      <FormCard>
-        <Title>Welcome Back! to UnitySpace</Title>
-        <Form onSubmit={handleSubmit}>
-          <FormField>
-            <Label htmlFor="username">Username</Label>
-            <div className="group relative">
-              <Input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="peer"
-              />
-              <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
-                Enter your registered username
-              </span>
-            </div>
-          </FormField>
+      <BackgroundOverlay>
+        <FormCard>
+          <Title>Welcome Back! to UnitySpace</Title>
+          <Form onSubmit={handleSubmit} onKeyPress={handleKeyPress}>
+            <FormField>
+              <Label htmlFor="username">Username</Label>
+              <div className="group relative">
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="peer"
+                />
+                <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
+                  Enter your registered username
+                </span>
+              </div>
+            </FormField>
 
-          <FormField>
-            <Label htmlFor="password">Password</Label>
-            <div className="group relative">
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="peer"
-              />
-              <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
-                Enter your secure password
-              </span>
-            </div>
-          </FormField>
-          <Button type="submit">Sign In</Button>
-        </Form>
-        <RegisterText>
-          First time user? <Link to="/register">Register here</Link>
-        </RegisterText>
-      </FormCard>
+            <FormField>
+              <Label htmlFor="password">Password</Label>
+              <div className="group relative">
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="peer"
+                />
+                <span className="pointer-events-none absolute -top-7 left-0 opacity-0 transition-opacity peer-hover:opacity-100 bg-gray-700 text-white p-2 rounded text-sm">
+                  Enter your secure password
+                </span>
+              </div>
+            </FormField>
+            <Button type="submit">Sign In</Button>
+          </Form>
+          <RegisterText>
+            First time user? <Link to="/register">Register here</Link>
+          </RegisterText>
+        </FormCard>
+      </BackgroundOverlay>
       <ToastContainer />
     </Container>
   );
@@ -150,12 +159,22 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f5f5f5;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3') center/cover;
   font-family: 'Poppins', sans-serif;
 `;
 
+const BackgroundOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+`;
+
 const FormCard = styled.div`
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
