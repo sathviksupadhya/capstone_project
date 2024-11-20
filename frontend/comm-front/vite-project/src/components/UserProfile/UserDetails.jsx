@@ -233,7 +233,7 @@ const UserDetails = () => {
     profilePhoto: user?.image || null
   });
 
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryCode, setCountryCode] = useState("+91");
   const [phoneError, setPhoneError] = useState("");
   const [photoPreview, setPhotoPreview] = useState(null);
   const [githubImageUrl, setGithubImageUrl] = useState(null);
@@ -241,9 +241,9 @@ const UserDetails = () => {
   const token = sessionStorage.getItem('jwtToken');
 
   const countryPhoneLengths = {
+    "+91": 10,
     "+1": 10,
     "+44": 10,
-    "+91": 10,
     "+86": 11,
     "+81": 10,
     "+82": 10,
@@ -395,9 +395,9 @@ const UserDetails = () => {
                   setPhoneError("");
                 }}
               >
+                <option value="+91">+91 (India)</option>
                 <option value="+1">+1 (USA/Canada)</option>
                 <option value="+44">+44 (UK)</option>
-                <option value="+91">+91 (India)</option>
                 <option value="+86">+86 (China)</option>
                 <option value="+81">+81 (Japan)</option>
                 <option value="+82">+82 (South Korea)</option>

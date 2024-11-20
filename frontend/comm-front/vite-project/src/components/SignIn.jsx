@@ -66,32 +66,22 @@ const SignInForm = () => {
       console.error('Login error:', err);
       
       if (err.code === 'ECONNABORTED') {
-        toast.error('Request timed out. Please try again.', {
-          position: "top-right",
-          autoClose: 5000
-        });
+        setError('Request timed out. Please try again.');
       } else if (err.response) {
         // Handle different HTTP error codes
         switch (err.response.status) {
           case 400:
-            toast.error('Invalid username or password format', {
-              position: "top-right",
-              autoClose: 5000
-            });
+            setError('Username or password is incorrect');
             break;
           case 500:
-            toast.error('Internal server error. Please try again later.', {
-              position: "top-right",
-              autoClose: 5000
-            });
+            setError('Internal server error. Please try again later.');
+            break;
+          default:
+            setError('Username or password is incorrect');
         }
       } else {
-        toast.error('Network error. Please check your connection.', {
-          position: "top-right",
-          autoClose: 5000
-        });
+        setError('Network error. Please check your connection.');
       }
-      setError(err.message);
     }
   };
 
@@ -142,6 +132,7 @@ const SignInForm = () => {
                   Enter your secure password
                 </span>
               </div>
+              {error && <ErrorMessage>{error}</ErrorMessage>}
             </FormField>
             <Button type="submit">Sign In</Button>
           </Form>
@@ -228,6 +219,13 @@ const Input = styled.input`
     outline: none;
     border-color: #000000;
   }
+`;
+
+const ErrorMessage = styled.div`
+  color: #ff0000;
+  font-size: 14px;
+  margin-top: 5px;
+  font-family: 'Inter', sans-serif;
 `;
 
 const Button = styled.button`
