@@ -3,6 +3,248 @@ import styled from 'styled-components';
 import { FaHome, FaCalendarAlt, FaBell, FaCog, FaSignOutAlt, FaUser, FaSms, FaPhone, FaEnvelope, FaTimes, FaHouseUser, FaChartPie, FaColumns } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
+const UserDashboard = () => {
+  const [userData, setUserData] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
+  const [reminders, setReminders] = useState([]);
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [showEvents, setShowEvents] = useState(false);
+  const [notificationPreferences, setNotificationPreferences] = useState({
+    sms: false,
+    call: false,
+    email: false
+  });
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const userId = sessionStorage.getItem('userId');
+  const token = sessionStorage.getItem('jwtToken');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:9997/api/residents/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setUserData(data);
+
+        const eventsResponse = await fetch(`http://localhost:9997/event/getAllEvents`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const eventsData = await eventsResponse.json();
+        setEvents(eventsData);
+
+        const recentActivityData = eventsData
+          .filter(event => event.userId === userId)
+          .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+          .slice(-5)
+          .map(event => ({
+            id: event.eventId,
+            description: `Created event: ${event.eventTitle}`,
+            timestamp: new Date(event.eventDate).toLocaleDateString()
+          }));
+        setRecentActivity(recentActivityData);
+
+        const reminderResponse = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const reminderData = await reminderResponse.json();
+        setReminders(reminderData);
+        const notificationsData = reminderData.filter(reminder => 
+          reminder.rem.needSms || reminder.rem.needCall || reminder.rem.needEmail
+        ).map(reminder => ({
+          id: reminder.rem.remId,
+          message: `Reminder for event: ${reminder.event.eventTitle}`,
+          reminderType: `${reminder.rem.needSms ? 'SMS ' : ''}${reminder.rem.needCall ? 'Call ' : ''}${reminder.rem.needEmail ? 'Email' : ''}`,
+          reminderDate: new Date(reminder.event.eventDate).toLocaleDateString(),
+          eventTitle: reminder.event.eventTitle
+        }));
+        setNotifications(notificationsData);
+      
+        const userEventsData = eventsData.filter(event => event.userId === userId);
+        setUserEvents(userEventsData || []); 
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [userId, token]);
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  const handleProfileClick = () => {
+    navigate('/home/profile/profile', { state: { user: userData } });
+  };
+
+  // const handleSettingsClick = () => {
+  //   navigate('/home/profile/settings');
+  // };
+
+  // const handleNotificationClick = () => {
+  //   setShowNotificationPopup(true);
+  // };
+
+  const handleEventsClick = () => {
+    setShowEvents(!showEvents);
+  };
+
+  const handleDashboardClick = () => {
+    setShowEvents(false);
+  };
+
+  // const handleCheckboxChange = (type) => {
+  //   setNotificationPreferences(prev => ({
+  //     ...prev,
+  //     [type]: !prev[type]
+  //   }));
+  // };
+
+  // const handleSaveNotifications = () => {
+  //   alert('Notification preferences saved: ' + 
+  //         Object.entries(notificationPreferences)
+  //           .filter(([_, value]) => value)
+  //           .map(([key]) => key)
+  //           .join(', '));
+  //   setShowNotificationPopup(false);
+  // };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('jwtToken');
+    navigate('/');
+  };
+
+  return (
+    <DashboardContainer>
+      <Sidebar style={{ position: 'fixed', top: 0, left: 0, height: '100vh', overflowY: 'hidden' }}>
+        <Logo onClick={() => navigate('/home')}>
+          <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
+          UnitySpace
+        </Logo>
+        <SidebarMenu>
+          <MenuItem onClick={() => navigate('/home')}>
+            <FaHouseUser />
+            Home
+          </MenuItem>
+          <MenuItem onClick={handleDashboardClick} active={!showEvents}>
+            <FaColumns />
+            Dashboard
+          </MenuItem>
+          <MenuItem onClick={handleEventsClick} active={showEvents}>
+            <FaCalendarAlt />
+            Events
+          </MenuItem>
+          <MenuItem onClick={handleProfileClick}>
+            <FaUser />
+            Profile
+          </MenuItem>
+          <MenuItem onClick={handleLogout}>
+            <FaSignOutAlt />
+            Logout
+          </MenuItem>
+        </SidebarMenu>
+      </Sidebar>
+
+      <MainContent style={{ marginLeft: '280px' }}>
+        <Header>
+          <ProfileImage src={userData.image} alt="Profile" />
+          <UserInfo>
+            <h1>{userData.userName}</h1>
+            <p>{userData.email}</p>
+          </UserInfo>
+        </Header>
+
+        {showEvents ? (
+          <>
+            <h2 style={{fontSize: '20px', fontWeight: 'bold'}}>My Events</h2>
+            <EventsGrid>
+              {Array.isArray(userEvents) && userEvents.map((event, index) => (
+                <EventCard key={index}>
+                  <img src={event.eventImg} alt={event.eventName} />
+                  <h3 style={{fontSize: '20px', fontWeight: 'bold'}}>{event.eventTitle}</h3>
+                  <p className="date">{new Date(event.eventDate).toLocaleDateString()}</p>
+                  <p>{event.eventDescription}</p>
+                  {reminders.filter(r => r.eventId === event.eventId).map((reminder, rIndex) => (
+                    <p key={rIndex} style={{color: '#e74c3c', marginTop: '10px'}}>
+                      Reminder set for: {new Date(reminder.reminderDate).toLocaleDateString()} 
+                      ({reminder.needSms ? 'SMS ' : ''}{reminder.needCall ? 'Call ' : ''}{reminder.needEmail ? 'Email' : ''})
+                    </p>
+                  ))}
+                </EventCard>
+              ))}
+            </EventsGrid>
+          </>
+        ) : (
+          <>
+            <StatsGrid>
+              <StatCard>
+                <h3>Total Events</h3>
+                <p>{events.length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>Upcoming Events</h3>
+                <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>My Events</h3>
+                <p>{userEvents.length}</p>
+              </StatCard>
+              <StatCard>
+                <h3>Reminders</h3>
+                <p>{reminders.filter(reminder => reminder.rem.needSms || reminder.rem.needCall || reminder.rem.needEmail).length}</p>
+              </StatCard>
+            </StatsGrid>
+
+            <ContentGrid>
+              <RecentActivityContainer>
+                <SectionHeader>
+                  <SectionTitle>Recent Activity</SectionTitle>
+                </SectionHeader>
+                {recentActivity.map((activity) => (
+                  <ActivityItem key={activity.id}>
+                    <span>{activity.description}</span>
+                    <span>{activity.timestamp}</span>
+                  </ActivityItem>
+                ))}
+              </RecentActivityContainer>
+
+              <NotificationsContainer>
+                <SectionHeader>
+                  <SectionTitle>Notifications</SectionTitle>
+                </SectionHeader>
+                {notifications.map((notification) => (
+                  <NotificationItem key={notification.id}>
+                    <FaBell />
+                    <div>
+                      <p>{notification.message}</p>
+                      <small>
+                        Reminder Date: {notification.reminderDate}<br/>
+                        Type: {notification.reminderType}
+                      </small>
+                    </div>
+                  </NotificationItem>
+                ))}
+              </NotificationsContainer>
+            </ContentGrid>
+          </>
+        )}
+      </MainContent>
+    </DashboardContainer>
+  );
+};
+
 const DashboardContainer = styled.div`
   display: flex;
   min-height: 100vh;
@@ -439,249 +681,5 @@ const NotificationItem = styled.div`
     color: #7f8c8d;
   }
 `;
-
-const UserDashboard = () => {
-  const [userData, setUserData] = useState(null);
-  const [events, setEvents] = useState([]);
-  const [userEvents, setUserEvents] = useState([]);
-  const [reminders, setReminders] = useState([]);
-  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
-  const [showEvents, setShowEvents] = useState(false);
-  const [notificationPreferences, setNotificationPreferences] = useState({
-    sms: false,
-    call: false,
-    email: false
-  });
-  const [recentActivity, setRecentActivity] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const userId = sessionStorage.getItem('userId');
-  const token = sessionStorage.getItem('jwtToken');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:9997/api/residents/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
-        setUserData(data);
-
-        const eventsResponse = await fetch(`http://localhost:9997/event/getAllEvents`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const eventsData = await eventsResponse.json();
-        setEvents(eventsData);
-
-        // Set recent activity based on events
-        const recentActivityData = eventsData
-          .filter(event => event.userId === userId)
-          .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
-          .slice(0, 5)
-          .map(event => ({
-            id: event.eventId,
-            description: `Created event: ${event.eventTitle}`,
-            timestamp: new Date(event.eventDate).toLocaleDateString()
-          }));
-        setRecentActivity(recentActivityData);
-
-        // Fetch reminders and combine with event data
-        const reminderResponse = await fetch(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const reminderData = await reminderResponse.json();
-        setReminders(reminderData);
-
-        // Create notifications with reminder details
-        const notificationsData = reminderData.map(reminder => ({
-          id: reminder.remId,
-          message: `Reminder for event: ${reminder.eventTitle}`,
-          reminderType: `${reminder.needSms ? 'SMS ' : ''}${reminder.needCall ? 'Call ' : ''}${reminder.needEmail ? 'Email' : ''}`,
-          reminderDate: new Date(reminder.reminderDate).toLocaleDateString(),
-          eventTitle: reminder.eventTitle
-        }));
-        setNotifications(notificationsData);
-      
-        const userEventsData = eventsData.filter(event => event.userId === userId);
-        setUserEvents(userEventsData || []); 
-
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, [userId, token]);
-
-  if (!userData) {
-    return <div>Loading...</div>;
-  }
-
-  const handleProfileClick = () => {
-    navigate('/home/profile/profile', { state: { user: userData } });
-  };
-
-  // const handleSettingsClick = () => {
-  //   navigate('/home/profile/settings');
-  // };
-
-  // const handleNotificationClick = () => {
-  //   setShowNotificationPopup(true);
-  // };
-
-  const handleEventsClick = () => {
-    setShowEvents(!showEvents);
-  };
-
-  const handleDashboardClick = () => {
-    setShowEvents(false);
-  };
-
-  // const handleCheckboxChange = (type) => {
-  //   setNotificationPreferences(prev => ({
-  //     ...prev,
-  //     [type]: !prev[type]
-  //   }));
-  // };
-
-  // const handleSaveNotifications = () => {
-  //   alert('Notification preferences saved: ' + 
-  //         Object.entries(notificationPreferences)
-  //           .filter(([_, value]) => value)
-  //           .map(([key]) => key)
-  //           .join(', '));
-  //   setShowNotificationPopup(false);
-  // };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('userId');
-    sessionStorage.removeItem('jwtToken');
-    navigate('/');
-  };
-
-  return (
-    <DashboardContainer>
-      <Sidebar style={{ position: 'fixed', top: 0, left: 0, height: '100vh', overflowY: 'hidden' }}>
-        <Logo onClick={() => navigate('/home')}>
-          <LogoImage src="/src/assets/mainlogo.jpg" alt="UnitySpace Logo" />
-          UnitySpace
-        </Logo>
-        <SidebarMenu>
-          <MenuItem onClick={() => navigate('/home')}>
-            <FaHouseUser />
-            Home
-          </MenuItem>
-          <MenuItem onClick={handleDashboardClick} active={!showEvents}>
-            <FaColumns />
-            Dashboard
-          </MenuItem>
-          <MenuItem onClick={handleEventsClick} active={showEvents}>
-            <FaCalendarAlt />
-            Events
-          </MenuItem>
-          <MenuItem onClick={handleProfileClick}>
-            <FaUser />
-            Profile
-          </MenuItem>
-          <MenuItem onClick={handleLogout}>
-            <FaSignOutAlt />
-            Logout
-          </MenuItem>
-        </SidebarMenu>
-      </Sidebar>
-
-      <MainContent style={{ marginLeft: '280px' }}>
-        <Header>
-          <ProfileImage src={userData.image} alt="Profile" />
-          <UserInfo>
-            <h1>{userData.userName}</h1>
-            <p>{userData.email}</p>
-          </UserInfo>
-        </Header>
-
-        {showEvents ? (
-          <>
-            <h2 style={{fontSize: '20px', fontWeight: 'bold'}}>My Events</h2>
-            <EventsGrid>
-              {Array.isArray(userEvents) && userEvents.map((event, index) => (
-                <EventCard key={index}>
-                  <img src={event.eventImg} alt={event.eventName} />
-                  <h3 style={{fontSize: '20px', fontWeight: 'bold'}}>{event.eventTitle}</h3>
-                  <p className="date">{new Date(event.eventDate).toLocaleDateString()}</p>
-                  <p>{event.eventDescription}</p>
-                  {reminders.filter(r => r.eventId === event.eventId).map((reminder, rIndex) => (
-                    <p key={rIndex} style={{color: '#e74c3c', marginTop: '10px'}}>
-                      Reminder set for: {new Date(reminder.reminderDate).toLocaleDateString()} 
-                      ({reminder.needSms ? 'SMS ' : ''}{reminder.needCall ? 'Call ' : ''}{reminder.needEmail ? 'Email' : ''})
-                    </p>
-                  ))}
-                </EventCard>
-              ))}
-            </EventsGrid>
-          </>
-        ) : (
-          <>
-            <StatsGrid>
-              <StatCard>
-                <h3>Total Events</h3>
-                <p>{events.length}</p>
-              </StatCard>
-              <StatCard>
-                <h3>Upcoming Events</h3>
-                <p>{events.filter(event => new Date(event.eventDate) > new Date()).length}</p>
-              </StatCard>
-              <StatCard>
-                <h3>My Events</h3>
-                <p>{userEvents.length}</p>
-              </StatCard>
-              <StatCard>
-                <h3>Reminders</h3>
-                <p>{reminders.filter(reminder => reminder.needSms || reminder.needCall || reminder.needEmail).length}</p>
-              </StatCard>
-            </StatsGrid>
-
-            <ContentGrid>
-              <RecentActivityContainer>
-                <SectionHeader>
-                  <SectionTitle>Recent Activity</SectionTitle>
-                </SectionHeader>
-                {recentActivity.map((activity) => (
-                  <ActivityItem key={activity.id}>
-                    <span>{activity.description}</span>
-                    <span>{activity.timestamp}</span>
-                  </ActivityItem>
-                ))}
-              </RecentActivityContainer>
-
-              <NotificationsContainer>
-                <SectionHeader>
-                  <SectionTitle>Notifications</SectionTitle>
-                </SectionHeader>
-                {notifications.map((notification) => (
-                  <NotificationItem key={notification.id}>
-                    <FaBell />
-                    <div>
-                      <p>{notification.message}</p>
-                      <small>
-                        Reminder Date: {notification.reminderDate}<br/>
-                        Type: {notification.reminderType}
-                      </small>
-                    </div>
-                  </NotificationItem>
-                ))}
-              </NotificationsContainer>
-            </ContentGrid>
-          </>
-        )}
-      </MainContent>
-    </DashboardContainer>
-  );
-};
 
 export default UserDashboard;

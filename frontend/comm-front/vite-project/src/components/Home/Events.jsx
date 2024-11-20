@@ -6,6 +6,149 @@ import axios from "axios";
 import { FaFilter, FaSearch, FaSortAmountDown, FaTimes } from "react-icons/fa";
 import EventForm from "../EventForm";
 
+export default function Events() {
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("userId");
+  const token = sessionStorage.getItem("jwtToken");
+  const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
+  const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'upcoming', or 'past'
+  const [showEventForm, setShowEventForm] = useState(false);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:9997/event/getAllEvents`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await response.data;
+        setCards([...data].reverse());
+        setFilteredCards([...data].reverse());
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    let filtered = [...cards];
+    const currentDate = new Date();
+    
+    // Apply time filter
+    if (timeFilter !== 'all') {
+      filtered = filtered.filter(card => {
+        const eventDate = new Date(card.eventDate);
+        if (timeFilter === 'upcoming') {
+          return eventDate >= currentDate;
+        } else {
+          return eventDate < currentDate;
+        }
+      });
+    }
+    
+    // Apply month filter
+    if (selectedMonth !== 'all') {
+      filtered = filtered.filter(card => {
+        const eventDate = new Date(card.eventDate);
+        return eventDate.getMonth() === parseInt(selectedMonth);
+      });
+    }
+    
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(card => 
+        card.eventTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.eventDate);
+      const dateB = new Date(b.eventDate);
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+    
+    setFilteredCards(filtered);
+  }, [selectedMonth, searchTerm, cards, sortOrder, timeFilter]);
+
+  const handleMonthChange = (e) => {
+    setSelectedMonth(e.target.value);
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
+
+  return (
+    <div style={{ marginTop: "80px" }}>
+      {showEventForm && (
+        <Modal onClick={() => setShowEventForm(false)}>
+          <ScrollableEventForm onClick={e => e.stopPropagation()}>
+            <CloseButton onClick={() => setShowEventForm(false)}>
+              <FaTimes />
+            </CloseButton>
+            <EventForm />
+          </ScrollableEventForm>
+        </Modal>
+      )}
+      
+      <TopControls>
+        <SearchContainer>
+          <FaSearch color="#666" />
+          <SearchInput 
+            type="text" 
+            placeholder="Search events..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SearchContainer>
+
+        <AddEventButton onClick={() => setShowEventForm(true)}>Add an Event</AddEventButton>
+
+        <SortButton onClick={toggleSortOrder}>
+          <FaSortAmountDown />
+          {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
+        </SortButton>
+        
+        <FilterContainer>
+          <FaFilter color="#666" />
+          <FilterSelect value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
+            <option value="all">All Events</option>
+            <option value="upcoming">Upcoming Events</option>
+            <option value="past">Past Events</option>
+          </FilterSelect>
+          <FilterSelect value={selectedMonth} onChange={handleMonthChange}>
+            <option value="all">Filter by Month</option>
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </FilterSelect>
+        </FilterContainer>
+      </TopControls>
+      <FocusCards cards={filteredCards} />
+    </div>
+  );
+}
+
 const EventsContainer = styled.div`
   margin-top: 140px;
   display: flex;
@@ -185,147 +328,3 @@ const CloseButton = styled.button`
     color: #333;
   }
 `;
-
-export default function Events() {
-  const navigate = useNavigate();
-  const userId = sessionStorage.getItem("userId");
-  const token = sessionStorage.getItem("jwtToken");
-  const [cards, setCards] = useState([]);
-  const [filteredCards, setFilteredCards] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' or 'desc'
-  const [timeFilter, setTimeFilter] = useState('all'); // 'all', 'upcoming', or 'past'
-  const [showEventForm, setShowEventForm] = useState(false);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        console.log(userId);
-        const response = await axios.get(
-          `http://localhost:9997/event/getAllEvents`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.data;
-        setCards([...data].reverse());
-        setFilteredCards([...data].reverse());
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchEvents();
-  }, []);
-
-  useEffect(() => {
-    let filtered = [...cards];
-    const currentDate = new Date();
-    
-    // Apply time filter
-    if (timeFilter !== 'all') {
-      filtered = filtered.filter(card => {
-        const eventDate = new Date(card.eventDate);
-        if (timeFilter === 'upcoming') {
-          return eventDate >= currentDate;
-        } else {
-          return eventDate < currentDate;
-        }
-      });
-    }
-    
-    // Apply month filter
-    if (selectedMonth !== 'all') {
-      filtered = filtered.filter(card => {
-        const eventDate = new Date(card.eventDate);
-        return eventDate.getMonth() === parseInt(selectedMonth);
-      });
-    }
-    
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(card => 
-        card.eventTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.eventDate);
-      const dateB = new Date(b.eventDate);
-      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-    });
-    
-    setFilteredCards(filtered);
-  }, [selectedMonth, searchTerm, cards, sortOrder, timeFilter]);
-
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
-  };
-
-  const toggleSortOrder = () => {
-    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-  };
-
-  return (
-    <div style={{ marginTop: "80px" }}>
-      {showEventForm && (
-        <Modal onClick={() => setShowEventForm(false)}>
-          <ScrollableEventForm onClick={e => e.stopPropagation()}>
-            <CloseButton onClick={() => setShowEventForm(false)}>
-              <FaTimes />
-            </CloseButton>
-            <EventForm />
-          </ScrollableEventForm>
-        </Modal>
-      )}
-      
-      <TopControls>
-        <SearchContainer>
-          <FaSearch color="#666" />
-          <SearchInput 
-            type="text" 
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </SearchContainer>
-
-        <AddEventButton onClick={() => setShowEventForm(true)}>Add an Event</AddEventButton>
-
-        <SortButton onClick={toggleSortOrder}>
-          <FaSortAmountDown />
-          {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
-        </SortButton>
-        
-        <FilterContainer>
-          <FaFilter color="#666" />
-          <FilterSelect value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
-            <option value="all">All Events</option>
-            <option value="upcoming">Upcoming Events</option>
-            <option value="past">Past Events</option>
-          </FilterSelect>
-          <FilterSelect value={selectedMonth} onChange={handleMonthChange}>
-            <option value="all">Filter by Month</option>
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-          </FilterSelect>
-        </FilterContainer>
-      </TopControls>
-      <FocusCards cards={filteredCards} />
-    </div>
-  );
-}

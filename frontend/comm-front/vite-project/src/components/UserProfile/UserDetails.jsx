@@ -7,6 +7,239 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 
+const UserDetails = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    profilePhoto: null
+  });
+
+  const [countryCode, setCountryCode] = useState("+91");
+  const [phoneError, setPhoneError] = useState("");
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [githubImageUrl, setGithubImageUrl] = useState(null);
+  const userId = sessionStorage.getItem('userId');
+  const token = sessionStorage.getItem('jwtToken');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:9997/api/residents/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setFormData({
+          fullName: data?.userName || '',
+          email: data?.email || '',
+          phone: data?.phoneNumber ? data?.phoneNumber.slice(3) : '',
+          profilePhoto: data?.image || null
+        });
+      } catch(error) {
+        console.error('Error fetching user data:', error);
+        toast.error("Error fetching user data");
+      }
+    };
+    
+    fetchUserData();
+  }, [userId, token]);
+
+  
+
+  const countryPhoneLengths = {
+    "+1": 10,
+    "+44": 10,
+    "+91": 10,
+    "+86": 11,
+    "+81": 10,
+    "+82": 10,
+    "+61": 9,
+    "+33": 9,
+    "+49": 11,
+  };
+
+  const validatePhone = (phoneNumber, selectedCountryCode) => {
+    const exactLength = countryPhoneLengths[selectedCountryCode];
+    return phoneNumber.length === exactLength;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= countryPhoneLengths[countryCode]) {
+      setFormData(prevState => ({
+        ...prevState,
+        phone: value
+      }));
+      setPhoneError("");
+    }
+  };
+  
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        const result = reader.result;
+        setPhotoPreview(result);
+        setFormData(prevState => ({
+          ...prevState,
+          profilePhoto: reader.result
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validatePhone(formData.phone, countryCode)) {
+      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:9997/api/residents/update/${userId}`, {
+        email: formData.email,
+        phoneNumber: countryCode + formData.phone,
+        image: formData.profilePhoto
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      toast.success('Successfully updated profile!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      navigate('/home/profile');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleClose = () => {
+    navigate('/home/profile');
+  };
+
+  return (
+    <Container>
+      <FormContainer
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <CloseButton onClick={handleClose}>&times;</CloseButton>
+        <Title>Update Your Profile</Title>
+        <StyledForm onSubmit={handleSubmit}>
+          <ProfilePhotoContainer>
+            <PhotoPreview>
+              <img src={photoPreview || '/default-avatar.png'} alt="Profile Preview" />
+            </PhotoPreview>
+            <PhotoUploadButton htmlFor="photo-upload">
+              <FaCamera /> Change Photo
+              <input
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: 'none' }}
+              />
+            </PhotoUploadButton>
+          </ProfilePhotoContainer>
+
+          <FormGroup>
+            <Label>
+              <FaUser /> Username
+            </Label>
+            <Input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              disabled
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>
+              <FaEnvelope /> Email Address
+            </Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>
+              <FaPhone /> Phone Number
+            </Label>
+            <PhoneInputContainer>
+              <StyledCountrySelect
+                value={countryCode}
+                onChange={(e) => {
+                  setCountryCode(e.target.value);
+                  setPhoneError("");
+                }}
+              >
+                <option value="+1">+1 (USA/Canada)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+91">+91 (India)</option>
+                <option value="+86">+86 (China)</option>
+                <option value="+81">+81 (Japan)</option>
+                <option value="+82">+82 (South Korea)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+33">+33 (France)</option>
+                <option value="+49">+49 (Germany)</option>
+              </StyledCountrySelect>
+              <StyledPhoneInput
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handlePhoneChange}
+                placeholder={`${countryPhoneLengths[countryCode]} digits`}
+                maxLength={countryPhoneLengths[countryCode]}
+                required
+              />
+            </PhoneInputContainer>
+            {phoneError && <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>{phoneError}</div>}
+          </FormGroup>
+
+          <SubmitButton
+            type="submit"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Update Profile
+          </SubmitButton>
+        </StyledForm>
+      </FormContainer>
+    </Container>
+  );
+};
+
 const Container = styled.div`
   position: fixed;
   top: 0;
@@ -221,214 +454,5 @@ const SubmitButton = styled(motion.button)`
     transform: translateY(-1px);
   }
 `;
-
-const UserDetails = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const user = location.state?.user;
-  const [formData, setFormData] = useState({
-    fullName: user?.userName || '',
-    email: user?.email || '',
-    phone: user?.phoneNumber?.replace(/^\+\d+/, '') || '',
-    profilePhoto: user?.image || null
-  });
-
-  const [countryCode, setCountryCode] = useState("+91");
-  const [phoneError, setPhoneError] = useState("");
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [githubImageUrl, setGithubImageUrl] = useState(null);
-  const userId = sessionStorage.getItem('userId');
-  const token = sessionStorage.getItem('jwtToken');
-
-  const countryPhoneLengths = {
-    "+91": 10,
-    "+1": 10,
-    "+44": 10,
-    "+86": 11,
-    "+81": 10,
-    "+82": 10,
-    "+61": 9,
-    "+33": 9,
-    "+49": 11,
-  };
-
-  const validatePhone = (phoneNumber, selectedCountryCode) => {
-    const exactLength = countryPhoneLengths[selectedCountryCode];
-    return phoneNumber.length === exactLength;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "");
-    if (value.length <= countryPhoneLengths[countryCode]) {
-      setFormData(prevState => ({
-        ...prevState,
-        phone: value
-      }));
-      setPhoneError("");
-    }
-  };
-  
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    
-    if (file) {
-      const reader = new FileReader();
-      
-      reader.onloadend = () => {
-        const result = reader.result;
-        setPhotoPreview(result);
-        setFormData(prevState => ({
-          ...prevState,
-          profilePhoto: reader.result
-        }));
-      };
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validatePhone(formData.phone, countryCode)) {
-      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
-      return;
-    }
-
-    try {
-      const response = await axios.put(`http://localhost:9997/api/residents/update/${userId}`, {
-        email: formData.email,
-        phoneNumber: countryCode + formData.phone,
-        image: formData.profilePhoto
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      toast.success('Successfully updated profile!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-      });
-      navigate('/home/profile');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
-
-  const handleClose = () => {
-    navigate('/home/profile');
-  };
-
-  return (
-    <Container>
-      <FormContainer
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <CloseButton onClick={handleClose}>&times;</CloseButton>
-        <Title>Update Your Profile</Title>
-        <StyledForm onSubmit={handleSubmit}>
-          <ProfilePhotoContainer>
-            <PhotoPreview>
-              <img src={photoPreview || '/default-avatar.png'} alt="Profile Preview" />
-            </PhotoPreview>
-            <PhotoUploadButton htmlFor="photo-upload">
-              <FaCamera /> Change Photo
-              <input
-                id="photo-upload"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                style={{ display: 'none' }}
-              />
-            </PhotoUploadButton>
-          </ProfilePhotoContainer>
-
-          <FormGroup>
-            <Label>
-              <FaUser /> Username
-            </Label>
-            <Input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              disabled
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>
-              <FaEnvelope /> Email Address
-            </Label>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>
-              <FaPhone /> Phone Number
-            </Label>
-            <PhoneInputContainer>
-              <StyledCountrySelect
-                value={countryCode}
-                onChange={(e) => {
-                  setCountryCode(e.target.value);
-                  setPhoneError("");
-                }}
-              >
-                <option value="+91">+91 (India)</option>
-                <option value="+1">+1 (USA/Canada)</option>
-                <option value="+44">+44 (UK)</option>
-                <option value="+86">+86 (China)</option>
-                <option value="+81">+81 (Japan)</option>
-                <option value="+82">+82 (South Korea)</option>
-                <option value="+61">+61 (Australia)</option>
-                <option value="+33">+33 (France)</option>
-                <option value="+49">+49 (Germany)</option>
-              </StyledCountrySelect>
-              <StyledPhoneInput
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                placeholder={`${countryPhoneLengths[countryCode]} digits`}
-                maxLength={countryPhoneLengths[countryCode]}
-                required
-              />
-            </PhoneInputContainer>
-            {phoneError && <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>{phoneError}</div>}
-          </FormGroup>
-
-          <SubmitButton
-            type="submit"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            Update Profile
-          </SubmitButton>
-        </StyledForm>
-      </FormContainer>
-    </Container>
-  );
-};
 
 export default UserDetails;

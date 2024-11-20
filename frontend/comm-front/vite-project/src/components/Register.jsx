@@ -10,7 +10,7 @@ const RegisterForm = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryCode, setCountryCode] = useState("+91");
   const [usernameError, setUsernameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
@@ -34,16 +34,16 @@ const RegisterForm = () => {
     return phoneNumber.length === exactLength;
   };
 
-  const handleVerifyClick = () => {
-    if (!validatePhone(phone, countryCode)) {
-      setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
-      return;
-    }
-    setShowOtpField(true);
-    toast.info("OTP sent to your phone number!", {
-      position: "top-right",
-    });
-  };
+  // const handleVerifyClick = () => {
+  //   if (!validatePhone(phone, countryCode)) {
+  //     setPhoneError(`Phone number must be exactly ${countryPhoneLengths[countryCode]} digits for ${countryCode}`);
+  //     return;
+  //   }
+  //   setShowOtpField(true);
+  //   toast.info("OTP sent to your phone number!", {
+  //     position: "top-right",
+  //   });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +64,6 @@ const RegisterForm = () => {
           role: "Resident",
         }
       );
-      console.log("dsfas");
       const validateResponse = await axios.post(
         "http://localhost:9997/auth/validate/user",
         {
@@ -175,9 +174,9 @@ const RegisterForm = () => {
                     setPhoneError("");
                   }}
                 >
+                  <option value="+91">+91 (India)</option>
                   <option value="+1">+1 (USA/Canada)</option>
                   <option value="+44">+44 (UK)</option>
-                  <option value="+91">+91 (India)</option>
                   <option value="+86">+86 (China)</option>
                   <option value="+81">+81 (Japan)</option>
                   <option value="+82">+82 (South Korea)</option>

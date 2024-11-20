@@ -13,7 +13,6 @@ const SignInForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("username:", username);
 
     try {
       const response = await axios.post(
@@ -28,7 +27,6 @@ const SignInForm = () => {
       }
 
       const { token, userId } = response.data;
-      console.log(token);
       sessionStorage.setItem("jwtToken", token);
       sessionStorage.setItem("userId", userId);
 
@@ -41,7 +39,6 @@ const SignInForm = () => {
           }
       );
       const userStatus = user.data.status;
-      console.log(userStatus);
       if(userStatus === "APPROVED"){ 
         toast.success("Sign in successful! Redirecting to your dashboard...", {
           position: "top-right",

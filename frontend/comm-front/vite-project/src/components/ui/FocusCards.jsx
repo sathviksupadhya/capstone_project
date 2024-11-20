@@ -45,7 +45,7 @@ export const Card = React.memo(({
       const month = date.toLocaleString('default', { month: 'short' });
       const hour = date.getHours();
       const ampm = hour >= 12 ? 'PM' : 'AM';
-      const hour12 = hour > 12 ? hour - 12 : hour;
+      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       const message = `${day}${getSuffix(day)} ${month} at ${hour12}${ampm}`;
       function getSuffix(day) {
         if (day >= 11 && day <= 13) return 'th';

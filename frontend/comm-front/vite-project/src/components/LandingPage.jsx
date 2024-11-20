@@ -198,7 +198,7 @@ const LandingPage = () => {
         </motion.div>
         </AuroraBackground>
 
-        <SectionTitle theme={theme} gradient={true}>Our Features</SectionTitle>
+        <SectionTitle theme={theme} gradient="true">Our Features</SectionTitle>
         <FeaturesSection ref={featuresSectionRef}>
           <FeatureItem
             variants={featureVariants}
@@ -279,7 +279,7 @@ const LandingPage = () => {
           </FeatureItem>
         </FeaturesSection>
 
-        <SectionTitle theme={theme} gradient={true}>Coming Soon</SectionTitle>
+        <SectionTitle theme={theme} gradient="true">Coming Soon</SectionTitle>
         <FeaturesSection>
           <FeatureItem
             variants={featureVariants}
@@ -590,9 +590,9 @@ const SectionTitle = styled.h2`
   margin-bottom: 1rem;
   text-align: center;
   color: ${props => props.theme === 'dark' ? '#ffffff' : '#000000'};
-  background: ${props => props.gradient ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
-  -webkit-background-clip: ${props => props.gradient ? 'text' : 'none'};
-  -webkit-text-fill-color: ${props => props.gradient ? 'transparent' : 'inherit'};
+  background: ${props => props.gradient === "true" ? 'linear-gradient(to right, #2563eb, #4f46e5)' : 'none'};
+  -webkit-background-clip: ${props => props.gradient === "true" ? 'text' : 'none'};
+  -webkit-text-fill-color: ${props => props.gradient === "true" ? 'transparent' : 'inherit'};
 
   @media (max-width: 768px) {
     font-size: 2rem;
