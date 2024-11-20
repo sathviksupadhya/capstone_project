@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Carousel from "./Carousel";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../EventForm";
-import Events from "./events";
+import Events from "./Events";
 import FeedbackForm from "../Feedbackform";
 import Schedule from "./Schedule";
 import { HelpCircle, MessageCircle } from "lucide-react";

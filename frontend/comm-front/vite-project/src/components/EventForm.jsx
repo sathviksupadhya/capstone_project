@@ -50,8 +50,8 @@ const EventForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const localDateTime = new Date(formData.date).toISOString();
-    console.log(localDateTime);
+    const date = new Date(formData.date);
+    const localDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
     setI(i+1);
 
     try {
@@ -69,7 +69,7 @@ const EventForm = () => {
         },
         { headers }
       );
-      navigate(-1);
+      navigate('/home');
     } catch(error) {
       console.error('Error creating event:', error);
     }

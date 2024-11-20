@@ -24,7 +24,7 @@ const Schedule = () => {
   const token = sessionStorage.getItem('jwtToken');
   const userId = sessionStorage.getItem('userId');
 
-  useEffect(() => {
+
     const fetchAllData = async () => {
       try {
         // Get all events
@@ -34,15 +34,13 @@ const Schedule = () => {
           }
         });
 
-        // Get user's reminders
         const reminderResponse = await axios.get(`http://localhost:9997/reminder/getbyUserId/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        const reminderEventIds = new Set(reminderResponse.data.map(reminder => reminder.eventId));
+        const reminderEventIds = new Set(reminderResponse.data.map(reminder => reminder.event.eventId));
 
-        // Format and set events for calendar with reminder status
         const formattedEvents = eventsResponse.data.map(event => {
           const eventDate = new Date(event.eventDate);
           const hasReminder = reminderEventIds.has(event.eventId);
@@ -60,7 +58,6 @@ const Schedule = () => {
         });
         setEvents(formattedEvents);
 
-        // Filter and set available events
         const currentDate = new Date();
         const availableEvents = eventsResponse.data.filter(event => {
           const eventDate = new Date(event.eventDate);
@@ -72,7 +69,8 @@ const Schedule = () => {
         console.error('Error fetching data:', error);
       }
     };
-
+  
+  useEffect(() => {
     fetchAllData();
   }, []);
 
@@ -95,7 +93,7 @@ const Schedule = () => {
         }
       );
       
-      // Reset form and close modal
+
       setNewReminder({
         eventId: '',
         needsSms: false,
@@ -104,7 +102,7 @@ const Schedule = () => {
       });
       setShowAddReminder(false);
       
-      // Refresh data
+
       fetchAllData();
 
     } catch (error) {

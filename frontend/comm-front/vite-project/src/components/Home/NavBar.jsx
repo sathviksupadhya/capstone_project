@@ -52,7 +52,6 @@ const NavBar = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        // console.log(123, userId);
         const response = await axios.get(
           `http://localhost:9997/api/residents/${userId}`,
           {
@@ -62,7 +61,6 @@ const NavBar = () => {
           }
         );
         const data = await response.data;
-        console.log(data);
         setProfileImage(data.image);
         setUserName(data.userName);
         setUserEmail(data.email);
@@ -135,9 +133,11 @@ const NavBar = () => {
   const handleSetRem = async (eventid) => {
     if(!box) {
       setShowConfirmation(true);
+      return;
     }
     try {
       const baseUrl = "http://localhost:9997/reminder/create";
+      console.log(checkboxValues);
       await axios.post(
         `${baseUrl}`,
         {
@@ -257,10 +257,10 @@ const NavBar = () => {
             onClick={() => setDropdownOpen(!dropdownOpen)}
           />
           <ChevronIcon
-            isOpen={dropdownOpen}
+            isopen={dropdownOpen ? "true" : "false"}
             onClick={() => setDropdownOpen(!dropdownOpen)}
           />
-          <Dropdown isOpen={dropdownOpen}>
+          <Dropdown isopen={dropdownOpen ? "true" : "false"}>
             <DropdownUserName>{userName || "User"}</DropdownUserName>
             <DropdownItem onClick={handleMyAccount}>My Account</DropdownItem>
             <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
@@ -621,7 +621,7 @@ const ProfileImage = styled.img`
 const ChevronIcon = styled(FaChevronDown)`
   color: #ffffff;
   transition: transform 0.3s ease;
-  transform: ${(props) => (props.isOpen ? "rotate(180deg)" : "rotate(0)")};
+  transform: ${(props) => (props.isopen === "true" ? "rotate(180deg)" : "rotate(0)")};
 `;
 
 const Dropdown = styled.div`
@@ -632,7 +632,7 @@ const Dropdown = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px 0;
-  display: ${(props) => (props.isOpen ? "block" : "none")};
+  display: ${(props) => (props.isopen === "true" ? "block" : "none")};
   min-width: 200px;
 `;
 

@@ -1,18 +1,17 @@
 package com.Group1.Reminder.service;
 
-import com.Group1.Reminder.dto.ReminderDTO;
+import com.Group1.Reminder.dto.*;
 import com.Group1.Reminder.feign.eventClient;
 import com.Group1.Reminder.feign.userClient;
 import com.Group1.Reminder.model.Reminder;
-import com.Group1.Reminder.dto.User;
-import com.Group1.Reminder.dto.eventModel;
 import com.Group1.Reminder.repository.ReminderRepository;
-import com.Group1.Reminder.dto.Response;
 import com.twilio.rest.api.v2010.account.Call;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import com.twilio.type.Twiml;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +31,9 @@ public class ReminderService {
 
     @Autowired
     private userClient userclient;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
 
     public Response<ReminderDTO> createReminder(ReminderDTO reminderDTO) {
@@ -136,13 +138,30 @@ public class ReminderService {
         }
     }
 
-    public List<Reminder> getReminderByUserId(String userId) {
-        return reminderRepository.findByUserId(userId);
+    public List<fullDetails> getReminderByUserId(String userId) {
+        List<Reminder> r = reminderRepository.findByUserId(userId);
+        List<fullDetails> reminder = r.stream().map(i->{
+            eventModel event = eventclient.getEvent(i.getEventId());
+            User user = userclient.getResidentById(i.getUserId());
+            fullDetails  f = new fullDetails();
+            f.setRem(i);
+            f.setEvent(event);
+            f.setUser(user);
+            return f;
+        }).collect(Collectors.toList());
+        return reminder;
+    }
+
+    public void SendEmail(String email, String message) {
+        SimpleMailMessage m = new SimpleMailMessage();
+        m.setTo(email);
+        m.setSubject("Community Event");
+        m.setText(message);
+        m.setFrom("your-email@gmail.com");
+
+        javaMailSender.send(m);
     }
 
 
-//    public String SendEmail(String email, String message) {
-//
-//    }
 }
 

@@ -11,6 +11,8 @@ import com.twilio.rest.api.v2010.account.Call;
 import com.twilio.type.PhoneNumber;
 import com.twilio.type.Twiml;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/reminder")
-public class reminderController {
+public class reminderController{
 
     @Autowired
     private ReminderService reminderService;
@@ -34,6 +36,9 @@ public class reminderController {
 
     @Autowired
     private ReminderRepository reminderRepository;
+
+    @Autowired
+    private JavaMailSender  javaMailSender;
 
     @PostMapping("/create")
     public Response<ReminderDTO> createReminder(@RequestBody ReminderDTO reminderDTO) {
@@ -77,7 +82,7 @@ public class reminderController {
     }
 
     @GetMapping("/getbyUserId/{userId}")
-    public List<Reminder> getReminderByUserId(@PathVariable("userId") String userId) {
+    public List<fullDetails> getReminderByUserId(@PathVariable("userId") String userId) {
         return reminderService.getReminderByUserId(userId);
     }
 
@@ -94,20 +99,34 @@ public class reminderController {
            if (ChronoUnit.MINUTES.between(currentTime, eventDate) <= 30) {
                User user = userclient.getResidentById(reminder.getUserId());
                String message = "we have an " + event.getEventTitle() + " event on " + reminderService.formatDateTime(event.getEventDate());
+               if (reminder.isNeedSms()) {
+                   reminderService.SendSms(user.getPhoneNumber(), message);
+                   Reminder r = reminderRepository.findById(reminder.getRemId()).get();
+                   r.setNeedSms(false);
+                   reminderRepository.save(r);
+               }
                if (reminder.isNeedCall()) {
                    Reminder r = reminderRepository.findById(reminder.getRemId()).get();
                    r.setNeedCall(false);
                    reminderRepository.save(r);
+                   System.out.println(user.getPhoneNumber());
                    reminderService.SendCall(user.getPhoneNumber(), message);
                }
-               if (reminder.isNeedSms()) {
+               if (reminder.isNeedEmail()) {
                    Reminder r = reminderRepository.findById(reminder.getRemId()).get();
-                   r.setNeedSms(false);
+                   r.setNeedEmail(false);
                    reminderRepository.save(r);
-                   reminderService.SendCall(user.getPhoneNumber(), message);
+                   reminderService.SendEmail(user.getEmail(), message);
                }
+               reminderRepository.deleteById(reminder.getRemId());
            }
        });
+    }
+
+    @GetMapping("/sendEmail")
+    public String SendEmail(@RequestParam String email, @RequestParam String message) {
+        reminderService.SendEmail(email, message);
+        return "you may receive an email now!!!";
     }
 //
     @GetMapping("/sendUrgentsmsAndCall")
@@ -119,5 +138,4 @@ public class reminderController {
         }
         return "you may receive a message and call now!!!";
     }
-
 }
