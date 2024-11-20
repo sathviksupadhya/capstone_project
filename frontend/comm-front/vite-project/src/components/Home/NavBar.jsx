@@ -176,7 +176,7 @@ const NavBar = () => {
       });
       setShouldRefetch((prev) => !prev);
     } catch (error) {
-      console.error("Error marking alert as seen:", error);
+      // console.error("Error marking alert as seen:", error);
     }
   };
 

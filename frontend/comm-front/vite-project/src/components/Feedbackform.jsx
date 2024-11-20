@@ -117,8 +117,6 @@ const CommentSection = ({ eventId, eventData, isOpen, onClose }) => {
       );
 
       setComments(commentsWithUserNames);
-
-      // Clear success message after 3 seconds
       setTimeout(() => {
         setMessage("");
       }, 3000);
