@@ -54,7 +54,7 @@ const AdminEvents = () => {
         allEvents.forEach(event => {
           const eventDate = new Date(event.eventDate);
           if (eventDate < now) {
-            categorizedEvents.past.push(event);
+            categorizedEvents.past.push({...event, status: 'past'});
           } else if (eventDate.toDateString() === now.toDateString()) {
             categorizedEvents.ongoing.push(event);
           } else {
@@ -160,6 +160,9 @@ const AdminEvents = () => {
         <FaInfo /> {event.eventDescription}
       </EventDetail>
       <TagsContainer>
+        {event.status === 'past' && (
+          <PastTag>Past Event</PastTag>
+        )}
         {event.tags && event.tags.map(tag => (
           <Tag key={tag} $theme={theme}>#{tag}</Tag>
         ))}
@@ -544,6 +547,21 @@ const Tag = styled.span`
 
   &:hover {
     background: #1a237e;
+    color: white;
+  }
+`;
+
+const PastTag = styled.span`
+  padding: 6px 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 20px;
+  font-size: 12px;
+  color: #ff0000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ff0000;
     color: white;
   }
 `;
