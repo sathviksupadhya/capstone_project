@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 public class ReminderApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ReminderApplication.class, args);
 	}

@@ -1,6 +1,7 @@
 package com.Group1.Feedback.controller;
 
 import com.Group1.Feedback.dto.FeedbackDto;
+import com.Group1.Feedback.dto.FullDetails;
 import com.Group1.Feedback.model.Feedback;
 import com.Group1.Feedback.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,13 @@ public class FeedbackController {
     }
 
     @GetMapping("/get-feedback-by-eventId/{eventId}")
-    public ResponseEntity<List<FeedbackDto>> getFeedbackByEventId(@PathVariable("eventId") String eventId) {
-        List<FeedbackDto> feedbacks = feedbackService.getFeedbackByEventId(eventId);
+    public ResponseEntity<List<FullDetails>> getFeedbackByEventId(@PathVariable("eventId") String eventId) {
+        List<FullDetails> feedbacks = feedbackService.getFeedbackByEventId(eventId);
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-userId/{userId}")
-    public ResponseEntity<List<FeedbackDto>> getFeedbackByUserId(@PathVariable("userId") String userId) {
-        List<FeedbackDto> feedbacks = feedbackService.getFeedbackByUserId(userId);
+    public ResponseEntity<List<FullDetails>> getFeedbackByUserId(@PathVariable("userId") String userId) {
+        List<FullDetails> feedbacks = feedbackService.getFeedbackByUserId(userId);
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-UserId-EventId/{eventId}/{userId}")

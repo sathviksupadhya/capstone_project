@@ -1,6 +1,11 @@
 package com.Group1.Feedback.service;
 
 import com.Group1.Feedback.dto.FeedbackDto;
+import com.Group1.Feedback.dto.FullDetails;
+import com.Group1.Feedback.dto.eventModel;
+import com.Group1.Feedback.dto.userFullDetails;
+import com.Group1.Feedback.feign.eventClient;
+import com.Group1.Feedback.feign.userClient;
 import com.Group1.Feedback.model.Feedback;
 import com.Group1.Feedback.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +19,12 @@ public class FeedbackService {
 
     @Autowired
     private FeedbackRepository feedbackRepository;
+
+    @Autowired
+    private userClient userclient;
+
+    @Autowired
+    private eventClient eventclient;
 
     public static FeedbackDto entityToDto(Feedback feedback) {
         FeedbackDto dto = new FeedbackDto();
@@ -73,14 +84,46 @@ public class FeedbackService {
         return entityToDto(feedbackRepository.save(feedback));
     }
 
-    public List<FeedbackDto> getFeedbackByEventId(String eventId) {
+    public List<FullDetails> getFeedbackByEventId(String eventId) {
         List<Feedback> feedbacks = feedbackRepository.findByEventId(eventId);
-        return feedbacks.stream().map(FeedbackService::entityToDto).collect(Collectors.toList());
+
+        eventModel e = eventclient.getEvent(eventId);
+        userFullDetails u = userclient.getResidentById(e.getUserId());
+        return feedbacks.stream().map(feedback -> {
+            FullDetails fullDetails = new FullDetails();
+            fullDetails.setFeedbackId(feedback.getFeedbackId());
+            fullDetails.setFeedbackMessage(feedback.getFeedbackMessage());
+            fullDetails.setEventId(feedback.getEventId());
+            fullDetails.setUserId(feedback.getUserId());
+            fullDetails.setUserName(u.getUserName());
+            fullDetails.setEmail(u.getEmail());
+            fullDetails.setPhoneNumber(u.getPhoneNumber());
+            fullDetails.setImage(u.getImage());
+            fullDetails.setEventTitle(e.getEventTitle());
+            fullDetails.setEventDescription(e.getEventDescription());
+            fullDetails.setEventDate(e.getEventDate());
+            fullDetails.setEventImg(e.getEventImg());
+            return fullDetails;
+        }).collect(Collectors.toList());
+
     }
 
-    public List<FeedbackDto> getFeedbackByUserId(String userId) {
+    public List<FullDetails> getFeedbackByUserId(String userId) {
         List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
-        return feedbacks.stream().map(FeedbackService::entityToDto).collect(Collectors.toList());
+        userFullDetails u = userclient.getResidentById(userId);
+        return feedbacks.stream().map(feedback -> {
+            FullDetails fullDetails = new FullDetails();
+            fullDetails.setFeedbackId(feedback.getFeedbackId());
+            fullDetails.setFeedbackMessage(feedback.getFeedbackMessage());
+            fullDetails.setEventId(feedback.getEventId());
+            fullDetails.setUserId(feedback.getUserId());
+            fullDetails.setUserName(u.getUserName());
+            fullDetails.setEmail(u.getEmail());
+            fullDetails.setPhoneNumber(u.getPhoneNumber());
+            fullDetails.setImage(u.getImage());
+            return fullDetails;
+        }).collect(Collectors.toList());
+
     }
 
     public FeedbackDto getFeedbackByEventIdAndUserId(String eventId, String userId) {

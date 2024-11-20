@@ -114,7 +114,6 @@ const AdminEvents = () => {
         }
       );
     }else {
-      console.log('jahsdc')
       const response = await axios.get('http://localhost:9997/reminder/sendUrgentsmsAndCall',
         {
           headers: {
@@ -127,7 +126,7 @@ const AdminEvents = () => {
       );
     }
       setShowEventForm(false);
-      window.location.reload();
+      // window.location.reload();
     } catch(error) {
       console.error('Error creating event:', error);
     }
