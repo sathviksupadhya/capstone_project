@@ -1,9 +1,0 @@
-/* src/global.css */
-html {
-    scroll-behavior: smooth; /* Enable smooth scrolling for the whole page */
-}
-
-/* Additional global styles can go here */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
