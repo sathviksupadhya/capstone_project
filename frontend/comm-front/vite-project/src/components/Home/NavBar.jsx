@@ -114,6 +114,7 @@ const NavBar = () => {
           }
         );
         setCards(response.data);
+        console.log("asmdcb", response.data)
       } catch (error) {
         setCards([]);
         console.error("Error fetching alerts:", error);
@@ -176,7 +177,7 @@ const NavBar = () => {
       });
       setShouldRefetch((prev) => !prev);
     } catch (error) {
-      // console.error("Error marking alert as seen:", error);
+      console.error("Error marking alert as seen:", error);
     }
   };
 

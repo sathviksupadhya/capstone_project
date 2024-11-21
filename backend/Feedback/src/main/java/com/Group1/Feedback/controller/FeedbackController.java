@@ -42,8 +42,8 @@ public class FeedbackController {
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-userId/{userId}")
-    public ResponseEntity<List<FullDetails>> getFeedbackByUserId(@PathVariable("userId") String userId) {
-        List<FullDetails> feedbacks = feedbackService.getFeedbackByUserId(userId);
+    public ResponseEntity<List<Feedback>> getFeedbackByUserId(@PathVariable("userId") String userId) {
+        List<Feedback> feedbacks = feedbackService.getFeedbackByUserId(userId);
         return new ResponseEntity<>(feedbacks, HttpStatus.OK);
     }
     @GetMapping("/get-feedback-by-UserId-EventId/{eventId}/{userId}")

@@ -39,11 +39,14 @@ export default function Events() {
     fetchEvents();
   }, []);
 
+  const handleadd = () => {
+    navigate('/create-event')
+  }
+
   useEffect(() => {
     let filtered = [...cards];
     const currentDate = new Date();
     
-    // Apply time filter
     if (timeFilter !== 'all') {
       filtered = filtered.filter(card => {
         const eventDate = new Date(card.eventDate);
@@ -55,7 +58,6 @@ export default function Events() {
       });
     }
     
-    // Apply month filter
     if (selectedMonth !== 'all') {
       filtered = filtered.filter(card => {
         const eventDate = new Date(card.eventDate);
@@ -63,7 +65,6 @@ export default function Events() {
       });
     }
     
-    // Apply search filter
     if (searchTerm) {
       filtered = filtered.filter(card => 
         card.eventTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,7 +72,6 @@ export default function Events() {
       );
     }
 
-    // Apply sorting
     filtered.sort((a, b) => {
       const dateA = new Date(a.eventDate);
       const dateB = new Date(b.eventDate);
@@ -91,7 +91,7 @@ export default function Events() {
 
   return (
     <div style={{ marginTop: "80px" }}>
-      {showEventForm && (
+      {/* {showEventForm && (
         <Modal onClick={() => setShowEventForm(false)}>
           <ScrollableEventForm onClick={e => e.stopPropagation()}>
             <CloseButton onClick={() => setShowEventForm(false)}>
@@ -100,7 +100,7 @@ export default function Events() {
             <EventForm />
           </ScrollableEventForm>
         </Modal>
-      )}
+      )} */}
       
       <TopControls>
         <SearchContainer>
@@ -113,7 +113,7 @@ export default function Events() {
           />
         </SearchContainer>
 
-        <AddEventButton onClick={() => setShowEventForm(true)}>Add an Event</AddEventButton>
+        <AddEventButton onClick={handleadd}>Add an Event</AddEventButton>
 
         <SortButton onClick={toggleSortOrder}>
           <FaSortAmountDown />

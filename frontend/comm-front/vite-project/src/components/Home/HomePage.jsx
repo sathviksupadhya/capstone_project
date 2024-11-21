@@ -42,6 +42,7 @@ export default function HomePage() {
           },
         }
       );
+      console.log(response.data);
       setCommunityPosts(response.data);
     }catch (error) {
       console.error("Error fetching community posts:", error);
@@ -162,10 +163,9 @@ export default function HomePage() {
               {communityPosts.map((post) => (
                 <div key={post.feedbackId} className="p-6 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full" />
+                    <img src={post.image} className="w-10 h-10 rounded-full object-cover" />
                     <div>
                       <p className="font-medium">{post.userName}</p>
-                      <p className="text-sm text-gray-500">{new Date(post.timestamp).toLocaleString()}</p>
                     </div>
                   </div>
                   <p className="text-gray-700">{post.feedbackMessage}</p>

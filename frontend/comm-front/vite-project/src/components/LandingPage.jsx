@@ -26,8 +26,8 @@ const LandingPage = () => {
   }, []);
 
   const handleGetStarted = () => {
-    const isAuthenticated = localStorage.getItem('token');
-    if (isAuthenticated) {
+    const isAuthenticated = sessionStorage.getItem('token');
+    if (!isAuthenticated) {
       toast.error('Please sign in or register to access this feature!', {
         position: "top-right",
         autoClose: 3000,
@@ -36,7 +36,7 @@ const LandingPage = () => {
         pauseOnHover: true,
         draggable: true,
       });
-      navigate('/register');
+      navigate('/signin');
       return;
     }
     navigate('/home');

@@ -97,7 +97,7 @@ const AdminEvents = () => {
       const userId = sessionStorage.getItem('userId');
 
       if (formData.eventType === 'Event') {
-
+            console.log(formData);
       const response = await axios.post('http://localhost:9997/event/add',
         {
           eventTitle: formData.title,
@@ -117,7 +117,7 @@ const AdminEvents = () => {
       const response = await axios.get('http://localhost:9997/reminder/sendUrgentsmsAndCall',
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
           params: {
             Message: formData.description
@@ -126,8 +126,8 @@ const AdminEvents = () => {
       );
     }
       setShowEventForm(false);
-      // window.location.reload();
     } catch(error) {
+      setShowEventForm(false);
       console.error('Error creating event:', error);
     }
   };
@@ -159,9 +159,6 @@ const AdminEvents = () => {
         <FaInfo /> {event.eventDescription}
       </EventDetail>
       <TagsContainer>
-        {event.status === 'past' && (
-          <PastTag>Past Event</PastTag>
-        )}
         {event.tags && event.tags.map(tag => (
           <Tag key={tag} $theme={theme}>#{tag}</Tag>
         ))}

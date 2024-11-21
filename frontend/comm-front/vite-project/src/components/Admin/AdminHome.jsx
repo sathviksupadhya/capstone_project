@@ -17,6 +17,198 @@ import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
+
+const AdminHome = () => {
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    totalResidents: 0,
+    totalEvents: 0,
+    activeResidents: 0,
+    pendingApprovals: 0,
+  });
+
+  const [notifications, setNotifications] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const token = sessionStorage.getItem('jwtToken');
+  const userId = sessionStorage.getItem('userId');
+
+  useEffect(() => {
+    if (!token || userId !== '67358a8f23bfe342e171cad3') {
+      navigate('/');
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const residentsResponse = await axios.get(
+          "http://localhost:9997/api/residents/all",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const totalResidents = residentsResponse.data.length;
+        const activeResidents = residentsResponse.data.filter(
+          (resident) => resident.status === "APPROVED"
+        ).length;
+        const pendingApprovals = residentsResponse.data.filter(
+          (resident) => resident.status === "PENDING"
+        ).length;
+
+        const eventsResponse = await axios.get(
+          "http://localhost:9997/event/getAllEvents",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const totalEvents = eventsResponse.data.length;
+
+        setStats({
+          totalResidents,
+          totalEvents,
+          activeResidents,
+          pendingApprovals,
+        });
+
+        const notificationsList = [
+          ...residentsResponse.data
+            .filter((resident) => resident.status === "PENDING")
+            .map((resident) => ({
+              id: `resident-${resident.userId}`,
+              message: `New registration request from ${resident.userName}`,
+            })),
+          // ...eventsResponse.data
+          //   .filter((event) => new Date(event.eventDate) > new Date())
+          //   .map((event) => ({
+          //     id: `event-${event.id}`,
+          //     message: `Upcoming event: ${event.eventTitle}`,
+          //     timestamp: new Date(event.eventDate).toLocaleString(),
+          //   })),
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setNotifications(notificationsList.slice(0, 5));
+
+        const activityList = [
+          ...residentsResponse.data.map(resident => ({
+            id: `activity-resident-${resident.userId}`,
+            description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
+            timestamp: new Date(resident.createdAt).toLocaleString()
+          })),
+          ...eventsResponse.data.map((event) => ({
+            id: `activity-event-${event.id}`,
+            description: `New event created: ${event.eventTitle}`,
+            timestamp: new Date(event.eventDate).toLocaleString()
+          }))
+        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        setRecentActivity(activityList.slice(-5));
+
+      } catch (error) {
+        console.error("Error fetching admin dashboard data:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        }
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
+
+  return (
+    <PageWrapper>
+      {/* <AdminNavBar/> */}
+      <DashboardContainer>
+        <DashboardHeader>
+          <h1>Admin Dashboard</h1>
+        </DashboardHeader>
+
+        <StatsGrid>
+          <StatCard onClick={() => navigate("/admin/users")}>
+            <StatIcon>
+              <FaUsers />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.totalResidents}</h3>
+              <p>Total Residents</p>
+            </StatInfo>
+          </StatCard>
+
+          <StatCard onClick={() => navigate("/admin/events")}>
+            <StatIcon>
+              <FaCalendarAlt />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.totalEvents}</h3>
+              <p>Total Events</p>
+            </StatInfo>
+          </StatCard>
+
+          <StatCard
+            onClick={() =>
+              navigate("/admin/users", { state: { activeTab: "active" } })
+            }
+          >
+            <StatIcon>
+              <FaChartLine />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.activeResidents}</h3>
+              <p>Active Residents</p>
+            </StatInfo>
+          </StatCard>
+
+          <StatCard
+            onClick={() =>
+              navigate("/admin/users", { state: { activeTab: "inactive" } })
+            }
+          >
+            <StatIcon>
+              <FaUserClock />
+            </StatIcon>
+            <StatInfo>
+              <h3>{stats.pendingApprovals}</h3>
+              <p>Pending Approvals</p>
+            </StatInfo>
+          </StatCard>
+        </StatsGrid>
+
+        <ContentGrid>
+          <RecentActivityContainer>
+            <SectionHeader>
+              <SectionTitle>Recent Activity</SectionTitle>
+            </SectionHeader>
+            {recentActivity.map((activity) => (
+              <ActivityItem key={activity.id}>
+                <p>{activity.description}</p>
+                <small>{activity.timestamp}</small>
+              </ActivityItem>
+            ))}
+          </RecentActivityContainer>
+
+          <NotificationsContainer>
+            <SectionHeader>
+              <SectionTitle>Notifications</SectionTitle>
+            </SectionHeader>
+            {notifications.map((notification) => (
+              <NotificationItem key={notification.id}>
+                <FaBell />
+                <div>
+                  <p>{notification.message}</p>
+                  <small>{notification.timestamp}</small>
+                </div>
+              </NotificationItem>
+            ))}
+          </NotificationsContainer>
+        </ContentGrid>
+      </DashboardContainer>
+    </PageWrapper>
+  );
+};
+
 const PageWrapper = styled.div`
   background: #f0f2f5;
   min-height: 100vh;
@@ -228,197 +420,5 @@ const SectionTitle = styled.h2`
     border-radius: 2px;
   }
 `;
-
-const AdminHome = () => {
-  const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    totalResidents: 0,
-    totalEvents: 0,
-    activeResidents: 0,
-    pendingApprovals: 0,
-  });
-
-  const [notifications, setNotifications] = useState([]);
-  const [recentActivity, setRecentActivity] = useState([]);
-  const token = sessionStorage.getItem('jwtToken');
-  const userId = sessionStorage.getItem('userId');
-
-  useEffect(() => {
-    if (!token || userId !== '67358a8f23bfe342e171cad3') {
-      navigate('/');
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const residentsResponse = await axios.get(
-          "http://localhost:9997/api/residents/all",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const totalResidents = residentsResponse.data.length;
-        const activeResidents = residentsResponse.data.filter(
-          (resident) => resident.status === "APPROVED"
-        ).length;
-        const pendingApprovals = residentsResponse.data.filter(
-          (resident) => resident.status === "PENDING"
-        ).length;
-
-        const eventsResponse = await axios.get(
-          "http://localhost:9997/event/getAllEvents",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const totalEvents = eventsResponse.data.length;
-
-        setStats({
-          totalResidents,
-          totalEvents,
-          activeResidents,
-          pendingApprovals,
-        });
-
-        const notificationsList = [
-          ...residentsResponse.data
-            .filter((resident) => resident.status === "PENDING")
-            .map((resident) => ({
-              id: `resident-${resident.userId}`,
-              message: `New registration request from ${resident.userName}`,
-              timestamp: new Date(resident.createdAt).toLocaleString(),
-            })),
-          ...eventsResponse.data
-            .filter((event) => new Date(event.eventDate) > new Date())
-            .map((event) => ({
-              id: `event-${event.id}`,
-              message: `Upcoming event: ${event.eventTitle}`,
-              timestamp: new Date(event.eventDate).toLocaleString(),
-            })),
-        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        setNotifications(notificationsList.slice(0, 5));
-
-        const activityList = [
-          ...residentsResponse.data.map(resident => ({
-            id: `activity-resident-${resident.userId}`,
-            description: `Resident ${resident.userName} ${resident.status === 'ACTIVE' ? 'activated' : 'registered'}`,
-            timestamp: new Date(resident.createdAt).toLocaleString()
-          })),
-          ...eventsResponse.data.map((event) => ({
-            id: `activity-event-${event.id}`,
-            description: `New event created: ${event.eventTitle}`,
-            timestamp: new Date(event.eventDate).toLocaleString()
-          }))
-        ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-        setRecentActivity(activityList.slice(-5));
-
-      } catch (error) {
-        console.error("Error fetching admin dashboard data:", error);
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-        }
-      }
-    };
-
-    fetchData();
-  }, [navigate, token]);
-
-  return (
-    <PageWrapper>
-      {/* <AdminNavBar/> */}
-      <DashboardContainer>
-        <DashboardHeader>
-          <h1>Admin Dashboard</h1>
-        </DashboardHeader>
-
-        <StatsGrid>
-          <StatCard onClick={() => navigate("/admin/users")}>
-            <StatIcon>
-              <FaUsers />
-            </StatIcon>
-            <StatInfo>
-              <h3>{stats.totalResidents}</h3>
-              <p>Total Residents</p>
-            </StatInfo>
-          </StatCard>
-
-          <StatCard onClick={() => navigate("/admin/events")}>
-            <StatIcon>
-              <FaCalendarAlt />
-            </StatIcon>
-            <StatInfo>
-              <h3>{stats.totalEvents}</h3>
-              <p>Total Events</p>
-            </StatInfo>
-          </StatCard>
-
-          <StatCard
-            onClick={() =>
-              navigate("/admin/users", { state: { activeTab: "active" } })
-            }
-          >
-            <StatIcon>
-              <FaChartLine />
-            </StatIcon>
-            <StatInfo>
-              <h3>{stats.activeResidents}</h3>
-              <p>Active Residents</p>
-            </StatInfo>
-          </StatCard>
-
-          <StatCard
-            onClick={() =>
-              navigate("/admin/users", { state: { activeTab: "inactive" } })
-            }
-          >
-            <StatIcon>
-              <FaUserClock />
-            </StatIcon>
-            <StatInfo>
-              <h3>{stats.pendingApprovals}</h3>
-              <p>Pending Approvals</p>
-            </StatInfo>
-          </StatCard>
-        </StatsGrid>
-
-        <ContentGrid>
-          <RecentActivityContainer>
-            <SectionHeader>
-              <SectionTitle>Recent Activity</SectionTitle>
-            </SectionHeader>
-            {recentActivity.map((activity) => (
-              <ActivityItem key={activity.id}>
-                <p>{activity.description}</p>
-                <small>{activity.timestamp}</small>
-              </ActivityItem>
-            ))}
-          </RecentActivityContainer>
-
-          <NotificationsContainer>
-            <SectionHeader>
-              <SectionTitle>Notifications</SectionTitle>
-            </SectionHeader>
-            {notifications.map((notification) => (
-              <NotificationItem key={notification.id}>
-                <FaBell />
-                <div>
-                  <p>{notification.message}</p>
-                  <small>{notification.timestamp}</small>
-                </div>
-              </NotificationItem>
-            ))}
-          </NotificationsContainer>
-        </ContentGrid>
-      </DashboardContainer>
-    </PageWrapper>
-  );
-};
 
 export default AdminHome;

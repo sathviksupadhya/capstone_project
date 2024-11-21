@@ -135,6 +135,7 @@ public class reminderController{
         for(User i: users) {
             reminderService.SendSms(i.getPhoneNumber(), Message);
             reminderService.SendCall(i.getPhoneNumber(), Message);
+            reminderService.SendEmail(i.getEmail(), Message);
         }
         return "you may receive a message and call now!!!";
     }

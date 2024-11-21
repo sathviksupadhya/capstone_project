@@ -21,35 +21,9 @@ const CommentSection = ({ eventId, eventData, isOpen, onClose }) => {
             },
           }
         );
+        console.log(1,response.data);
 
-        // Fetch usernames for each comment
-        const commentsWithUserNames = await Promise.all(
-          response.data.map(async (comment) => {
-            try {
-              const userResponse = await axios.get(
-                `http://localhost:9997/auth/getuser/${comment.userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              );
-              console.log(userResponse.data);
-              return {
-                ...comment,
-                userName: userResponse.data.userName,
-              };
-            } catch (error) {
-              console.error("Error fetching username:", error);
-              return {
-                ...comment,
-                userName: "Unknown User",
-              };
-            }
-          })
-        );
-
-        setComments(commentsWithUserNames);
+        setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
         setMessage("Error loading comments. Please try again.");
@@ -59,12 +33,12 @@ const CommentSection = ({ eventId, eventData, isOpen, onClose }) => {
     if (isOpen && eventId) {
       fetchComments();
     }
-  }, [eventId, isOpen, token]);
+  }, [isOpen, eventId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:9997/feedback/create-feedback",
         {
           userId,
@@ -77,49 +51,20 @@ const CommentSection = ({ eventId, eventData, isOpen, onClose }) => {
           },
         }
       );
+      const response1 = await fetch(`http://localhost:9997/api/residents/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response1.json();
+    
       setComment("");
       setMessage("Comment posted successfully!");
 
-      // Refresh comments after posting
-      const response = await axios.get(
-        `http://localhost:9997/feedback/get-feedback-by-eventId/${eventId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Fetch usernames for new comments
-      const commentsWithUserNames = await Promise.all(
-        response.data.map(async (comment) => {
-          try {
-            const userResponse = await axios.get(
-              `http://localhost:9995/auth/user/${comment.userId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            return {
-              ...comment,
-              userName: userResponse.data.userName,
-            };
-          } catch (error) {
-            console.error("Error fetching username:", error);
-            return {
-              ...comment,
-              userName: "Unknown User",
-            };
-          }
-        })
-      );
-
-      setComments(commentsWithUserNames);
       setTimeout(() => {
         setMessage("");
-      }, 3000);
+      }, 1000);
+      setComments(prevComments => [...prevComments, {...response.data, userName: data.userName}]);
     } catch (error) {
       console.error("Error posting comment:", error);
       setMessage("Error posting comment. Please try again.");

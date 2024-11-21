@@ -10,6 +10,8 @@ import com.Group1.Feedback.model.Feedback;
 import com.Group1.Feedback.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,11 +88,25 @@ public class FeedbackService {
 
     public List<FullDetails> getFeedbackByEventId(String eventId) {
         List<Feedback> feedbacks = feedbackRepository.findByEventId(eventId);
-
-        eventModel e = eventclient.getEvent(eventId);
-        userFullDetails u = userclient.getResidentById(e.getUserId());
+        if(eventId.equalsIgnoreCase("userReviews")){
+            List<FullDetails> f = new ArrayList<>();
+            for(Feedback i: feedbacks){
+                userFullDetails u = userclient.getResidentById(i.getUserId());
+                FullDetails fullDetails = new FullDetails();
+                fullDetails.setFeedbackId(i.getFeedbackId());
+                fullDetails.setFeedbackMessage(i.getFeedbackMessage());
+                fullDetails.setEventId(i.getEventId());
+                fullDetails.setUserId(i.getUserId());
+                fullDetails.setUserName(u.getUserName());
+                fullDetails.setEmail(u.getEmail());
+                fullDetails.setPhoneNumber(u.getPhoneNumber());
+                fullDetails.setImage(u.getImage());
+                f.add(fullDetails);
+            }
+        }
         return feedbacks.stream().map(feedback -> {
             FullDetails fullDetails = new FullDetails();
+            userFullDetails u = userclient.getResidentById(feedback.getUserId());
             fullDetails.setFeedbackId(feedback.getFeedbackId());
             fullDetails.setFeedbackMessage(feedback.getFeedbackMessage());
             fullDetails.setEventId(feedback.getEventId());
@@ -99,31 +115,14 @@ public class FeedbackService {
             fullDetails.setEmail(u.getEmail());
             fullDetails.setPhoneNumber(u.getPhoneNumber());
             fullDetails.setImage(u.getImage());
-            fullDetails.setEventTitle(e.getEventTitle());
-            fullDetails.setEventDescription(e.getEventDescription());
-            fullDetails.setEventDate(e.getEventDate());
-            fullDetails.setEventImg(e.getEventImg());
             return fullDetails;
         }).collect(Collectors.toList());
 
     }
 
-    public List<FullDetails> getFeedbackByUserId(String userId) {
+    public List<Feedback> getFeedbackByUserId(String userId) {
         List<Feedback> feedbacks = feedbackRepository.findByUserId(userId);
-        userFullDetails u = userclient.getResidentById(userId);
-        return feedbacks.stream().map(feedback -> {
-            FullDetails fullDetails = new FullDetails();
-            fullDetails.setFeedbackId(feedback.getFeedbackId());
-            fullDetails.setFeedbackMessage(feedback.getFeedbackMessage());
-            fullDetails.setEventId(feedback.getEventId());
-            fullDetails.setUserId(feedback.getUserId());
-            fullDetails.setUserName(u.getUserName());
-            fullDetails.setEmail(u.getEmail());
-            fullDetails.setPhoneNumber(u.getPhoneNumber());
-            fullDetails.setImage(u.getImage());
-            return fullDetails;
-        }).collect(Collectors.toList());
-
+        return feedbacks;
     }
 
     public FeedbackDto getFeedbackByEventIdAndUserId(String eventId, String userId) {

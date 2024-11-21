@@ -196,9 +196,9 @@ const UserPage = () => {
                     </CardActionButton>
                   </>
                 )}
-                <CardActionButton $delete onClick={() => handleDelete(user.userId)}>
+                {/* <CardActionButton $delete onClick={() => handleDelete(user.userId)}>
                   <FaTrash />
-                </CardActionButton>
+                </CardActionButton> */}
               </UserActions>
               <UserAvatar>
                 {user.userName?.charAt(0)}
